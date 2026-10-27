@@ -81,9 +81,11 @@ def scan(root=None, quiet=False):
     docs = [p for p in (root / n for n in PUBLIC_DOCS) if p.is_file()]
     # release notes are historical by nature: they pin their own version and links, so they are only
     # required to exist for the latest release, never rewritten.
-    notes = sorted(root.glob(RELEASE_NOTE_GLOB))
-    if not any(latest in p.name for p in notes):
-        problems.append(f"no release notes file for {latest} (RELEASE_NOTES_{latest}.md)")
+    notes = root / "RELEASE_NOTES.md"
+    if not notes.is_file():
+        problems.append("no RELEASE_NOTES.md in the repository")
+    elif latest not in notes.read_text(encoding="utf-8", errors="ignore"):
+        problems.append(f"RELEASE_NOTES.md does not mention the latest release {latest}")
     for p in docs:
         text = p.read_text(encoding="utf-8", errors="ignore")
         for m in URL_VERSION.finditer(text):
