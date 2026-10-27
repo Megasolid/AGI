@@ -64,7 +64,7 @@ the live **gen3.5**, the parentage and mutations between them, what was absorbed
 
 It also covers the public era: the trust layer (post-quantum identity, Merkle trust log, member identity, bundle lattice,
 owner activation, public mirror, one official repository) and the public releases
-`v0.1.0`, `v0.2.0`, `v0.3.0`, `v0.4.0`, `v0.4.1` and `v0.4.2`.
+`v0.1.0`, `v0.2.0`, `v0.3.0`, `v0.4.0`, `v0.4.1`, `v0.4.2` and `v0.4.3`.
 
 Release artefacts, tags and hashes live on the releases page — the lineage explains why each exists and
 what it descends from.

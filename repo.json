@@ -22,7 +22,7 @@
     "path": "releases/custom/2026-10-26/agi-custom-20261026.zip",
     "published_at": "",
     "sha256": "c944e723c6e8ad6962c216d61b7663e07abc95a90b1997787e141b877c8519a0",
-    "tag": "v0.4.2"
+    "tag": "v0.4.3"
    },
    {
     "class": "official",
@@ -31,16 +31,16 @@
     "path": "releases/official/2026-10-26/agi-official-20261026.zip",
     "published_at": "",
     "sha256": "238ffbdc04c3658d5a29d1e7c7c53869d65750cad6a82ec4b2d81ead22de6e57",
-    "tag": "v0.4.2"
+    "tag": "v0.4.3"
    },
    {
     "class": "unknown",
     "date": "2026-10-27",
-    "package": "agi-runtime-v0.4.2",
-    "path": "releases/runtime/2026-10-27/agi-runtime-v0.4.2.zip",
+    "package": "agi-runtime-v0.4.3",
+    "path": "releases/runtime/2026-10-27/agi-runtime-v0.4.3.zip",
     "published_at": "",
-    "sha256": "761f919567eb422a9403c0f1efaf1df191921e86d380afd83880ee215fdd9511",
-    "tag": "v0.4.2"
+    "sha256": "3a66eeb301c5638c2c33bc5e1fab4e3c6d220e267c03bac1fd7d8043c6d4fc4d",
+    "tag": "v0.4.3"
    }
   ]
  },
@@ -64,5 +64,5 @@
  },
  "repo": "AGI",
  "schema": "agi-repo/1",
- "updated": "2026-10-27T10:36:49+0330"
+ "updated": "2026-10-27T11:02:41+0330"
 }
