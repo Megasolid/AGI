@@ -2,3 +2,6 @@
 * text=auto eol=lf
 *.zip binary
 *.png binary
+# signatures are data, not source: keep GitHub's language stats meaningful
+*.sig linguist-generated=true
+*.sig linguist-detectable=false
