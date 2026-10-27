@@ -1,0 +1,6 @@
+{
+ "bundle_class": "official",
+ "note": "activation is performed by the owner after installation and verified by the runtime",
+ "schema": "agi-identity-template/1",
+ "state": "inactive"
+}

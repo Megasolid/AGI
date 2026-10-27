@@ -1,0 +1,20 @@
+name: integrity
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0        # public-doc version sync needs the release tags
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: verify artifact hashes, SHA256SUMS and identity hygiene
+        run: python tools/check_integrity.py
+      - name: public docs/installers must advertise the latest release
+        run: python tools/check_public_sync.py

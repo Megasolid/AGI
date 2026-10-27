@@ -1,0 +1,39 @@
+{
+ "bundle_id": "agi-official",
+ "capabilities": {
+  "can_consume": [
+   "pill"
+  ],
+  "can_issue": [],
+  "can_reproduce": false
+ },
+ "class": "official",
+ "core": {
+  "bundle": "agi_core_v3_2_interaction.tar.gz",
+  "bundle_sha256": "2d46f625d543680265070564bb0995e325cd18cfd15aa09ae0b13ad964779166",
+  "core_manifest_sha256": "9aa949bf7ea5c5bbc814b880b5a640c86aa1cd012ff01bdd3953e318de3734a8",
+  "core_version": "3.2",
+  "dna_version": 3,
+  "files": 22
+ },
+ "distribution": "public",
+ "generation": {
+  "core_version": "3.2",
+  "dna_version": 3,
+  "gen": "gen3.5"
+ },
+ "issued": "2026-10-26T11:39:16+0330",
+ "issuer": {
+  "device_alg": "ML-DSA-65",
+  "kind": "master",
+  "note": "member-neutral public bundle"
+ },
+ "parent": null,
+ "pill_policy": {
+  "accept_local_member_pills": false
+ },
+ "policy": {
+  "identity": "member-neutral; activation is performed by the owner, verified by the runtime"
+ },
+ "schema": "agi-bundle/1"
+}

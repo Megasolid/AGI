@@ -1,0 +1,4 @@
+# deterministic checkouts: git stores text with LF; hashing normalises CRLF -> LF anyway
+* text=auto eol=lf
+*.zip binary
+*.png binary
