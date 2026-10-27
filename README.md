@@ -30,7 +30,7 @@ Install AGI (https://github.com/Megasolid/AGI) on this computer for me.
 Follow the official protocol at
 https://raw.githubusercontent.com/Megasolid/AGI/main/INSTALL_PROMPT.md exactly.
 
-Key rules: install version v0.4.2; verify the download's SHA-256 against SHA256SUMS.txt BEFORE
+Key rules: install version v0.4.3; verify the download's SHA-256 against SHA256SUMS.txt BEFORE
 extracting; no administrator/root; keep everything inside my home directory; do not touch my other
 files; if a non-empty folder would be overwritten, ask me first.
 

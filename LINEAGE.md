@@ -83,7 +83,7 @@ pre-lineage (separate skills; Season 0–2, 2026-10-13 → 10-17)
                               │  one official repository, installable runtime, native login, passkey
                               │  verifier, agent-facing install prompt
                               │
-                              └─ public releases: v0.1.0, v0.2.0, v0.3.0, v0.4.0, v0.4.1, v0.4.2 at github.com/Megasolid/AGI
+                              └─ public releases: v0.1.0, v0.2.0, v0.3.0, v0.4.0, v0.4.1, v0.4.2, v0.4.3 at github.com/Megasolid/AGI
 ```
 
 ---
@@ -211,6 +211,11 @@ the record was compiled — the **trust layer v0** and the first public releases
     `-Resume`/`AGI_RESUME` finishes an interrupted extraction (the exact state D2060 was left in), and
     `-Python`/`AGI_PYTHON` is authoritative. Runtime also carries the admin rotate/temporary-session/wipe
     UI. Pre-stable test build.
+  - `v0.4.3` (2026-10-27) — **guest-install fixes after the second guest audit**: the installer's Python
+    download fallback works on hosts whose schannel stack is broken (PowerShell 5.1 no longer strips the
+    helper's quoting), `app.py launch --login` opens the correct `/login` URL (base was the board page),
+    `repo.py verify` soft-skips when no repository is initialised, and non-Studio hosts get a documented
+    `root_fallback` so `bootstrap check` is honest instead of failing. Pre-stable test build.
   - `v0.4.2` (2026-10-27) — **public-runtime cleanup after the guest-machine audit**: the public archive no
     longer contains the internal agent pool, provider credential files, backups/logs or machine scratch
     output; the registry shipped in the archive is sanitised so the verified-only gate passes without them;

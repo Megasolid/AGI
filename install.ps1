@@ -1,6 +1,6 @@
 # install.ps1 - one-prompt AGI runtime installer (Windows PowerShell 5.1+)
 #
-#   irm https://github.com/Megasolid/AGI/releases/download/v0.4.2/install.ps1 | iex
+#   irm https://github.com/Megasolid/AGI/releases/download/v0.4.3/install.ps1 | iex
 #
 # It downloads the runtime archive from a *pinned release*, verifies it against the released
 # SHA256SUMS before extracting anything, seeds the fresh state, runs the cold boot, and then opens
@@ -8,11 +8,11 @@
 # -Destination, and no personal data is fetched.
 #
 # Manual, safer form (review the script first, then run it):
-#   Invoke-WebRequest https://github.com/Megasolid/AGI/releases/download/v0.4.2/install.ps1 -OutFile install.ps1
-#   .\install.ps1 -Version v0.4.2
+#   Invoke-WebRequest https://github.com/Megasolid/AGI/releases/download/v0.4.3/install.ps1 -OutFile install.ps1
+#   .\install.ps1 -Version v0.4.3
 #
 param(
-  [string]$Version = "v0.4.2",
+  [string]$Version = "v0.4.3",
   [string]$Destination = "$HOME\AGI",
   [string]$BaseUrl = "",
   [switch]$NoBoot,
@@ -115,11 +115,27 @@ function Fetch-Url([string]$Url, [string]$OutFile) {
   if (Test-Path (Join-Path $env:ProgramFiles "Git\mingw64\etc\ssl\certs\ca-bundle.crt")) {
     $env:SSL_CERT_FILE = Join-Path $env:ProgramFiles "Git\mingw64\etc\ssl\certs\ca-bundle.crt"
   }
-  $pyCode = 'import sys,ssl,urllib.request; ctx=ssl.create_default_context(); ' +
-            'r=urllib.request.urlopen(sys.argv[1],timeout=180,context=ctx); ' +
-            'open(sys.argv[2],"wb").write(r.read())'
-  & $pyForHttp -c $pyCode "$Url" "$OutFile" 2>$null
-  if ($LASTEXITCODE -eq 0 -and (Test-Path $OutFile) -and (Get-Item $OutFile).Length -gt 0) { return }
+  # Never pass Python code through -c from PowerShell 5.1: inner quotes are stripped and the child
+  # dies with NameError (D2060, 2026-10-27). Write a verbatim helper script instead.
+  $pyHelper = Join-Path ([IO.Path]::GetTempPath()) ("agi-dl-" + [guid]::NewGuid().ToString("N").Substring(0, 8) + ".py")
+  $pySource = @'
+import ssl
+import sys
+import urllib.request
+
+ctx = ssl.create_default_context()
+with urllib.request.urlopen(sys.argv[1], timeout=180, context=ctx) as r:
+    data = r.read()
+with open(sys.argv[2], "wb") as fh:
+    fh.write(data)
+'@
+  try {
+    Set-Content -Path $pyHelper -Value $pySource -Encoding ASCII -Force
+    $rc = Invoke-Quiet $pyForHttp @($pyHelper, $Url, $OutFile)
+    if ($rc -eq 0 -and (Test-Path $OutFile) -and (Get-Item $OutFile).Length -gt 0) { return }
+  } finally {
+    Remove-Item -Force $pyHelper -ErrorAction SilentlyContinue
+  }
   throw ("download failed after Invoke-WebRequest, curl and python: $Url ($($last.Exception.Message)). " +
          "If this host has no usable CA bundle, install or repair the Windows certificate store, " +
          "or download the release assets manually and run install.ps1 -BaseUrl <file-uri-or-folder-url>.")

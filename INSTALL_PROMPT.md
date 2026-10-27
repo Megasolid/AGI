@@ -8,7 +8,7 @@ Canonical sources:
 
 * repository — <https://github.com/Megasolid/AGI>
 * this protocol — <https://raw.githubusercontent.com/Megasolid/AGI/main/INSTALL_PROMPT.md>
-* release — <https://github.com/Megasolid/AGI/releases/tag/v0.4.2>
+* release — <https://github.com/Megasolid/AGI/releases/tag/v0.4.3>
 
 ---
 
@@ -68,7 +68,7 @@ Run the official installer for the pinned version. It downloads, verifies the SH
 installs into `~/AGI`, seeds a fresh state, cold-boots, and opens the login screen.
 
 ```powershell
-$v = "v0.4.2"
+$v = "v0.4.3"
 $dest = "$HOME\AGI"   # or "$PWD\AGI" when the host only allows workspace writes
 $base = "https://github.com/Megasolid/AGI/releases/download/$v"
 Invoke-WebRequest "$base/install.ps1" -OutFile "$env:TEMP\agi-install.ps1" -UseBasicParsing
@@ -81,7 +81,7 @@ too, but the downloaded-then-run form is easier to audit.
 ## 3. Install (macOS / Linux)
 
 ```bash
-v="v0.4.2"
+v="v0.4.3"
 base="https://github.com/Megasolid/AGI/releases/download/$v"
 curl -fsSL "$base/install.sh" -o /tmp/agi-install.sh
 bash /tmp/agi-install.sh
@@ -136,7 +136,7 @@ What to tell the user, in plain words:
 ## 7. Report back (one line, then details if asked)
 
 ```
-AGI v0.4.2 installed at <path> — sha256 761f9195… verified — cold boot READY, gate 12/12.
+AGI v0.4.3 installed at <path> — sha256 3a66eeb3… verified — cold boot READY, gate 12/12.
 ```
 
 Include: version, install path, the verified sha256, whether a venv was created, and the command to start
@@ -157,6 +157,22 @@ That is a broken CA/schannel configuration on the host, not a repository problem
    `install.ps1 -BaseUrl <folder-url-or-local-paths>` or ask the user to run it in a normal terminal.
 
 Do not disable certificate verification as a workaround.
+
+## 7c. Sandboxed hosts: expected gate noise
+
+Two checks can fail on a host whose sandbox forbids writes outside the workspace, and neither is an AGI
+defect - say so, and do not "fix" them by weakening the gate:
+
+* **`boot gate: FAIL ... conformance_quick=False`** - the interaction contract uses `tempfile`, and some
+  sandboxes allow creating a temp directory but deny writing inside it. Prove it by re-running the suite
+  with `tempfile.tempdir` pointed at a pre-created workspace folder; if it passes, report it as
+  environmental.
+* **`repo.py verify` says no manifest** - the official repository is not initialised by the runtime; that
+  is a skip, not a failure (`repo.py init` / `pool-pull` creates it when the member wants the update pool).
+* **`bootstrap.py check` may report `env_probe.json has no root` on non-Studio hosts** - the probe records
+  a `root_fallback` (the AGI folder) for standalone installs; if an older runtime lacks it, report it and
+  move on rather than fabricating a Studio marker.
+* On such hosts set `AGI_RAM_ROOT` to a workspace folder **outside** the AGI tree before `bios.py`.
 
 ## 8. Failure handling
 

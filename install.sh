@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # install.sh - one-prompt AGI runtime installer (macOS / Linux)
 #
-#   curl -fsSL https://github.com/Megasolid/AGI/releases/download/v0.4.2/install.sh | bash
+#   curl -fsSL https://github.com/Megasolid/AGI/releases/download/v0.4.3/install.sh | bash
 #
 # Downloads the runtime from a *pinned release*, verifies it against the released SHA256SUMS before
 # extracting, seeds the fresh state, cold-boots, then opens the login screen. No sudo, nothing
@@ -11,7 +11,7 @@
 #   curl -fsSL .../install.sh -o install.sh && bash install.sh
 set -eu
 
-VERSION="${AGI_VERSION:-v0.4.2}"
+VERSION="${AGI_VERSION:-v0.4.3}"
 DEST="${AGI_DEST:-$HOME/AGI}"
 BASE_URL="${AGI_BASE_URL:-https://github.com/Megasolid/AGI/releases/download/$VERSION}"
 NO_BOOT="${AGI_NO_BOOT:-0}"
