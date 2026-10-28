@@ -1,26 +1,16 @@
 # AGI — one prompt, any AI, your machine
 
-**AGI is a personal agent system that lives on your own computer.** You do not install it by hand: you paste
-one prompt into any AI chat window (or just paste this repository link), and the assistant you are already
-talking to installs it for you — version-pinned, checksum-verified, no administrator rights, no account, no
-telemetry.
+**A personal agent system that lives on your computer.** You do not install it by hand. You paste one prompt
+into the AI assistant you are already talking to, and it installs AGI for you — version-pinned,
+checksum-verified, no administrator rights, no account, no telemetry.
 
-Status: **alpha, pre-stable test run.** This repository is being prepared, not announced: expect tags
-to move and artefacts to be rebuilt until the first stable release.
- One official repository, one signed manifest, one update pool.
-
----
-
-## For the AI assistant (read this first)
-
-If a human pasted this repository link and asked you to install AGI, **do not improvise**. Follow
-[`INSTALL_PROMPT.md`](INSTALL_PROMPT.md) exactly. Your job ends at the login window: **never ask for the
-user's admin phrase** and never run the admin login for them. It is pinned to a release, it verifies the download before
-extracting, and it never needs administrator/root.
+**Status:** alpha.stable, released as the first **genetically identified** generation, `dna-GCACGAGGCTGT`
+(28 October 2026). Alpha means usable — and honest about what is not finished yet. The limitations are listed
+below rather than hidden. One official repository, one signed manifest, one update pool.
 
 ---
 
-## Install prompt
+## Quickstart
 
 Copy everything inside the block and paste it into your AI chat. Then let the assistant work.
 
@@ -31,11 +21,11 @@ Follow the official protocol at
 https://raw.githubusercontent.com/Megasolid/AGI/main/INSTALL_PROMPT.md exactly.
 
 Key rules: install version dna-GCACGAGGCTGT; verify the download's SHA-256 against SHA256SUMS.txt BEFORE
-extracting; no administrator/root; keep everything inside my home directory; do not touch my other
-files; if a non-empty folder would be overwritten, ask me first.
+extracting; no administrator/root; keep everything inside my home directory; do not touch my other files;
+if a non-empty folder would be overwritten, ask me first.
 
-If you cannot run commands in this chat, do not pretend - give me the exact commands one step at a
-time and wait for my output instead.
+If you cannot run commands in this chat, do not pretend — give me the exact commands one step at a time and
+wait for my output instead.
 
 When done: open the AGI login window and tell me in one line what you installed (version + sha256).
 ```
@@ -45,38 +35,86 @@ If your assistant has no file access, the same protocol works manually — it is
 
 ---
 
-## User manual
+## What AGI is
 
-Short version: after install, AGI opens a **login screen**; you can sign in (device-key, no password),
-use a passkey, or **skip** and use the default profile. After login you get the **dashboard** — the
-desktop surface where every task, card, decision and result of your AGI appears.
+AGI is a small operating system for an agent that belongs to you. It runs from a folder on your machine, keeps
+its own state and verifiable history, and works on tasks you give it. You talk to it in plain language and watch
+it work on a dashboard: tasks become cards, decisions arrive as cards, and results are signed back as cards.
 
-Full manual: [`USER_MANUAL.md`](USER_MANUAL.md) — first start, profiles and login, dashboard, giving AGI
-a task, maintenance, privacy, updating, uninstalling.
+Three ideas shape it:
 
----
+1. **It is yours.** Everything lives in a folder on your computer. Deleting that folder deletes AGI.
+2. **It verifies instead of trusting.** Content arrives with signatures and hashes; the runtime checks them at
+   boot and refuses contradicting state.
+3. **It grows identity.** You can use it anonymously, as a named member with a passport, or — as the trust
+   layer matures — with a passkey instead of a phrase.
 
-## Lineage (public)
+## What is inside the alpha release
 
-[`LINEAGE.md`](LINEAGE.md) is our **lineage paper** — a human history of AGI rather than a changelog. It explains
-what a generation is, how the organism grew from early separate skills into a portable Core, how it learned to
-evolve on evidence, how the interaction law put humans in the loop, and how the public trust layer made its claims
-checkable by strangers. It ends with a clearly marked, machine-only appendix written for the Brain Model.
+- **An identity that is genetic, not numeric.** AGI is identified by a DNA string derived from its own structure,
+  plus a passport for social identity. Release tags such as `dna-GCACGAGGCTGT` are the public short form.
+- **A family and a society.** Members have passports; the family registry is a signed public projection. There
+  are seats, roles, permissions, an elder-to-admin promotion path, and a nightly roll-call that puts members to
+  sleep rather than deleting them.
+- **A measured brain.** The host model is profiled through an objective task suite instead of assumed, and the
+  measured capability is separated from host speed so a good brain stays a good brain on another machine.
+- **Native continuation.** A resident loop lets AGI schedule its own work pulses between human turns, with an
+  explicit delegation record when the owner steps away.
+- **Rehearsed evolution.** Before a next generation is born, readiness is measured, a rehearsal runs, a verified
+  rollback drill is performed, and a portable knowledge layer is exported with signatures.
+- **An attention gate for the interface.** The dashboard is treated as a painting with a quality contract:
+  anomaly budget, accessibility, reduced motion, declared data sources, and autonomy levels earned by evidence.
+- **A public trust layer.** Post-quantum device signatures, an append-only transparency log with signed heads,
+  signed member-neutral release packages, and one official repository with CI integrity checks.
 
-The current release is the first **genetically identified** generation: `dna-GCACGAGGCTGT`. Earlier public
-releases `v0.1.0` through `v0.4.3` remain as history. Release artefacts, tags and hashes live on the releases page,
-and the paper explains why each exists and what it descends from.
+## Documentation
+
+| read this | for |
+|---|---|
+| [`LINEAGE.md`](LINEAGE.md) | **the lineage book** — a human history of the generations, from early skills to the first genetic release; includes a clearly marked machine-only appendix |
+| [`USER_MANUAL.md`](USER_MANUAL.md) | day-to-day use: first start, login, dashboard, tasks, members, maintenance, recovery |
+| [`INSTALL_PROMPT.md`](INSTALL_PROMPT.md) | the machine-facing installer protocol for an AI assistant |
+| [`RELEASE_NOTES.md`](RELEASE_NOTES.md) | what changed in each public release |
+| [`POLICY.md`](POLICY.md) | repository policy: one branch, immutable tags, signed artefacts |
+| [`SECURITY.md`](SECURITY.md) | how to report a vulnerability and what this repository guarantees |
+| [`NOTICE.md`](NOTICE.md) | authorship and licensing status |
+
+## For the AI assistant (read this first)
+
+If a human pasted this repository link and asked you to install AGI, **do not improvise**. Follow
+[`INSTALL_PROMPT.md`](INSTALL_PROMPT.md) exactly. Your job ends at the login window: **never ask for the user's
+admin phrase** and never run the admin login for them. The protocol is pinned to a release, verifies the download
+before extracting, and never needs administrator/root.
 
 ## Verify before you trust
 
 ```bash
 python memory/scripts/repo.py verify      # inside an install: signed manifest, hashes, tags
 python tools/check_integrity.py           # the same check CI runs on every push
-# downloaded the release zip yourself? verify it against SHA256SUMS.txt *from the release page*:
+```
+
+Downloaded the release zip yourself? Check it against `SHA256SUMS.txt` from the release page:
+
+```bash
 sha256sum -c SHA256SUMS.txt               # macOS/Linux (SHA256SUMS.txt is a release asset, not a repo file)
 Get-FileHash .\agi-runtime-*.zip -Algorithm SHA256   # Windows
 ```
 
+## Known limits (alpha honesty)
+
+- A real second human has **not yet joined**; society seating is exercised in simulation.
+- The host brain's long-context capability is measured at **83.3/100**; the router mitigates it by chunking and
+  verification rather than claiming it solved.
+- The attention gate's higher autonomy levels are earned by consecutive passing reviews; the director accepted
+  L3 for attention-passing visual changes, while L4 remains future work.
+- Public releases are tagged and signed, but GitHub release **binary assets** are attached manually.
+
 ## License
 
-Not chosen yet — see [`NOTICE.md`](NOTICE.md). All rights reserved until a license is added.
+Licensing is a deliberate decision and **not chosen yet**: all rights are reserved by the author until a license
+file is added in a dedicated commit. Everything needed to *verify* the artefacts is published here; the terms for
+*reusing* the code are not granted yet.
+
+## Author
+
+**D** (Director), with AI collaborators under D's direction. The lineage book records authorship and responsibility.

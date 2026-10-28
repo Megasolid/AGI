@@ -1,32 +1,51 @@
-# AGI content policy (D, 2026-10-26)
+# AGI content policy
 
-One official repository, **one long-lived branch (`main`)**. No feature branches, no forks of truth:
-an official repo with divergent histories is not official. Versions are **immutable git tags**; content
-is organised by **versioned directories**, so a member can clone and read any past release.
+*One official repository, one long-lived branch, immutable releases — and nothing private, ever.*
+
+This repository is the official home of AGI. It exists so that anyone can read the releases, verify what they
+download, and understand how the project is kept. The rules below are short on purpose: they are the things that
+would be hard to undo if they were broken.
+
+## One branch of truth
+
+`main` is the only long-lived branch. An official repository with divergent histories is no longer official, so
+there are no feature branches and no rewriting of published history (no force-push, no rebasing published work).
+
+## Releases are immutable tags
+
+Each release is identified by its **DNA tag** — for this generation, `dna-GCACGAGGCTGT` — with legacy semantic
+version tags (`v0.1.0` … `v0.4.3`) kept only as history. A tag is a promise: the bytes it points at never change.
+
+Content is organised by date and class so any past release can be read or cloned:
 
 ```
-bundle/official/                  the official bundle (the only distributable bundle)
-pool/                             update pool: pills from all bundles + signed index + proofs
-public/mirror/<tree_size>/        snapshot of the *.public pill mirror at one signed log head
-releases/<class>/<YYYY-MM-DD>/    release zips (official, custom) + SHA256SUMS
-docs/                             public trust summary / milestone exports
-repo.json + .sig                  signed manifest: official bundle, pool head, artifact index
+bundle/official/                  the official distributable bundle
+pool/                             update pool: signed index and proofs
+public/mirror/<tree_size>/        public mirror snapshot at one signed log head
+releases/<class>/<date>/          release packages + SHA256SUMS
+docs/                             public trust summary and milestone exports
+repo.json + .sig                  signed manifest of the whole repository
 POLICY.md                         this file
 ```
 
-Rules:
-1. `main` is the only branch; history is never rewritten (no force-push, no rebase of published commits).
-2. Every release is a tag `release/<YYYY-MM-DD>[-n]` on a commit that contains its zip; the tag is the
-   version a member pins.
-3. Binaries (zips) are committed only through `repo.py publish-release`, which verifies the package first
-   (signature + every hash) and records its sha256 in `releases/SHA256SUMS`.
-4. Mirror snapshots are committed through `repo.py snapshot-mirror`, which verifies the mirror first and
-   keeps each snapshot at its own tree size (a proof belongs to one head, never to "the latest").
-5. Nothing private is ever committed: no secrets, no private material, no personal data.
-6. `repo.py verify` must pass before any push; the boot gate repeats the same checks at every boot.
+## Signed artefacts only
+
+Binaries and bundles enter the repository only through the repository tooling, which verifies the package before
+recording its hashes. Mirror snapshots are committed only after verification, and each snapshot stays pinned to
+its own signed log head — a proof belongs to one head, never to "the latest".
+
+## Nothing private
+
+No secrets, no private key material, no member data, no personal information. The public repository carries
+releases and public projections only.
+
+## Verify before you push
+
+`repo.py verify` must pass before anything is published, and the same checks run at every boot. The CI integrity
+job repeats the hash checks on every push and pull request.
 
 ## Line endings and hashing
 
-The repo stores text with LF (`* text=auto eol=lf`). Artefact hashes in `repo.json` and
-`releases/SHA256SUMS` are computed over **LF-normalised** bytes, so a Windows working tree
-and a Linux CI clone produce the same hashes. Binary artefacts (zips) are hashed raw.
+Text is stored with LF line endings, and hashes in `repo.json` and `releases/SHA256SUMS` are computed over
+normalised text, so a Windows working tree and a Linux CI clone produce the same values. Binary artefacts are
+hashed raw.

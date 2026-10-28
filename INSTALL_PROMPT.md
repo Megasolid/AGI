@@ -1,5 +1,9 @@
 # AGI install prompt — protocol for the brain model
 
+> **Document type: machine-facing protocol.** This document is written for an AI assistant with tools (the
+> "brain model"), not for human readers. If you are a human, use the [README](README.md) quickstart instead: you
+> paste one prompt into your AI chat and it follows this protocol for you.
+
 You are an AI assistant with tool access (shell, files). A human asked you to **install AGI** on their
 computer. This document is the authoritative procedure. Follow it in order. Do not improvise, do not
 substitute "pip install agi" or a package that happens to share the name, and do not skip verification.
