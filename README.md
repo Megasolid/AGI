@@ -58,18 +58,14 @@ a task, maintenance, privacy, updating, uninstalling.
 
 ## Lineage (public)
 
-[`LINEAGE.md`](LINEAGE.md) is the **official AGI lineage record** — the document behind this repository's
-existence. It records what AGI descends from: the DNA root and its invariants, every generation from gen1 to
-the live **gen3.5**, the parentage and mutations between them, what was absorbed or retired, the obligations every generation inherits, and the protocol for reproducing the next generation.
+[`LINEAGE.md`](LINEAGE.md) is our **lineage paper** — a human history of AGI rather than a changelog. It explains
+what a generation is, how the organism grew from early separate skills into a portable Core, how it learned to
+evolve on evidence, how the interaction law put humans in the loop, and how the public trust layer made its claims
+checkable by strangers. It ends with a clearly marked, machine-only appendix written for the Brain Model.
 
-It also covers the public era: the trust layer (post-quantum identity, Merkle trust log, member identity, bundle lattice,
-owner activation, public mirror, one official repository) and the public releases
-`v0.1.0`, `v0.2.0`, `v0.3.0`, `v0.4.0`, `v0.4.1`, `v0.4.2` and `dna-GCACGAGGCTGT`.
-
-Release artefacts, tags and hashes live on the releases page — the lineage explains why each exists and
-what it descends from.
-
----
+The current release is the first **genetically identified** generation: `dna-GCACGAGGCTGT`. Earlier public
+releases `v0.1.0` through `v0.4.3` remain as history. Release artefacts, tags and hashes live on the releases page,
+and the paper explains why each exists and what it descends from.
 
 ## Verify before you trust
 
