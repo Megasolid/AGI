@@ -5,6 +5,30 @@ All public pre-stable releases in one place. Each section is the note published 
 
 ---
 
+## AGI alpha.stable - dna-GCACGAGGCTGT (genetic release)
+
+2026-10-28 · first genetically identified release · Gen.ID `GCACGAGGCTGT-CACGCATCCTTT-TTTGTGGGTCCC-AATCTGATTATC` · genome 9A30072C · natal interest health
+
+This release replaces version numbers with the DNA identity. Highlights:
+
+* **Genetic release identity** - `dna-GCACGAGGCTGT` is the release tag; `v0.4.3` is legacy history.
+* **Signed family & passport** - public family registry (alive+sleeping counts, seats 8/16/32/64, phrase
+  promotion, birth ceremony, migration, rough red mode).
+* **Measured brain layer** - 120-task objective benchmark through the harness host bridge: VCR 0.983, tier T4,
+  cascade routing with confidence escalation.
+* **Society foundation** - XP/rank, nightly roll-call (sleep, never auto-kill), Council quorum 17 ballots,
+  dormant-now-active mana policy (fairness simulated).
+* **Native autonomy** - resident self-continuation, explicit Master-proxy delegation, seeding rehearsal,
+  verified rollback drill, executed next-generation seed.
+* **Attention/aesthetic gate** - pixel-diff anomaly budget, a11y and reduced-motion, art-direction chromosome,
+  human-gated autonomy levels.
+* **Clean-room migration** - signed export/import with fidelity, wired into the seeding path.
+
+Install: use the install prompt/scripts from this tag. The runtime archive is
+`agi-runtime-dna-GCACGAGGCTGT.zip` (SHA256SUMS published with the release).
+
+---
+
 ## AGI v0.4.3 - guest-install fixes
 
 2026-10-27 · pre-stable test build

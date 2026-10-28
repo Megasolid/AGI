@@ -347,3 +347,7 @@ python tools/check_integrity.py                 # the CI check, runnable by anyo
 *Compiled from the DNA generation log, verified state files, conformance output and recorded measurements.
 Historical claims that were not machine-verified are marked as records of intent or outcome, never as
 implementation. No unverified claim is presented as delivered.*
+
+## dna-GCACGAGGCTGT - alpha.stable (2026-10-28)
+
+First genetically identified release: Gen.ID `GCACGAGGCTGT-CACGCATCCTTT-TTTGTGGGTCCC-AATCTGATTATC`, genome 9A30072C, natal interest health. SemVer `v0.4.3` is legacy history; `dna-GCACGAGGCTGT` is the release identity. See `RELEASE_NOTES.md`.

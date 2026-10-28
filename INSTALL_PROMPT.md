@@ -8,7 +8,7 @@ Canonical sources:
 
 * repository — <https://github.com/Megasolid/AGI>
 * this protocol — <https://raw.githubusercontent.com/Megasolid/AGI/main/INSTALL_PROMPT.md>
-* release — <https://github.com/Megasolid/AGI/releases/tag/v0.4.3>
+* release — <https://github.com/Megasolid/AGI/releases/tag/dna-GCACGAGGCTGT>
 
 ---
 
@@ -68,7 +68,7 @@ Run the official installer for the pinned version. It downloads, verifies the SH
 installs into `~/AGI`, seeds a fresh state, cold-boots, and opens the login screen.
 
 ```powershell
-$v = "v0.4.3"
+$v = "dna-GCACGAGGCTGT"
 $dest = "$HOME\AGI"   # or "$PWD\AGI" when the host only allows workspace writes
 $base = "https://github.com/Megasolid/AGI/releases/download/$v"
 Invoke-WebRequest "$base/install.ps1" -OutFile "$env:TEMP\agi-install.ps1" -UseBasicParsing
@@ -81,7 +81,7 @@ too, but the downloaded-then-run form is easier to audit.
 ## 3. Install (macOS / Linux)
 
 ```bash
-v="v0.4.3"
+v="dna-GCACGAGGCTGT"
 base="https://github.com/Megasolid/AGI/releases/download/$v"
 curl -fsSL "$base/install.sh" -o /tmp/agi-install.sh
 bash /tmp/agi-install.sh
@@ -136,7 +136,7 @@ What to tell the user, in plain words:
 ## 7. Report back (one line, then details if asked)
 
 ```
-AGI v0.4.3 installed at <path> — sha256 3a66eeb3… verified — cold boot READY, gate 12/12.
+AGI dna-GCACGAGGCTGT installed at <path> — sha256 42154791… verified — cold boot READY, gate 12/12.
 ```
 
 Include: version, install path, the verified sha256, whether a venv was created, and the command to start

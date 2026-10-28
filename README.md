@@ -30,7 +30,7 @@ Install AGI (https://github.com/Megasolid/AGI) on this computer for me.
 Follow the official protocol at
 https://raw.githubusercontent.com/Megasolid/AGI/main/INSTALL_PROMPT.md exactly.
 
-Key rules: install version v0.4.3; verify the download's SHA-256 against SHA256SUMS.txt BEFORE
+Key rules: install version dna-GCACGAGGCTGT; verify the download's SHA-256 against SHA256SUMS.txt BEFORE
 extracting; no administrator/root; keep everything inside my home directory; do not touch my other
 files; if a non-empty folder would be overwritten, ask me first.
 
@@ -64,7 +64,7 @@ the live **gen3.5**, the parentage and mutations between them, what was absorbed
 
 It also covers the public era: the trust layer (post-quantum identity, Merkle trust log, member identity, bundle lattice,
 owner activation, public mirror, one official repository) and the public releases
-`v0.1.0`, `v0.2.0`, `v0.3.0`, `v0.4.0`, `v0.4.1`, `v0.4.2` and `v0.4.3`.
+`v0.1.0`, `v0.2.0`, `v0.3.0`, `v0.4.0`, `v0.4.1`, `v0.4.2` and `dna-GCACGAGGCTGT`.
 
 Release artefacts, tags and hashes live on the releases page — the lineage explains why each exists and
 what it descends from.
