@@ -142,7 +142,8 @@ extracting.
 * Passkeys: the verifier exists and is tested; the browser ceremony is still in progress. Until it lands, login
   is per-install, not portably across machines.
 * The host brain's long-context capability is measured at 83.3/100 and is mitigated by chunking and verification.
-* The attention gate's L3 autonomy is accepted for attention-passing visual changes; L4 remains future work.
+* The attention gate's autonomy is accepted through L4 for attention-passing visual changes; the recommended
+  level still rises with the consecutive-review streak.
 * A license has not been chosen yet: all rights reserved until a license file is added.
 
 ## 13. Troubleshooting

@@ -1,6 +1,6 @@
-# AGI — one prompt, any AI, your machine
+# What AGI is
 
-**A personal agent system that lives on your computer.** You do not install it by hand. You paste one prompt
+AGI is a personal agent system that lives on your computer. You do not install it by hand. You paste one prompt
 into the AI assistant you are already talking to, and it installs AGI for you — version-pinned,
 checksum-verified, no administrator rights, no account, no telemetry.
 
@@ -105,8 +105,9 @@ Get-FileHash .\agi-runtime-*.zip -Algorithm SHA256   # Windows
 - A real second human has **not yet joined**; society seating is exercised in simulation.
 - The host brain's long-context capability is measured at **83.3/100**; the router mitigates it by chunking and
   verification rather than claiming it solved.
-- The attention gate's higher autonomy levels are earned by consecutive passing reviews; the director accepted
-  L3 for attention-passing visual changes, while L4 remains future work.
+- The attention gate's autonomy levels are earned by consecutive passing reviews. The director has accepted
+  **L4 as the autonomy ceiling** for attention-passing visual changes; the gate's recommended level still rises
+  with the evidence streak.
 - Public releases are tagged and signed, but GitHub release **binary assets** are attached manually.
 
 ## License

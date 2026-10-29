@@ -21,8 +21,8 @@ This release replaces version numbers with the DNA identity. Highlights:
 * **Native autonomy** - resident self-continuation, explicit Master-proxy delegation, seeding rehearsal,
   verified rollback drill, executed next-generation seed.
 * **Attention/aesthetic gate** - pixel-diff anomaly budget, a11y and reduced-motion, art-direction chromosome,
-  and autonomy levels: the director has accepted L3 for attention-passing visual changes, while L4 stays earned
-  through a longer evidence streak.
+  and autonomy levels: the director has accepted **L4 as the autonomy ceiling** for attention-passing visual
+  changes; the gate's recommended level still rises with the evidence streak.
 * **Clean-room migration** - signed export/import with fidelity, wired into the seeding path.
 
 Install: use the install prompt/scripts from this tag. The runtime archive is
