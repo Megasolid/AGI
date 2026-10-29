@@ -16,5 +16,7 @@ jobs:
           python-version: "3.12"
       - name: verify artifact hashes, SHA256SUMS and identity hygiene
         run: python tools/check_integrity.py
+      - name: public sync self-test (DNA tags + legacy semver tags)
+        run: python tools/test_check_public_sync.py
       - name: public docs/installers must advertise the latest release
         run: python tools/check_public_sync.py

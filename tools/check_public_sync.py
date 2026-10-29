@@ -5,13 +5,19 @@ Root cause this guards against (2026-10-27): version numbers were hardcoded in s
 (README install prompt, INSTALL_PROMPT.md, installer defaults, LINEAGE release list) and the release
 process only bumped the installers and release notes - so the front page kept advertising an old version.
 
+The release identity is no longer only semantic version. Since the genetic release, tags look like
+`dna-GCACGAGGCTGT`; older releases use `vX.Y.Z`. This check is tag-format agnostic: it reads the current
+release tag from `repo.json` (the signed manifest is the source of truth) and falls back to the newest tag.
+
 Checks (repo root = parent of tools/):
-  1. latest tag = `git describe --tags --abbrev=0` (or the newest tag by creation date);
-  2. every `releases/download/vX` and `releases/tag/vX` URL in the public docs equals the latest tag;
-  3. every "install version vX" / `-Version vX` / `$v = "vX"` / `v="vX"` pin equals the latest tag;
-  4. the installer defaults (`param(... "vX" ...)`, `VERSION="${AGI_VERSION:-vX}"`) equal the latest tag;
-  5. LINEAGE.md lists the latest tag in its release section;
-  6. README's lineage summary contains the latest tag.
+  1. latest tag = `repo.json:current_tag`, else the newest tag by creation date;
+  2. every `releases/download/<tag>` and `releases/tag/<tag>` URL in public docs/installers equals it;
+  3. every install pin ("install version <tag>", `$v = "<tag>"`, `-Version <tag>`) equals it;
+  4. installer defaults equal it (`$Version = "<tag>"`, `AGI_VERSION:-<tag>`);
+  5. LINEAGE.md lists it; README's lineage summary (if present) mentions it;
+  6. RELEASE_NOTES.md mentions it;
+  7. the released runtime archive for that tag exists in `releases/SHA256SUMS`, and any SHA cited in
+     INSTALL_PROMPT.md / RELEASE_NOTES.md matches it.
 
 Usage: python tools/check_public_sync.py [--repo <path>] [--quiet]
 Exit: 0 = in sync, 1 = drift (prints every stale reference).
@@ -26,47 +32,63 @@ from pathlib import Path
 PUBLIC_DOCS = ("README.md", "INSTALL_PROMPT.md", "USER_MANUAL.md", "LINEAGE.md",
                "SECURITY.md", "NOTICE.md", "POLICY.md")
 INSTALLERS = ("install.ps1", "install.sh")
-RELEASE_NOTE_GLOB = "RELEASE_NOTES*.md"
 
-URL_VERSION = re.compile(r"releases/(?:download|tag)/v(\d+\.\d+\.\d+)")
-PIN_VERSION = re.compile(r'(?:install version|-Version|\$v\s*=\s*"|v="|AGI )\s*"?v?(\d+\.\d+\.\d+)')
-PS_DEFAULT = re.compile(r'\$Version\s*=\s*"v(\d+\.\d+\.\d+)"')
-SH_DEFAULT = re.compile(r"AGI_VERSION:-v(\d+\.\d+\.\d+)")
-
-
-def latest_tag(root):
-    for cmd in (["git", "describe", "--tags", "--abbrev=0"],
-                ["git", "tag", "--sort=-creatordate"]):
-        try:
-            out = subprocess.run(cmd, cwd=str(root), capture_output=True, text=True, timeout=20)
-            if out.returncode == 0 and out.stdout.strip():
-                return out.stdout.split()[0].strip()
-        except Exception:
-            continue
-    return None
-
-
-def _version(s):
-    return tuple(int(x) for x in s.split("."))
-
-
-RUNTIME_NAME = re.compile(r"agi-runtime-v(\d+\.\d+\.\d+)\.zip")
+# A release tag: DNA tags (`dna-GCACGAGGCTGT`) or legacy semver (`v0.4.3`). Keep the character class
+# deliberately conservative so a stray word after a URL is not mistaken for a tag.
+TAG = r"[A-Za-z0-9][A-Za-z0-9._-]*"
+URL_TAG = re.compile(r"releases/(?:download|tag)/(" + TAG + r")")
+PIN_PATTERNS = [
+    re.compile(r"install version\s+[`\"']?(" + TAG + r")", re.I),
+    re.compile(r"\$v\s*=\s*[\"'](" + TAG + r")[\"']"),
+    re.compile(r"\bv\s*=\s*[\"'](" + TAG + r")[\"']"),
+    re.compile(r"-Version\s+[\"']?(" + TAG + r")"),
+]
+PS_DEFAULT = re.compile(r'\$Version\s*=\s*["\'](' + TAG + r')["\']')
+SH_DEFAULT = re.compile(r"AGI_VERSION:-(" + TAG + r")")
 CITED_SHA = re.compile(r"sha256[^0-9a-fA-F]{0,12}([0-9a-fA-F]{8,64})")
 
 
+def _run_git(root, *args):
+    try:
+        out = subprocess.run(["git"] + list(args), cwd=str(root), capture_output=True, text=True, timeout=20)
+        if out.returncode == 0 and out.stdout.strip():
+            return out.stdout.strip()
+    except Exception:
+        pass
+    return None
+
+
+def latest_tag(root):
+    """Current release tag: repo.json first (source of truth), then newest tag by creation date."""
+    manifest = Path(root) / "repo.json"
+    if manifest.is_file():
+        try:
+            tag = str(json.loads(manifest.read_text(encoding="utf-8")).get("current_tag") or "").strip()
+            if tag:
+                return tag
+        except Exception:
+            pass
+    out = _run_git(root, "for-each-ref", "--sort=-creatordate", "--format=%(refname:short)", "refs/tags")
+    if out:
+        return out.split()[0].strip()
+    return _run_git(root, "describe", "--tags", "--abbrev=0")
+
+
 def latest_runtime(root, latest):
-    """(filename, sha256) of the runtime archive for the latest release, from releases/SHA256SUMS."""
+    """(path, sha256) of the runtime archive for the latest release, from releases/SHA256SUMS."""
     sums = Path(root) / "releases" / "SHA256SUMS"
     if not sums.is_file():
         return None, None, ["releases/SHA256SUMS is missing"]
     wanted = "agi-runtime-%s.zip" % latest
-    problems = []
     for line in sums.read_text(encoding="utf-8", errors="ignore").splitlines():
         parts = line.split()
         if len(parts) >= 2 and parts[-1].endswith(wanted):
-            return parts[-1], parts[0].lower(), problems
-    problems.append("releases/SHA256SUMS has no entry for %s" % wanted)
-    return None, None, problems
+            return parts[-1], parts[0].lower(), []
+    return None, None, ["releases/SHA256SUMS has no entry for %s" % wanted]
+
+
+def _line(text, start):
+    return text.count("\n", 0, start) + 1
 
 
 def scan(root=None, quiet=False):
@@ -77,42 +99,51 @@ def scan(root=None, quiet=False):
     if not latest:
         return {"ok": False, "latest": None, "problems": ["no release tag found in the repository"]}
 
-    latest_num = latest.lstrip("v")
     docs = [p for p in (root / n for n in PUBLIC_DOCS) if p.is_file()]
-    # release notes are historical by nature: they pin their own version and links, so they are only
-    # required to exist for the latest release, never rewritten.
     notes = root / "RELEASE_NOTES.md"
     if not notes.is_file():
         problems.append("no RELEASE_NOTES.md in the repository")
     elif latest not in notes.read_text(encoding="utf-8", errors="ignore"):
         problems.append(f"RELEASE_NOTES.md does not mention the latest release {latest}")
+
+    # 2) release URLs in public docs and installers must point at the current tag
+    for p in docs + [root / n for n in INSTALLERS if (root / n).is_file()]:
+        text = p.read_text(encoding="utf-8", errors="ignore")
+        for m in URL_TAG.finditer(text):
+            tag = m.group(1)
+            refs.setdefault(p.name, []).append(("url", tag))
+            if tag != latest:
+                problems.append(f"{p.name}:{_line(text, m.start())}: release URL points at {tag}, latest is {latest}")
+
+    # 3) explicit install pins in public docs must be the current tag
     for p in docs:
         text = p.read_text(encoding="utf-8", errors="ignore")
-        for m in URL_VERSION.finditer(text):
-            refs.setdefault(p.name, []).append(("url", m.group(1)))
-            if m.group(1) != latest_num:
-                line = text.count("\n", 0, m.start()) + 1
-                problems.append(f"{p.name}:{line}: release URL points at v{m.group(1)}, latest is {latest}")
-        if p.name not in ("LINEAGE.md", "README.md"):
-            for m in PIN_VERSION.finditer(text):
-                refs.setdefault(p.name, []).append(("pin", m.group(1)))
-                if m.group(1) != latest_num:
-                    line = text.count("\n", 0, m.start()) + 1
-                    problems.append(f"{p.name}:{line}: pinned version v{m.group(1)} is stale (latest {latest})")
+        for rx in PIN_PATTERNS:
+            for m in rx.finditer(text):
+                tag = m.group(1)
+                refs.setdefault(p.name, []).append(("pin", tag))
+                if tag != latest:
+                    problems.append(f"{p.name}:{_line(text, m.start())}: install pin {tag} is stale (latest {latest})")
 
+    # 4) installer defaults must equal the current tag
     for name in INSTALLERS:
         p = root / name
         if not p.is_file():
             continue
         text = p.read_text(encoding="utf-8", errors="ignore")
+        seen = False
         for rx in (PS_DEFAULT, SH_DEFAULT):
             for m in rx.finditer(text):
-                refs.setdefault(name, []).append(("default", m.group(1)))
-                if m.group(1) != latest_num:
-                    line = text.count("\n", 0, m.start()) + 1
-                    problems.append(f"{name}:{line}: installer default v{m.group(1)} is stale (latest {latest})")
+                seen = True
+                tag = m.group(1)
+                refs.setdefault(name, []).append(("default", tag))
+                if tag != latest:
+                    problems.append(f"{name}:{_line(text, m.start())}: installer default {tag} is stale "
+                                    f"(latest {latest})")
+        if not seen:
+            problems.append(f"{name}: no release default found (expected {latest})")
 
-    # LINEAGE must record the latest release; README's lineage summary must mention it.
+    # 5) LINEAGE must record the latest release; README's lineage summary, if present, must too.
     lin = root / "LINEAGE.md"
     if lin.is_file() and latest not in lin.read_text(encoding="utf-8", errors="ignore"):
         problems.append(f"LINEAGE.md does not list the latest release {latest}")
@@ -123,20 +154,36 @@ def scan(root=None, quiet=False):
         if m and latest not in m.group(1):
             problems.append(f"README.md lineage section does not mention {latest}")
 
-    # runtime sha consistency: docs that quote a runtime sha must quote the *released* one
+    # 7) runtime consistency: the released archive must be listed and quoted hashes must match it.
     runtime_file, runtime_sha, runtime_problems = latest_runtime(root, latest)
     problems += runtime_problems
     if runtime_file:
-        sha_docs = [p for p in docs if p.name in ("INSTALL_PROMPT.md",)]
-        sha_docs += [p for p in notes if latest in p.name]
+        sha_docs = [root / "INSTALL_PROMPT.md"]
+        # Only the section of the release notes that belongs to the latest release is current. Historical
+        # sections legitimately cite their own old runtime hashes and must not be rewritten.
+        if notes.is_file():
+            sections = re.split(r"(?m)^##\s+", notes.read_text(encoding="utf-8", errors="ignore"))
+            current = [s for s in sections if latest in s.split("\n", 1)[0]]
+            for s in current:
+                text = s
+                for m in CITED_SHA.finditer(text):
+                    cited = m.group(1).lower()
+                    if not runtime_sha.startswith(cited):
+                        problems.append(f"RELEASE_NOTES.md (latest section): cites sha256 {cited}… but the released "
+                                        f"runtime is {runtime_sha[:12]}… ({runtime_file})")
         for p in sha_docs:
+            if not p.is_file():
+                continue
             text = p.read_text(encoding="utf-8", errors="ignore")
-            cited = [m.group(1).lower() for m in CITED_SHA.finditer(text)]
-            for c in cited:
-                if not runtime_sha.startswith(c):
-                    line = text[:text.lower().find(c)].count("\n") + 1
-                    problems.append(f"{p.name}:{line}: cites sha256 {c}… but the released runtime is "
-                                    f"{runtime_sha[:12]}… ({runtime_file})")
+            for m in CITED_SHA.finditer(text):
+                cited = m.group(1).lower()
+                if not runtime_sha.startswith(cited):
+                    problems.append(f"{p.name}:{_line(text, m.start())}: cites sha256 {cited}… but the released "
+                                    f"runtime is {runtime_sha[:12]}… ({runtime_file})")
+    else:
+        # keep the reason visible even when no sha is quoted
+        problems += runtime_problems
+
 
     result = {"ok": not problems, "latest": latest, "problems": problems,
               "runtime": {"file": runtime_file, "sha256": runtime_sha},
