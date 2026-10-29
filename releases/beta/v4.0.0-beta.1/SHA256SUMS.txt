@@ -1,2 +1,0 @@
-79e1ac29f11e6e483ee293bbd72404011b45d0e5494cec00805ce5ddfa43ba80  agi-entelechy-beta1-runtime.zip
-417dd0175b2200e8a25e118eab0bfddd45ade042e12d7eec5e9d4f06773d52e4  AGI-ENTL-SEED.md
