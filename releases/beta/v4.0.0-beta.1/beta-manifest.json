@@ -1,0 +1,13 @@
+{
+ "schema": "agi-entelechy/beta-manifest/1",
+ "tag": "v4.0.0-beta.1",
+ "generation": "Entelechy",
+ "dna_version": 4,
+ "files": {
+  "agi-entelechy-beta1-runtime.zip": "79e1ac29f11e6e483ee293bbd72404011b45d0e5494cec00805ce5ddfa43ba80",
+  "AGI-ENTL-SEED.md": "417dd0175b2200e8a25e118eab0bfddd45ade042e12d7eec5e9d4f06773d52e4"
+ },
+ "sha256sums": "d754a3dbc2dc5de8d563f9896ff1948f18c05ab4d21c2f1ffb81d572f07ab857",
+ "scope": "runtime+index+seed+sensorium-preview+docs",
+ "stable": "gen3.5 dna-GCACGAGGCTGT untouched"
+}
