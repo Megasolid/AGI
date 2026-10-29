@@ -1,8 +1,16 @@
 # What AGI is
 
-AGI is a personal agent system that lives on your computer. You do not install it by hand. You paste one prompt
-into the AI assistant you are already talking to, and it installs AGI for you — version-pinned,
-checksum-verified, no administrator rights, no account, no telemetry.
+AGI is a small operating system for an agent that belongs to you. It runs from a folder on your machine, keeps
+its own state and verifiable history, and works on tasks you give it. You talk to it in plain language and watch
+it work on a dashboard: tasks become cards, decisions arrive as cards, and results are signed back as cards.
+
+Three ideas shape it:
+
+1. **It is yours.** Everything lives in a folder on your computer. Deleting that folder deletes AGI.
+2. **It verifies instead of trusting.** Content arrives with signatures and hashes; the runtime checks them at
+   boot and refuses contradicting state.
+3. **It grows identity.** You can use it anonymously, as a named member with a passport, or — as the trust
+   layer matures — with a passkey instead of a phrase.
 
 **Status:** alpha.stable, released as the first **genetically identified** generation, `dna-GCACGAGGCTGT`
 (28 October 2026). Alpha means usable — and honest about what is not finished yet. The limitations are listed
@@ -34,20 +42,6 @@ If your assistant has no file access, the same protocol works manually — it is
 (`install.ps1` / `install.sh`) and the same checksums.
 
 ---
-
-## What AGI is
-
-AGI is a small operating system for an agent that belongs to you. It runs from a folder on your machine, keeps
-its own state and verifiable history, and works on tasks you give it. You talk to it in plain language and watch
-it work on a dashboard: tasks become cards, decisions arrive as cards, and results are signed back as cards.
-
-Three ideas shape it:
-
-1. **It is yours.** Everything lives in a folder on your computer. Deleting that folder deletes AGI.
-2. **It verifies instead of trusting.** Content arrives with signatures and hashes; the runtime checks them at
-   boot and refuses contradicting state.
-3. **It grows identity.** You can use it anonymously, as a named member with a passport, or — as the trust
-   layer matures — with a passkey instead of a phrase.
 
 ## What is inside the alpha release
 
