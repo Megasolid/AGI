@@ -1,0 +1,171 @@
+{
+ "schema": "agi-dna/4",
+ "generation": {
+  "name": "Entelechy",
+  "major": 4,
+  "dna_version": 4,
+  "status": "beta-candidate",
+  "gen_id": "ENTL-CAACGGCAACTC-AGTGAGTTGGAG-AAAGAGAATCAG-AACCGTGCTAAC"
+ },
+ "lineage": {
+  "parent_dna_tag": "dna-GCACGAGGCTGT",
+  "parent_core": "3.2",
+  "parent_dna_version": 3,
+  "rule": "preserve I1-I9; dna changes only by dna_version bump + Master sign-off"
+ },
+ "invariants": [
+  "I1 enforcement in gates, never prose",
+  "I2 machine facts only in state/",
+  "I3 verified-only execution",
+  "I4 idempotent boot from disk",
+  "I5 hash manifests on portable artifacts",
+  "I6 structured IO envelopes",
+  "I7 model portability via adapters",
+  "I8 stop on first failure; thresholds need Master",
+  "I9 durable decision projection"
+ ],
+ "reactive_dna": {
+  "schema": "agi-reactive-dna/1",
+  "evaluation": "fitness = survival * task_success / attempt - cost - conflict_penalty - complexity_tax",
+  "selection": "conflict-aware; one reaction per (trigger, env); env tags over env=any; held-out validation",
+  "rules": [
+   {
+    "trigger": "boot",
+    "env": "any",
+    "reaction": "load_db"
+   },
+   {
+    "trigger": "loss",
+    "env": "any",
+    "reaction": "restore_snapshot"
+   },
+   {
+    "trigger": "corrupt",
+    "env": "any",
+    "reaction": "rollback"
+   },
+   {
+    "trigger": "miss",
+    "env": "any",
+    "reaction": "rebuild_index"
+   },
+   {
+    "trigger": "fetch_fail",
+    "env": "noisy-web",
+    "reaction": "retry_fallback"
+   },
+   {
+    "trigger": "untrusted",
+    "env": "noisy-web",
+    "reaction": "sandbox"
+   },
+   {
+    "trigger": "overflow",
+    "env": "long-session",
+    "reaction": "compact"
+   },
+   {
+    "trigger": "drift",
+    "env": "long-session",
+    "reaction": "reanchor"
+   },
+   {
+    "trigger": "intent",
+    "env": "any",
+    "reaction": "queue_and_notify"
+   },
+   {
+    "trigger": "approval",
+    "env": "any",
+    "reaction": "execute_once"
+   },
+   {
+    "trigger": "recall_miss",
+    "env": "any",
+    "reaction": "index_expand"
+   },
+   {
+    "trigger": "env_change",
+    "env": "any",
+    "reaction": "retag_rules"
+   },
+   {
+    "trigger": "percept",
+    "env": "any",
+    "reaction": "render_salience_digest"
+   },
+   {
+    "trigger": "ui_env_change",
+    "env": "any",
+    "reaction": "retag_visual_genes"
+   }
+  ]
+ },
+ "memory": {
+  "engine": "sqlite3",
+  "db": "state/agi.db",
+  "journal": "WAL",
+  "tables": [
+   "items",
+   "items_fts (fts5/porter)",
+   "items_vec (optional)",
+   "intents",
+   "decisions",
+   "snapshots"
+  ],
+  "fusion": "RRF when vector leg is enabled; FTS5 always available"
+ },
+ "runtime": {
+  "module": "runtime/agi_runtime.py",
+  "verbs": [
+   "status",
+   "recall",
+   "remember",
+   "boot",
+   "propose_intent",
+   "poll_intent",
+   "approve_intent",
+   "fetch",
+   "snapshot",
+   "evolve_propose"
+  ],
+  "rule": "stateless typed adapter; writes are intents; execute-once after Master approval"
+ },
+ "bridge": {
+  "inbound_ports": 0,
+  "tunnel": [
+   "cloudflared",
+   "tailscale-funnel"
+  ],
+  "auth": "OAuth 2.1 PKCE, scoped short-lived tokens",
+  "reads": "scoped/redacted",
+  "writes": "intent queue + Master approval",
+  "beta_1": "stdio only; fetch/exec denied"
+ },
+ "visual_genome": {
+  "system": "AGI Sensorium",
+  "contract": "agi-percept-graph/1",
+  "engine": "WebGL2",
+  "paradigm": "intent-field",
+  "winning_genes": {
+   "layout": "radial-field",
+   "motion": "pulse",
+   "palette": "ember",
+   "density": "low",
+   "a11y": "reduced-motion",
+   "webgl_budget": "balanced"
+  },
+  "reference_genes": [
+   "causal_filament: cyan-gold animated trails linking intent to predicted consequences",
+   "stale_shimmer:pulse_node_opacity_by_seconds_since_last_state_change"
+  ]
+ },
+ "budget": {
+  "runtime_lines_max": 600,
+  "dna_lines_max": 200,
+  "docs_max_files": 4,
+  "boot_context_max_kb": 8
+ },
+ "created": "2026-10-29T20:28:28+00:00",
+ "digest_sha256": "a1f18e5e41bee331e8e8e3db9f070cddaf96620ab2d799dbf3ac2f791792fc86"
+}
