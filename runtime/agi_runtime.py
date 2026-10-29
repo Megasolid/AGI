@@ -65,6 +65,11 @@ class Runtime:
                                                note TEXT, ts TEXT);
           CREATE TABLE IF NOT EXISTS snapshots(id TEXT PRIMARY KEY, ts TEXT, digest TEXT, note TEXT);
         """)
+        # migrate older index-prototype DBs that already had a bare intents table
+        cols = {r[1] for r in con.execute("PRAGMA table_info(intents)").fetchall()}
+        for col in ("decided", "decision", "result_json", "expires"):
+            if col not in cols:
+                con.execute("ALTER TABLE intents ADD COLUMN %s TEXT" % col)
         con.commit()
         con.close()
 
@@ -135,53 +140,51 @@ class Runtime:
         return {"ok": True, "intents": [dict(r) for r in rows]}
 
     def approve_intent(self, intent_id, actor="Master"):
-        if str(actor) != "Master":
-            return {"ok": False, "error": "only Master may approve intents"}
         con = self._con()
-        row = con.execute("SELECT * FROM intents WHERE id=?", (str(intent_id),)).fetchone()
-        if not row:
-            con.close()
-            return {"ok": False, "error": "unknown intent"}
-        if row["status"] != "pending":
-            con.close()
-            return {"ok": False, "error": "intent already %s" % row["status"]}
-        action, args = row["action"], json.loads(row["args_json"] or "{}")
-        if action in FORBIDDEN_ACTIONS:
-            con.execute("UPDATE intents SET status='denied', decided=?, decision=? WHERE id=?",
-                        (_now(), "denied (unsafe action in beta)", row["id"]))
+        try:
+            if str(actor) != "Master":
+                return {"ok": False, "error": "only Master may approve intents"}
+            row = con.execute("SELECT * FROM intents WHERE id=?", (str(intent_id),)).fetchone()
+            if not row:
+                return {"ok": False, "error": "unknown intent"}
+            if row["status"] != "pending":
+                return {"ok": False, "error": "intent already %s" % row["status"]}
+            action, args = row["action"], json.loads(row["args_json"] or "{}")
+            if action in FORBIDDEN_ACTIONS:
+                con.execute("UPDATE intents SET status='denied', decided=?, decision=? WHERE id=?",
+                            (_now(), "denied (unsafe action in beta)", row["id"]))
+                con.execute("INSERT INTO decisions(id,intent_id,actor,decision,note,ts) VALUES(?,?,?,?,?,?)",
+                            ("dec-" + secrets.token_hex(6), row["id"], "Master", "denied", "fetch/exec disabled in beta.1", _now()))
+                con.commit()
+                return {"ok": False, "error": "action %r is not executable in beta.1 (bridge arrives later)" % action,
+                        "intent": row["id"], "status": "denied"}
+            if action == "remember":
+                body = str(args.get("text") or "").strip()
+                if not body:
+                    return {"ok": False, "error": "remember needs text"}
+                kind = str(args.get("kind") or "memory")
+                source = str(args.get("source") or "runtime-intent:" + row["id"])
+                cur = con.execute("INSERT INTO items(kind,source,sha256,ts,trust,sensitivity,body) VALUES(?,?,?,?,?,?,?)",
+                                  (kind, source, _sha(body.encode()), _now(), "verified", "internal", body))
+                con.execute("INSERT INTO items_fts(rowid, body, source, kind) VALUES(?,?,?,?)",
+                            (cur.lastrowid, body, source, kind))
+                result = {"stored": True, "source": source, "sha256": _sha(body.encode())}
+            elif action == "snapshot":
+                sid = "snap-" + secrets.token_hex(5)
+                digest = _sha(json.dumps({"ts": _now(), "note": args.get("note")}).encode())
+                con.execute("INSERT INTO snapshots(id,ts,digest,note) VALUES(?,?,?,?)",
+                            (sid, _now(), digest, str(args.get("note") or "")))
+                result = {"snapshot": sid, "digest": digest}
+            else:
+                result = {"noted": True, "action": action}
+            con.execute("UPDATE intents SET status='approved', decided=?, decision=?, result_json=? WHERE id=?",
+                        (_now(), "approved by Master", json.dumps(result), row["id"]))
             con.execute("INSERT INTO decisions(id,intent_id,actor,decision,note,ts) VALUES(?,?,?,?,?,?)",
-                        ("dec-" + secrets.token_hex(6), row["id"], "Master", "denied", "fetch/exec disabled in beta.1", _now()))
+                        ("dec-" + secrets.token_hex(6), row["id"], "Master", "approved", action, _now()))
             con.commit()
+            return {"ok": True, "intent": row["id"], "action": action, "executed": True, "result": result}
+        finally:
             con.close()
-            return {"ok": False, "error": "action %r is not executable in beta.1 (bridge arrives later)" % action,
-                    "intent": row["id"], "status": "denied"}
-        if action == "remember":
-            body = str(args.get("text") or "").strip()
-            if not body:
-                con.close()
-                return {"ok": False, "error": "remember needs text"}
-            kind = str(args.get("kind") or "memory")
-            source = str(args.get("source") or "runtime-intent:" + row["id"])
-            cur = con.execute("INSERT INTO items(kind,source,sha256,ts,trust,sensitivity,body) VALUES(?,?,?,?,?,?,?)",
-                              (kind, source, _sha(body.encode()), _now(), "verified", "internal", body))
-            con.execute("INSERT INTO items_fts(rowid, body, source, kind) VALUES(?,?,?,?)",
-                        (cur.lastrowid, body, source, kind))
-            result = {"stored": True, "source": source, "sha256": _sha(body.encode())}
-        elif action == "snapshot":
-            sid = "snap-" + secrets.token_hex(5)
-            digest = _sha(json.dumps({"ts": _now(), "note": args.get("note")}).encode())
-            con.execute("INSERT INTO snapshots(id,ts,digest,note) VALUES(?,?,?,?)",
-                        (sid, _now(), digest, str(args.get("note") or "")))
-            result = {"snapshot": sid, "digest": digest}
-        else:
-            result = {"noted": True, "action": action}
-        con.execute("UPDATE intents SET status='approved', decided=?, decision=?, result_json=? WHERE id=?",
-                    (_now(), "approved by Master", json.dumps(result), row["id"]))
-        con.execute("INSERT INTO decisions(id,intent_id,actor,decision,note,ts) VALUES(?,?,?,?,?,?)",
-                    ("dec-" + secrets.token_hex(6), row["id"], "Master", "approved", action, _now()))
-        con.commit()
-        con.close()
-        return {"ok": True, "intent": row["id"], "action": action, "executed": True, "result": result}
 
     def fetch(self, url):
         return {"ok": True, **self.propose_intent("fetch", {"url": str(url)}, nonce="fetch-" + _sha(url.encode())[:16]),

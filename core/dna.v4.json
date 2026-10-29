@@ -5,7 +5,7 @@
   "major": 4,
   "dna_version": 4,
   "status": "beta-candidate",
-  "gen_id": "ENTL-CAACGGCAACTC-AGTGAGTTGGAG-AAAGAGAATCAG-AACCGTGCTAAC"
+  "gen_id": "ENTL-GGAACTATAAGT-TTGCAGTAAGTC-CCCAAAACATAT-TAGATAGAGAAT"
  },
  "lineage": {
   "parent_dna_tag": "dna-GCACGAGGCTGT",
@@ -166,6 +166,6 @@
   "docs_max_files": 4,
   "boot_context_max_kb": 8
  },
- "created": "2026-10-29T20:28:28+00:00",
- "digest_sha256": "a1f18e5e41bee331e8e8e3db9f070cddaf96620ab2d799dbf3ac2f791792fc86"
+ "created": "2026-10-29T20:29:07+00:00",
+ "digest_sha256": "39dd5592f5f0d2573bc7529e206d679767d70c49d4bdfc0ef7aa5236117954c8"
 }
