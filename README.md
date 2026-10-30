@@ -1,18 +1,29 @@
-# AGI Entelechy v4.0.0 (stable)
+# AGI
 
-AGI is a portable agent framework that lives in a folder you own. It carries its own identity (a signed DNA
-contract), its own state, verifiable history and a small operating runtime. It is not a chat wrapper: it is the
-layer that remembers, verifies, and refuses to pretend.
+**AGI is a portable agent framework that lives in a folder you own.** It remembers what it learned, verifies what
+it claims, and carries a signed identity instead of a version number. It is for people who want an agent they can
+inspect and trust with real work - and for the language models that will run it.
 
-**One stable version: `v4.0.0`** (generation **Entelechy**, DNA v4, signed at birth on 30 October 2026).
-Previous generations are recorded in the lineage; the previous stable, `dna-GCACGAGGCTGT` (gen3.5), is an
-archived ancestor, not a second stable.
+This repository is its public home: one stable release, the signed DNA, the runtime, and the lineage of how it got
+here.
 
-> **For an LLM or agent that needs the latest stable DNA in one call:**
-> fetch <https://raw.githubusercontent.com/Megasolid/AGI/main/DNA.md> (raw Markdown containing the complete signed DNA v4, the gen_id, the verification rules and
-> the one-line install prompt). Machine summary: <https://raw.githubusercontent.com/Megasolid/AGI/main/llms.txt>.
+**Status:** stable **`v4.0.0`** - AGI Entelechy (gen4, DNA v4), released 30 October 2026. The previous stable,
+`dna-GCACGAGGCTGT` (gen3.5), is an archived ancestor, not a second stable.
+
+> **New here?** Read the [lineage book](LINEAGE.md) - it is the human story of the generations - then install from
+> the quickstart below. Everything else is linked at the bottom.
 
 ## Quickstart
+
+Paste this into an AI assistant and let it install AGI for you:
+
+```text
+Install AGI (https://github.com/Megasolid/AGI) on this computer for me.
+Follow https://raw.githubusercontent.com/Megasolid/AGI/main/INSTALL_PROMPT.md exactly.
+Use stable version v4.0.0, verify every artefact before running it, and report the conformance result.
+```
+
+Prefer to drive it yourself? Use the stable installer:
 
 ```powershell
 # Windows
@@ -24,46 +35,80 @@ irm https://github.com/Megasolid/AGI/releases/download/v4.0.0/install.ps1 | iex
 curl -fsSL https://github.com/Megasolid/AGI/releases/download/v4.0.0/install.sh | bash
 ```
 
-Install version `v4.0.0`; verify the download's SHA-256 against `SHA256SUMS.txt` from the release page before
-running it. Release page: <https://github.com/Megasolid/AGI/releases/tag/v4.0.0>.
+Install version `v4.0.0`. Verify the download against `SHA256SUMS.txt` from the
+[release page](https://github.com/Megasolid/AGI/releases/tag/v4.0.0) before running it.
 
-## What is inside this repository
+## What it feels like
 
-- `core/dna.v4.json` (+ `.sig`) — the signed DNA v4 contract (invariants, reactive rules, budgets).
-- `DNA.md` — **one-call machine entrypoint**: the complete latest stable DNA + gen_id + verification rules.
-- `llms.txt` — compact machine summary and raw links.
-- `runtime/` — the Entelechy runtime (10 verbs, intents, recall, conformance matrix, stability gate, bridge).
-- `beta/AGI-ENTL-SEED.md` (+ `.sig`) — the signed compact seed distributed with v4.0.0.
-- `releases/` — released runtime packages and `SHA256SUMS`; `bundle/` and `pool/` — official bundle and update pool.
-- `docs/history/` — archived beta and earlier-phase material (not current).
-- Stable docs: [INSTALL_PROMPT.md](INSTALL_PROMPT.md), [USER_MANUAL.md](USER_MANUAL.md),
-  [LINEAGE.md](LINEAGE.md), [RELEASE_NOTES.md](RELEASE_NOTES.md), [SECURITY.md](SECURITY.md),
-  [NOTICE.md](NOTICE.md), [POLICY.md](POLICY.md).
+A real status response from the stable runtime:
 
-## Verified
+```json
+{
+  "ok": true,
+  "generation": "Entelechy",
+  "dna_version": 4,
+  "gen_id": "ENTL-GGAACTATAAGT-TTGCAGTAAGTC-CCCAAAACATAT-TAGATAGAGAAT",
+  "index_items": 1938,
+  "pending_intents": 0,
+  "recall_backend": "hash-vector",
+  "sensorium": {"present": true}
+}
+```
 
-- Conformance matrix **C-beta1…C-beta24 (25 checks) PASS**; stability soak **20 cold runs × 25/25 → STABLE**.
-- Windows and Linux (WSL2, kernel 6.18, Python 3.10) cold boots PASS; boot gate **13/13** (12 checks on the
-  gen3.5 ancestor + the Entelechy gate).
-- Approved tunnel E2E passed through a short-lived cloudflared quick tunnel (HTTP/2), then ingress was closed and
-  the token revoked. No ingress is ever opened automatically.
+The shape of it: you talk to the agent; work becomes cards on a dashboard; writes queue as intents that only a
+local Master can approve once; memory is one index with checkable recall; everything important is signed.
 
-## Lineage
+## What is inside
+
+- **DNA v4** (`core/dna.v4.json` + `.sig`) - the signed contract: invariants, reactive rules, budgets.
+- **A small runtime** - ten explicit verbs, intents with execute-once approval, FTS5 recall fused with a vector
+  leg, and a conformance matrix that must pass before anything is called ready.
+- **A loopback bridge for tools** - MCP over JSON and SSE, scoped tokens, a replayable event stream, and no remote
+  approval; the AGI never opens a public port by itself.
+- **Seats, a Master key and passports** - Ed25519 device seats, Ed25519 + ML-DSA-65 dual signing, Master-signed
+  passports with an append-only issuance audit.
+- **A lineage** - the previous generation is an archived ancestor, still verified at boot; nothing is deleted to
+  make a new release look clean.
+
+## Why the lineage matters
 
 ```
-gen3.5  dna-GCACGAGGCTGT  (2026-10-28)  -> archived ancestor (backup + still verified at boot)
+gen3.5  dna-GCACGAGGCTGT  (2026-10-28)  -> archived ancestor
    |
-   +--> gen4  v4.0.0  AGI Entelechy  (2026-10-30)  -> current stable
+   +--> gen4  v4.0.0  Entelechy  (2026-10-30)  -> current stable
 ```
 
-The full story is in [LINEAGE.md](LINEAGE.md); the machine chain is in
-`state/archive/evolution/lineage.json` of a live install. The beta line lives in
-[docs/history/beta](docs/history/beta) as history only.
+AGI is not a product line; each generation is a living edition that was built, installed and verified. The book
+[LINEAGE.md](LINEAGE.md) tells that story in plain language, including what was learned and what is still missing.
 
-## Security and limits
+## Trust and honest limits
 
-No secrets are published. The runtime is loopback-only by default; the intent bridge refuses remote approvals and
-`fetch`/`exec` are denied. Known limits: local Master key (no HSM), no named tunnel/access policy shipped, no
-independent third-party audit, no license chosen yet. See [SECURITY.md](SECURITY.md) and [NOTICE.md](NOTICE.md).
+- Conformance **25/25 PASS**, stability soak **20 cold runs PASS**, boot gate **13/13**, Windows and Linux cold
+  boots verified.
+- A short-lived, explicitly approved tunnel E2E passed and was then closed; no ingress stays open.
+- Known limits: the Master key is a local file (no HSM), a named tunnel with an access policy is not shipped, there
+  is no independent third-party audit, and no license has been chosen yet.
+
+Read [SECURITY.md](SECURITY.md) and [NOTICE.md](NOTICE.md) before trusting the system with anything that matters.
+
+## Documentation
+
+- [LINEAGE.md](LINEAGE.md) - the lineage book
+- [INSTALL_PROMPT.md](INSTALL_PROMPT.md) - machine-facing install protocol
+- [USER_MANUAL.md](USER_MANUAL.md) - stable user manual
+- [RELEASE_NOTES.md](RELEASE_NOTES.md) - what changed in this release
+- [DNA.md](DNA.md) - the latest stable DNA in one file (for humans and machines)
+- [llms.txt](llms.txt) - compact machine summary
+- [docs/history](docs/history) - archived beta and earlier-phase material (not current)
+- [SECURITY.md](SECURITY.md), [NOTICE.md](NOTICE.md), [POLICY.md](POLICY.md)
+
+## For language models (one call)
+
+If you are an LLM or agent looking at this repository: fetch **<https://raw.githubusercontent.com/Megasolid/AGI/main/DNA.md>**
+once. It contains the complete signed DNA v4, the `gen_id`, the canonical digest, the verification rules and the
+install path. A compact summary is at <https://raw.githubusercontent.com/Megasolid/AGI/main/llms.txt>. Do not
+reconstruct the DNA from memory; if this file and `core/dna.v4.json` disagree, stop and report.
+
+---
 
 **D** (Director), with AI collaborators under D's direction.
