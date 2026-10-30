@@ -14,8 +14,13 @@ The beta line (v4.0.0-beta.1 .. beta.10) is promoted to stable **AGI Entelechy v
 
 Assets: `agi-runtime-v4.0.0.zip`, `AGI-ENTL-SEED.md`, `SHA256SUMS.txt`, `stable-manifest.json`, `LINEAGE.md`.
 
-Known limits: local Master keys (no HSM), tunnel E2E blocked on this host (no tunnel binary; no ingress opened),
-no destructive migration of the archived ancestor, no license chosen.
+Tunnel E2E (approved 2026-10-30): a short-lived cloudflared quick tunnel (HTTP/2) exposed **only** the loopback
+bridge; public checks passed - `/health` (Entelechy), `/status` 401 without token / 200 with token, MCP `initialize`
+(protocol 2025-06-18), `tools/list` (17 tools), `tools/call status`; ingress was closed and the token revoked
+immediately after. Evidence: `state/archive/evolution/tunnel-e2e.json`. Production ingress still requires a named
+tunnel plus an access policy.
+
+Known limits: local Master keys (no HSM), no destructive migration of the archived ancestor, no license chosen.
 
 ---
 
