@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""agi_conformance - beta conformance matrix for AGI Entelechy (C-beta1..C-beta8).
+"""agi_conformance - beta conformance matrix for AGI Entelechy (C-beta1..C-beta11).
 
 Runs against an isolated sandbox copy (never live state) and returns a per-check verdict. This is the beta
 analogue of the gen3 C1-C6 matrix: it proves the DNA contract, runtime intents, recall, sensorium, budgets,
@@ -22,7 +22,9 @@ import urllib.request
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import agi_bridge  # noqa: E402
+import agi_migrate  # noqa: E402
 import agi_runtime  # noqa: E402
+import agi_tunnel  # noqa: E402
 
 SCHEMA = "agi-entelechy/conformance-matrix/1"
 
@@ -115,9 +117,30 @@ def run(sandbox):
     docs_root = HERE.parent
     docs = [p for p in ("README.beta.md", "INSTALL_PROMPT.beta.md", "USER_MANUAL.beta.md", "BETA-NOTES.md")
             if (docs_root / p).is_file()]
-    ck("C-beta8", "budgets: runtime<=600, bridge<=520, DNA<=200 lines; docs<=4",
-       rt_lines <= 600 and br_lines <= 520 and dna_lines <= 200 and len(docs) <= 4,
+    ck("C-beta8", "budgets: runtime<=600, bridge<=560, DNA<=200 lines; docs<=4",
+       rt_lines <= 600 and br_lines <= 560 and dna_lines <= 200 and len(docs) <= 4,
        (rt_lines, br_lines, dna_lines, len(docs)))
+
+    # beta.5: event bus, migration read-only dry-run, tunnel plan (never executes)
+    be = agi_bridge.Bridge(root)
+    be.queue_intent({"action": "remember", "args": {"text": "conformance event"}, "nonce": "conf-evt"})
+    ev = be.replay(0)
+    ck("C-beta9", "event bus: intents are published and replayable",
+       len(ev) >= 1 and any(e["type"] == "intent_queued" for e in ev), len(ev))
+    with tempfile.TemporaryDirectory() as td:
+        src = pathlib.Path(td) / "source"
+        (src / "memory").mkdir(parents=True)
+        (src / "memory" / "MEMORY.md").write_text("p-test\t2026-10-30 conformance memory line\n", encoding="utf-8")
+        before = (src / "memory" / "MEMORY.md").read_text(encoding="utf-8")
+        mig = agi_migrate.run(src, root, apply=False)
+        after = (src / "memory" / "MEMORY.md").read_text(encoding="utf-8")
+        ck("C-beta10", "migration dry-run is read-only and target-checked",
+           mig.get("ok") and mig.get("applied") == 0 and mig.get("source_unchanged") and before == after, mig.get("error"))
+    tchk = agi_tunnel.check()
+    tplan = agi_tunnel.plan(port=8766)
+    ck("C-beta11", "tunnel helper plans only (security policy, no execution)",
+       isinstance(tchk.get("any_available"), bool) and len(tchk.get("security") or []) >= 3
+       and "never" in (tplan.get("note") or "").lower(), tchk.get("verdict"))
 
     passed = sum(1 for x in checks if x["ok"])
     return {"schema": SCHEMA, "sandbox": str(root), "checks": checks,

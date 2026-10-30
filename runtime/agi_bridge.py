@@ -78,6 +78,8 @@ class Bridge:
         self.root = pathlib.Path(root).resolve()
         self.rt = agi_runtime.Runtime(self.root)
         self.token_path = self.root / "state" / "bridge_token.json"
+        self.events_path = self.root / "state" / "bridge_events.jsonl"
+        self.seq_path = self.root / "state" / "bridge_events_seq.json"
 
     # ------------------------------------------------------------- tokens
     def init_token(self, scopes=("read", "write")):
@@ -108,6 +110,37 @@ class Bridge:
         if scope not in scopes:
             return False, "token lacks scope %r" % scope
         return True, None
+
+    # --------------------------------------------------------- event bus
+    def _next_seq(self):
+        try:
+            seq = int(json.loads(self.seq_path.read_text(encoding="utf-8")).get("seq") or 0)
+        except Exception:
+            seq = 0
+        seq += 1
+        self.seq_path.parent.mkdir(parents=True, exist_ok=True)
+        self.seq_path.write_text(json.dumps({"seq": seq}), encoding="utf-8")
+        return seq
+
+    def publish(self, etype, data):
+        rec = {"seq": self._next_seq(), "ts": agi_runtime._now(), "type": etype, "data": data}
+        self.events_path.parent.mkdir(parents=True, exist_ok=True)
+        with self.events_path.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(rec, sort_keys=True) + "\n")
+        return rec
+
+    def replay(self, last_event_id=0, limit=100):
+        out = []
+        if not self.events_path.is_file():
+            return out
+        for line in self.events_path.read_text(encoding="utf-8", errors="ignore").splitlines():
+            try:
+                rec = json.loads(line)
+            except Exception:
+                continue
+            if int(rec.get("seq") or 0) > int(last_event_id):
+                out.append(rec)
+        return out[-int(limit):]
 
     # ------------------------------------------------------------- MCP
     def mcp(self, req, scopes):
@@ -148,6 +181,9 @@ class Bridge:
             if need not in scopes:
                 return err(-32001, "token lacks %r scope for tool %r" % (need, name)), None
             res = self.rt.handle(name, args)
+            if name in ("remember", "propose_intent", "snapshot", "fetch") and res.get("ok"):
+                iid = res.get("id") or (res.get("queued") or {}).get("id")
+                self.publish("tool_call", {"tool": name, "intent_id": iid, "status": res.get("status") or "queued"})
             return ok({"content": [{"type": "text", "text": json.dumps(res, sort_keys=True)}],
                        "isError": not bool(res.get("ok"))}), None
         return err(-32601, "method not found: %r" % method), None
@@ -162,9 +198,13 @@ class Bridge:
         return self.rt.handle("status")
 
     def queue_intent(self, body):
-        return self.rt.handle("propose_intent", {"action": body.get("action"),
-                                                 "args": body.get("args") or {},
-                                                 "nonce": body.get("nonce")})
+        res = self.rt.handle("propose_intent", {"action": body.get("action"),
+                                                "args": body.get("args") or {},
+                                                "nonce": body.get("nonce")})
+        if res.get("ok"):
+            self.publish("intent_queued", {"intent_id": res.get("id"), "action": res.get("action"),
+                                           "status": res.get("status"), "idempotent": bool(res.get("idempotent"))})
+        return res
 
     def poll(self, intent_id):
         return self.rt.handle("poll_intent", {"id": intent_id})
@@ -244,6 +284,38 @@ def make_handler(bridge):
                 self.wfile.write(("event: %s\ndata: %s\n\n" % (name, data)).encode())
                 self.wfile.flush()
 
+        def _send_sse_stream(self, sid, last_event_id):
+            """Long-lived MCP event stream: replay from Last-Event-ID, then live events + heartbeats."""
+            self.send_response(200)
+            self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Connection", "close")
+            self.send_header("Mcp-Session-Id", sid)
+            self.end_headers()
+            last = int(last_event_id or 0)
+            try:
+                for rec in bridge.replay(last):
+                    self.wfile.write(("id: %d\nevent: %s\ndata: %s\n\n"
+                                      % (rec["seq"], rec["type"], json.dumps(rec, sort_keys=True))).encode())
+                    last = rec["seq"]
+                deadline = time.time() + 6.0
+                next_ping = time.time() + 2.0
+                while time.time() < deadline:
+                    fresh = bridge.replay(last)
+                    for rec in fresh:
+                        self.wfile.write(("id: %d\nevent: %s\ndata: %s\n\n"
+                                          % (rec["seq"], rec["type"], json.dumps(rec, sort_keys=True))).encode())
+                        last = rec["seq"]
+                    if time.time() >= next_ping:
+                        self.wfile.write(('event: ping\ndata: {"jsonrpc":"2.0","method":"ping"}\n\n').encode())
+                        next_ping = time.time() + 2.0
+                    self.wfile.flush()
+                    time.sleep(0.2)
+            except (BrokenPipeError, ConnectionResetError, OSError):
+                pass
+            finally:
+                self.close_connection = True
+
         def do_GET(self):
             if not self._loopback():
                 return self._send(403, {"ok": False, "error": "loopback only"})
@@ -270,9 +342,10 @@ def make_handler(bridge):
                     return self._send(401, {"jsonrpc": "2.0", "id": None,
                                             "error": {"code": -32000, "message": err}})
                 sid = self.headers.get("Mcp-Session-Id") or ("mcp-" + secrets.token_hex(8))
-                return self._send_sse([("ping", {"jsonrpc": "2.0", "method": "ping",
-                                                 "params": {"session": sid}})],
-                                      extra={"Mcp-Session-Id": sid})
+                last = self.headers.get("Last-Event-ID") or 0
+                if not str(last).isdigit():
+                    last = 0
+                return self._send_sse_stream(sid, int(last))
             return self._send(404, {"ok": False, "error": "not found"})
 
         def do_POST(self):
