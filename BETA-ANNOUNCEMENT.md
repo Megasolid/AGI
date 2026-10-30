@@ -5,6 +5,11 @@
 AGI's first **LLM-runtime-native** generation is available as a public beta prerelease:
 <https://github.com/Megasolid/AGI/releases/tag/v4.0.0-beta.1>
 
+*Update, 30 October 2026: **beta 10 is out** - an append-only issuance audit trail, dual-signed release artifacts
+(DNA/seed/notes signed with Ed25519 + ML-DSA-65), and a 5-run stability window (25/25 conformance each -> STABLE).
+The beta still does not claim beta-stable; the stable default remains gen3.5. Tunnel E2E remains blocked pending
+explicit approval for network exposure. <https://github.com/Megasolid/AGI/releases/tag/v4.0.0-beta.10>
+
 *Update, 30 October 2026: **beta 9 is out** - post-quantum dual signing (Ed25519 + ML-DSA-65) for the Master and
 passports, remote passport issuance now gated by an explicit local policy (OFF by default), and a stability gate
 (2 cold conformance runs, 23/23 each -> STABLE). Tunnel E2E remains blocked pending explicit approval for network
