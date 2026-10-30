@@ -89,3 +89,18 @@ No license has been chosen yet; use at your own risk and treat the beta as a res
 AGI survives by being small enough to regrow and rigorous enough to verify itself. Beta 1 is the first generation
 built to be carried by an LLM rather than hosted by one machine: one seed, one index, one runtime, one perception
 contract - portable, signed, and inspectable.
+
+---
+
+## Promoted: beta line released as stable v4.0.0 (30 October 2026)
+
+The Entelechy beta line is now the **stable release**: **AGI Entelechy v4.0.0**.
+<https://github.com/Megasolid/AGI/releases/tag/v4.0.0>
+
+- 20 cold conformance runs, 25/25 each -> STABLE; Windows + Linux cold boots PASS.
+- Stable identity: DNA v4 / gen_id `ENTL-GGAACTATAAGT-TTGCAGTAAGTC-CCCAAAACATAT-TAGATAGAGAAT`; previous stable
+  `dna-GCACGAGGCTGT` (gen3.5) is archived as its direct ancestor and stays verified in the boot gate.
+- Live migration: memory was normalized into the Entelechy index (1,938 items, vector leg built) after a full
+  timestamped backup; the boot gate now verifies the Entelechy gate as a 13th check.
+- Lineage: see [LINEAGE.md](LINEAGE.md) and the release page.
+

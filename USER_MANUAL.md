@@ -18,7 +18,7 @@ Three ideas it is built around:
 3. **It can grow identity.** You can use it anonymously (default profile), as a named member with a passport, or
    — as the trust layer matures — with a passkey instead of a phrase.
 
-This release is the first **genetically identified** generation: `dna-GCACGAGGCTGT`. Version numbers from earlier
+This release is the first **genetically identified** generation: `v4.0.0`. Version numbers from earlier
 releases (`v0.1.0` … `v0.4.3`) are history, not identity.
 
 ---

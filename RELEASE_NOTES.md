@@ -1,3 +1,24 @@
+# v4.0.0 — Entelechy (stable, 30 October 2026)
+
+The beta line (v4.0.0-beta.1 .. beta.10) is promoted to stable **AGI Entelechy v4.0.0**.
+
+- Signed DNA v4 (I1-I9, 14 reactive rules), gen_id `ENTL-GGAACTATAAGT-TTGCAGTAAGTC-CCCAAAACATAT-TAGATAGAGAAT`.
+- Thin MCP-shaped runtime (10 verbs); intents with execute-once Master approval; FTS5 + hash-vector RRF recall.
+- MCP bridge: JSON, SSE, event stream with Last-Event-ID replay; loopback-only with scoped bearer tokens.
+- Ed25519 device seats, Master Ed25519 + ML-DSA-65 dual signing, Master-signed passports, policy-gated issuance,
+  append-only issuance audit.
+- Conformance matrix C-beta1..C-beta24 (**25 checks**) PASS; stability soak **20 runs x 25/25 -> STABLE**.
+- Windows + Linux (WSL2 6.18 / Python 3.10) cold boots PASS.
+- Ancestor: `dna-GCACGAGGCTGT` (gen3.5), archived and still verified by the boot gate; the Entelechy gate adds a
+  13th boot check.
+
+Assets: `agi-runtime-v4.0.0.zip`, `AGI-ENTL-SEED.md`, `SHA256SUMS.txt`, `stable-manifest.json`, `LINEAGE.md`.
+
+Known limits: local Master keys (no HSM), tunnel E2E blocked on this host (no tunnel binary; no ingress opened),
+no destructive migration of the archived ancestor, no license chosen.
+
+---
+
 # AGI release notes
 
 ---
