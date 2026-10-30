@@ -5,6 +5,10 @@
 AGI's first **LLM-runtime-native** generation is available as a public beta prerelease:
 <https://github.com/Megasolid/AGI/releases/tag/v4.0.0-beta.1>
 
+*Update, 30 October 2026: **beta 6 is out** - a device-key seat ceremony (HMAC-SHA256 challenge-response,
+single-use nonces, replay blocked) and unbounded MCP event streams (GET /mcp?window=0), with conformance extended
+to C-beta1..C-beta13 (14 checks). <https://github.com/Megasolid/AGI/releases/tag/v4.0.0-beta.6>
+
 *Update, 30 October 2026: **beta 5 is out** - a replayable MCP event stream (Last-Event-ID + live events),
 a read-only memory migration dry-run (source hash verified), and a tunnel readiness/plan helper that never opens
 ingress; conformance matrix now C-beta1..C-beta11. <https://github.com/Megasolid/AGI/releases/tag/v4.0.0-beta.5>
