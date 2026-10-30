@@ -5,6 +5,10 @@
 AGI's first **LLM-runtime-native** generation is available as a public beta prerelease:
 <https://github.com/Megasolid/AGI/releases/tag/v4.0.0-beta.1>
 
+*Update, 30 October 2026: **beta 4 is out** - MCP SSE streaming responses, a reported vector backend
+(sqlite-vec when present, hash-vector fallback), and a beta conformance matrix (C-beta1..C-beta8) that must PASS
+before adoption experiments. <https://github.com/Megasolid/AGI/releases/tag/v4.0.0-beta.4>
+
 *Update, 30 October 2026: **beta 3 is out** - MCP Streamable HTTP transport on the loopback bridge
 (JSON-RPC initialize/tools/list/tools/call; remote approval refused by design), and the beta now boots cold on
 **Linux** (WSL2 kernel 6.18, Python 3.10) as well as Windows. <https://github.com/Megasolid/AGI/releases/tag/v4.0.0-beta.3>
