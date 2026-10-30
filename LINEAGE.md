@@ -28,6 +28,20 @@ The last part of the book is different from the rest. It is written for the mach
 appendix that the system reads to understand its own lineage. It is clearly marked and can be skipped without
 missing anything meant for you.
 
+
+## Generation 4 — Entelechy, v4.0.0
+
+The fourth generation is the first one written for a large language model as the runtime. It keeps the genetic
+identity idea and adds a signed DNA v4 contract, a thin MCP-shaped runtime, a loopback bridge (JSON, SSE, event
+stream), Ed25519 device seats, a Master ceremony with Ed25519 + ML-DSA-65 dual signing, Master-signed passports,
+a 25-check conformance matrix and a 20-run stability soak.
+
+Its lineage is unbroken: **`dna-GCACGAGGCTGT` (gen3.5) -> `v4.0.0` (Entelechy, current stable)**. The parent
+generation is archived, not deleted; the boot gate verifies both the ancestor's manifest and the new Entelechy
+gate. This book is that lineage record.
+
+**Release:** `v4.0.0` · 30 October 2026 · <https://github.com/Megasolid/AGI/releases/tag/v4.0.0>
+
 ---
 
 ## Introduction: a reader's map
@@ -429,7 +443,11 @@ generations:
                     legacy-consolidation, season-close-automation]}
   - {id: gen3.5-public-alpha, period: "2026-10-26", status: within-live-generation,
      delta: [trust-layer-v0, public-releases-v0.1.0..v0.4.3]}
-  - {id: dna-GCACGAGGCTGT, period: "2026-10-28", status: released, parent: gen3.5,
+  - {id: v4.0.0, period: "2026-10-30", status: released, parent: dna-GCACGAGGCTGT,
+     delta: [entelechy-gen4, dna-v4, mcp-runtime, intent-bridge, mcp-transports, ed25519-seats,
+             master-ceremony, mldsa-dual-signing, master-signed-passports, conformance-25,
+             stability-soak-20, linux-cold-boot]}
+  - {id: dna-GCACGAGGCTGT, period: "2026-10-28", status: ancestor, parent: gen3.5,
      delta: [dna-identity, passport-and-family, society-and-mana, resident-autonomy, seeding-and-rehearsal,
              attention-gate, cleanroom-migration, public-genetic-release]}
 verification:
@@ -461,7 +479,7 @@ were refined with the help of external AI writing and editing passes, then verif
 records.
 
 Set in a plain Markdown book. Published at <https://github.com/Megasolid/AGI> with the first genetic release,
-`dna-GCACGAGGCTGT`, on 28 October 2026.
+`dna-GCACGAGGCTGT`, on 28 October 2026 — later succeeded by `v4.0.0` (Entelechy) on 30 October 2026.
 
 *Every claim in this book is backed by an artefact, a gate, a test or a named measurement. Historical claims that
 were not machine-verified are marked as records of intent or outcome, never as delivered.*

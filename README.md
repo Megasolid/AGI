@@ -12,13 +12,13 @@ Three ideas shape it:
 3. **It grows identity.** You can use it anonymously, as a named member with a passport, or — as the trust
    layer matures — with a passkey instead of a phrase.
 
-**Status:** alpha.stable, released as the first **genetically identified** generation, `dna-GCACGAGGCTGT`
-(28 October 2026). Alpha means usable — and honest about what is not finished yet. The limitations are listed
-below rather than hidden. One official repository, one signed manifest, one update pool.
+**Status:** stable, released as **AGI Entelechy v4.0.0** — gen4 / DNA v4, signed at birth, gen_id
+`ENTL-GGAACTATAAGT-TTGCAGTAAGTC-CCCAAAACATAT-TAGATAGAGAAT` (30 October 2026). The previous stable generation,
+`dna-GCACGAGGCTGT` (gen3.5), is archived as its direct ancestor and stays verified in the boot gate. The
+limitations are listed below rather than hidden. One official repository, one signed manifest, one update pool.
 
-> **Beta available:** **AGI Entelechy** (gen4 / DNA v4) — now **beta 9** (post-quantum dual signing + policy gate + stability gate) —
-> a separate, opt-in public prerelease: [read the announcement](BETA-ANNOUNCEMENT.md). It never migrates a
-> stable install; stable remains `dna-GCACGAGGCTGT`.
+> **Lineage:** [LINEAGE.md](LINEAGE.md) tells the story of every generation and records the chain of releases.
+
 
 ---
 
@@ -32,7 +32,7 @@ Install AGI (https://github.com/Megasolid/AGI) on this computer for me.
 Follow the official protocol at
 https://raw.githubusercontent.com/Megasolid/AGI/main/INSTALL_PROMPT.md exactly.
 
-Key rules: install version dna-GCACGAGGCTGT; verify the download's SHA-256 against SHA256SUMS.txt BEFORE
+Key rules: install version v4.0.0; verify the download's SHA-256 against SHA256SUMS.txt BEFORE
 extracting; no administrator/root; keep everything inside my home directory; do not touch my other files;
 if a non-empty folder would be overwritten, ask me first.
 
@@ -47,10 +47,10 @@ If your assistant has no file access, the same protocol works manually — it is
 
 ---
 
-## What is inside the alpha release
+## What is inside the stable release
 
 - **An identity that is genetic, not numeric.** AGI is identified by a DNA string derived from its own structure,
-  plus a passport for social identity. Release tags such as `dna-GCACGAGGCTGT` are the public short form.
+  plus a passport for social identity. Release tags such as `v4.0.0` are the public short form.
 - **A family and a society.** Members have passports; the family registry is a signed public projection. There
   are seats, roles, permissions, an elder-to-admin promotion path, and a nightly roll-call that puts members to
   sleep rather than deleting them.

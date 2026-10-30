@@ -67,6 +67,7 @@ class Runtime:
           CREATE TABLE IF NOT EXISTS decisions(id TEXT PRIMARY KEY, intent_id TEXT, actor TEXT, decision TEXT,
                                                note TEXT, ts TEXT);
           CREATE TABLE IF NOT EXISTS snapshots(id TEXT PRIMARY KEY, ts TEXT, digest TEXT, note TEXT);
+          CREATE TABLE IF NOT EXISTS items_vec(id INTEGER PRIMARY KEY, dim INTEGER, embedding BLOB);
         """)
         # migrate older index-prototype DBs that already had a bare intents table
         cols = {r[1] for r in con.execute("PRAGMA table_info(intents)").fetchall()}

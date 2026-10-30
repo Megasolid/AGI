@@ -1,5 +1,12 @@
 # AGI Entelechy beta changelog
 
+## v4.0.0 - stable promotion (30 October 2026)
+
+The beta line is promoted to **stable AGI Entelechy v4.0.0**: 25-check conformance PASS, 20-run stability soak
+STABLE, dual post-quantum signing, Master-signed passports, issuance audit, MCP transports, Ed25519 seats.
+Live migration completed with a full backup; ancestor `dna-GCACGAGGCTGT` archived and still verified by the boot
+gate. Assets: `agi-runtime-v4.0.0.zip`, seed, SHA256SUMS, stable manifest, LINEAGE.
+
 Public beta line of **AGI Entelechy** (gen4 / DNA v4). Stable gen3.5 (`dna-GCACGAGGCTGT`) remains the default and
 is never migrated by the beta. Releases are GitHub prereleases; each ships a runtime zip, the signed seed,
 SHA256SUMS and a manifest. Detailed notes live in `BETA-NOTES.md`; evidence lives under

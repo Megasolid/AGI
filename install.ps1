@@ -1,6 +1,6 @@
 # install.ps1 - one-prompt AGI runtime installer (Windows PowerShell 5.1+)
 #
-#   irm https://github.com/Megasolid/AGI/releases/download/dna-GCACGAGGCTGT/install.ps1 | iex
+#   irm https://github.com/Megasolid/AGI/releases/download/v4.0.0/install.ps1 | iex
 #
 # It downloads the runtime archive from a *pinned release*, verifies it against the released
 # SHA256SUMS before extracting anything, seeds the fresh state, runs the cold boot, and then opens
@@ -8,11 +8,11 @@
 # -Destination, and no personal data is fetched.
 #
 # Manual, safer form (review the script first, then run it):
-#   Invoke-WebRequest https://github.com/Megasolid/AGI/releases/download/dna-GCACGAGGCTGT/install.ps1 -OutFile install.ps1
-#   .\install.ps1 -Version dna-GCACGAGGCTGT
+#   Invoke-WebRequest https://github.com/Megasolid/AGI/releases/download/v4.0.0/install.ps1 -OutFile install.ps1
+#   .\install.ps1 -Version v4.0.0
 #
 param(
-  [string]$Version = "dna-GCACGAGGCTGT",
+  [string]$Version = "v4.0.0",
   [string]$Destination = "$HOME\AGI",
   [string]$BaseUrl = "",
   [switch]$NoBoot,
