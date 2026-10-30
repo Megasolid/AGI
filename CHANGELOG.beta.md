@@ -5,6 +5,17 @@ is never migrated by the beta. Releases are GitHub prereleases; each ships a run
 SHA256SUMS and a manifest. Detailed notes live in `BETA-NOTES.md`; evidence lives under
 `state/archive/evolution/` in the working tree.
 
+## v4.0.0-beta.10 - audit trail + dual-signed release artifacts + stability window
+- Append-only issuance audit (state/audit.jsonl, actor local/mcp, passport sha, algos).
+- Dual-signed release artifacts (DNA/seed/notes, Ed25519 + ML-DSA-65) with manifest + tamper verification.
+- Stability window: 5 cold conformance runs, 25/25 each -> STABLE. Conformance C-beta1..C-beta24 (25 checks).
+- Not beta-stable; stable remains gen3.5. Tunnel E2E blocked (no binary; needs explicit approval).
+
+## v4.0.0-beta.9 - ML-DSA dual signing + policy gate + stability gate
+- Master Ed25519 + ML-DSA-65 dual signing; passports inherit dual signatures.
+- Remote passport issuance OFF by default (state/passport_policy.json), MCP policy gate.
+- Stability gate (K cold runs); conformance C-beta22 (23 checks at the time).
+
 ## v4.0.0-beta.8 - remote enrollment + Master-signed passports
 - `seat_enroll` / `seat_status` / `passport_list` / `passport_verify` over MCP (16 tools total); enrollment needs
   `write` scope, key shown once.
