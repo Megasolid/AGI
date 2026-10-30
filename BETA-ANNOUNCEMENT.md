@@ -5,6 +5,10 @@
 AGI's first **LLM-runtime-native** generation is available as a public beta prerelease:
 <https://github.com/Megasolid/AGI/releases/tag/v4.0.0-beta.1>
 
+*Update, 30 October 2026:* **beta 2 is out** - loopback intent bridge with bearer tokens + scopes, an
+outbound relay mailbox (no inbound public port), and a fused FTS5 + hash-vector recall leg.
+<https://github.com/Megasolid/AGI/releases/tag/v4.0.0-beta.2>
+
 **Stable remains alpha.stable** (`dna-GCACGAGGCTGT`). The beta is separate, opt-in, and never touches or migrates a
 stable installation. If you want the proven system, use alpha.stable; if you want to explore where AGI is going, use
 the beta.
