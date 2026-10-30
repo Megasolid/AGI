@@ -7,10 +7,10 @@ inspect and trust with real work - and for the language models that will run it.
 This repository is its public home: one stable release, the signed DNA, the runtime, and the lineage of how it got
 here.
 
-**Status:** stable **`v4.0.0`** - AGI Entelechy (gen4, DNA v4, Core 4.0), released 30 October 2026. The previous stable,
+**Status:** stable **`v4.0.1`** - AGI Entelechy (gen4, DNA v4, Core 4.0), released 30 October 2026. The previous stable,
 `dna-GCACGAGGCTGT` (gen3.5), is an archived ancestor, not a second stable.
 
-> **Migration status:** phase 2 complete (30 October 2026). `v4.0.0` is the single stable release. The live install
+> **Migration status:** phase 2 complete (30 October 2026). `v4.0.1` is the single stable release. The live install
 > now runs generation **Entelechy**: identity is the v4 birth record, the memory corpus is indexed with per-item
 > provenance and freshness (1,958 items, 1,958 vectors), family/mana/trust/genesis/curriculum projections are migrated,
 > and the live **Core is 4.0 / DNA v4** with a rebuilt signed manifest and bundle. The gen3.5 ancestor is retained and
@@ -26,23 +26,23 @@ Paste this into an AI assistant and let it install AGI for you:
 ```text
 Install AGI (https://github.com/Megasolid/AGI) on this computer for me.
 Follow https://raw.githubusercontent.com/Megasolid/AGI/main/INSTALL_PROMPT.md exactly.
-Use stable version v4.0.0, verify every artefact before running it, and report the conformance result.
+Use stable version v4.0.1, verify every artefact before running it, and report the conformance result.
 ```
 
 Prefer to drive it yourself? Use the stable installer:
 
 ```powershell
 # Windows
-irm https://github.com/Megasolid/AGI/releases/download/v4.0.0/install.ps1 | iex
+irm https://github.com/Megasolid/AGI/releases/download/v4.0.1/install.ps1 | iex
 ```
 
 ```bash
 # macOS / Linux
-curl -fsSL https://github.com/Megasolid/AGI/releases/download/v4.0.0/install.sh | bash
+curl -fsSL https://github.com/Megasolid/AGI/releases/download/v4.0.1/install.sh | bash
 ```
 
-Install version `v4.0.0`. Verify the download against `SHA256SUMS.txt` from the
-[release page](https://github.com/Megasolid/AGI/releases/tag/v4.0.0) before running it.
+Install version `v4.0.1`. Verify the download against `SHA256SUMS.txt` from the
+[release page](https://github.com/Megasolid/AGI/releases/tag/v4.0.1) before running it.
 
 ## What it feels like
 
@@ -81,7 +81,7 @@ local Master can approve once; memory is one index with checkable recall; everyt
 ```
 gen3.5  dna-GCACGAGGCTGT  (2026-10-28)  -> archived ancestor
    |
-   +--> gen4  v4.0.0  Entelechy  (2026-10-30)  -> current stable
+   +--> gen4  v4.0.1  Entelechy  (2026-10-30)  -> current stable
 ```
 
 AGI is not a product line; each generation is a living edition that was built, installed and verified. The book

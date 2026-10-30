@@ -1,6 +1,6 @@
 # Notice
 
-**AGI** is published by **D** (github.com/Megasolid). Current release: **`v4.0.0`** - AGI Entelechy
+**AGI** is published by **D** (github.com/Megasolid). Current release: **`v4.0.1`** - AGI Entelechy
 (gen4, DNA v4), released 30 October 2026; `dna-GCACGAGGCTGT` (gen3.5) is the archived ancestor.
 
 **License: not chosen yet.** Until a license file is added, all rights are reserved by the author. A license is a

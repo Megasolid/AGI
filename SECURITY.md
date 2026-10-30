@@ -1,6 +1,6 @@
 # Security policy
 
-**Current release:** `v4.0.0` - AGI Entelechy (gen4, DNA v4), released 30 October 2026. The previous
+**Current release:** `v4.0.1` - AGI Entelechy (gen4, DNA v4), released 30 October 2026. The previous
 stable `dna-GCACGAGGCTGT` (gen3.5) is archived as its ancestor.
 
 ## Reporting a vulnerability

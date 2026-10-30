@@ -10,11 +10,11 @@ skip verification.
 ## Canonical sources
 
 - Latest stable DNA, in one call: <https://raw.githubusercontent.com/Megasolid/AGI/main/DNA.md>
-- Release page for `v4.0.0`: <https://github.com/Megasolid/AGI/releases/tag/v4.0.0>
+- Release page for `v4.0.1`: <https://github.com/Megasolid/AGI/releases/tag/v4.0.1>
 - This protocol: <https://raw.githubusercontent.com/Megasolid/AGI/main/INSTALL_PROMPT.md>
 - User manual: <https://raw.githubusercontent.com/Megasolid/AGI/main/USER_MANUAL.md>
 
-Only one stable version exists: `v4.0.0`. The previous stable `dna-GCACGAGGCTGT` is an archived ancestor; do not
+Only one stable version exists: `v4.0.1`. The previous stable `dna-GCACGAGGCTGT` is an archived ancestor; do not
 install two "stable" versions side by side.
 
 ## Step 0 - read the DNA first
@@ -27,11 +27,11 @@ from memory.
 
 Prefer the installer for the host OS:
 
-- Windows: `irm https://github.com/Megasolid/AGI/releases/download/v4.0.0/install.ps1 | iex`
-- macOS/Linux: `curl -fsSL https://github.com/Megasolid/AGI/releases/download/v4.0.0/install.sh | bash`
+- Windows: `irm https://github.com/Megasolid/AGI/releases/download/v4.0.1/install.ps1 | iex`
+- macOS/Linux: `curl -fsSL https://github.com/Megasolid/AGI/releases/download/v4.0.1/install.sh | bash`
 
 If you need manual control, download from the release page:
-`agi-runtime-v4.0.0.zip`, `SHA256SUMS.txt`, `AGI-ENTL-SEED.md`, `DNA.md`, `LINEAGE.md`.
+`agi-runtime-v4.0.1.zip`, `SHA256SUMS.txt`, `AGI-ENTL-SEED.md`, `DNA.md`, `LINEAGE.md`.
 
 ## Step 2 - verify before running
 
@@ -95,5 +95,5 @@ ingress.
 
 ## Step 8 - report honestly
 
-Report: install path, stable tag `v4.0.0`, `gen_id`, DNA digest, runtime status JSON, conformance verdict and the
+Report: install path, stable tag `v4.0.1`, `gen_id`, DNA digest, runtime status JSON, conformance verdict and the
 stability verdict. Do not report READY before the gate passes. Never print or publish key material.

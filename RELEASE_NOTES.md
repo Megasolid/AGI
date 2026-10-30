@@ -1,3 +1,15 @@
+# v4.0.1 - live migration completion patch (30 October 2026)
+
+Patch release for the v4.0.0 stable line. No DNA change; the live install completed its phase-2 migration.
+
+- Live identity switched to the v4 birth record (`ENTL-...`, release tag v4.0.1); gen3.5 ancestor retained.
+- Core upgraded in the live tree to **Core 4.0 / DNA v4** (signed core manifest + bundle; bundle manifests re-signed).
+- Operational state projections migrated (family/mana/trust/genesis/curriculum/identity profiles).
+- Adoption pipeline: full bodies (4k/8k caps removed), per-item provenance, idempotent sync + freshness gate.
+- Runtime asset refreshed with the updated adoption tooling (`tools/agi_index.py`, `tools/entelechy_sync.py`).
+- Known limits unchanged: local Master key (no HSM), no independent audit, no license.
+
+---
 # v4.0.0 — Entelechy (stable, 30 October 2026)
 
 The beta line (v4.0.0-beta.1 .. beta.10) is promoted to stable **AGI Entelechy v4.0.0**.

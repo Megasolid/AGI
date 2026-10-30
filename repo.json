@@ -59,11 +59,20 @@
     "sha256": "0412d6bba114fb4b2e0f0863faca787e89506227d09490c2e314297cac215c4b",
     "tag": "v4.0.0",
     "published_at": "2026-10-30T14:42:57+0330"
+   },
+   {
+    "package": "agi-runtime-v4.0.1",
+    "class": "official",
+    "date": "2026-10-30",
+    "path": "releases/runtime/2026-10-30/agi-runtime-v4.0.1.zip",
+    "sha256": "85a922540097315802509634a0e03e6a7940f4cf378a485fc93d2f00e85ec781",
+    "tag": "v4.0.1",
+    "published_at": "2026-10-30T18:18:06+0330"
    }
   ]
  },
  "created": "2026-10-26T12:42:15+0330",
- "current_tag": "v4.0.0",
+ "current_tag": "v4.0.1",
  "issuer": "owner",
  "key_id": "a73eaa5d3c31e009",
  "official": {
@@ -101,9 +110,19 @@
    "notes": "RELEASE_NOTES.md",
    "runtime": "agi-runtime-v4.0.0.zip",
    "tag": "v4.0.0"
+  },
+  {
+   "class": "official",
+   "date": "2026-10-30",
+   "gen_id": "ENTL-GGAACTATAAGT-TTGCAGTAAGTC-CCCAAAACATAT-TAGATAGAGAAT",
+   "genome8": "v4",
+   "identity": "DNA v4 (Entelechy, gen4) - patch v4.0.1",
+   "notes": "RELEASE_NOTES.md",
+   "runtime": "agi-runtime-v4.0.1.zip",
+   "tag": "v4.0.1"
   }
  ],
  "repo": "AGI",
  "schema": "agi-repo/1",
- "updated": "2026-10-30T14:42:57+0330"
+ "updated": "2026-10-30T18:18:06+0330"
 }

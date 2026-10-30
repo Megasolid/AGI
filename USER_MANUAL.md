@@ -1,6 +1,6 @@
-# AGI Entelechy v4.0.0 - user manual
+# AGI Entelechy v4.0.1 - user manual
 
-Stable generation **Entelechy** (gen4, DNA v4), released v4.0.0 on 30 October 2026. Previous stable
+Stable generation **Entelechy** (gen4, DNA v4), released v4.0.1 on 30 October 2026. Previous stable
 `dna-GCACGAGGCTGT` is an archived ancestor; this is the only current stable.
 
 ## Run the runtime

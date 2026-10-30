@@ -1,16 +1,16 @@
 # AGI (Megasolid/AGI) - machine summary
 
 - Project: AGI - portable agent framework with signed identity (DNA), verifiable history, and a small runtime.
-- Latest stable: v4.0.0 (generation Entelechy, gen4, DNA v4).
+- Latest stable: v4.0.1 (generation Entelechy, gen4, DNA v4).
 - One-call latest stable DNA: https://raw.githubusercontent.com/Megasolid/AGI/main/DNA.md
 - Raw signed DNA contract: https://raw.githubusercontent.com/Megasolid/AGI/main/core/dna.v4.json  (signature: https://raw.githubusercontent.com/Megasolid/AGI/main/core/dna.v4.sig)
 - gen_id: ENTL-GGAACTATAAGT-TTGCAGTAAGTC-CCCAAAACATAT-TAGATAGAGAAT
 - DNA canonical sha256: 39dd5592f5f0d2573bc7529e206d679767d70c49d4bdfc0ef7aa5236117954c8
-- Release page: https://github.com/Megasolid/AGI/releases/tag/v4.0.0
+- Release page: https://github.com/Megasolid/AGI/releases/tag/v4.0.1
 - Install prompt (machine-facing): https://raw.githubusercontent.com/Megasolid/AGI/main/INSTALL_PROMPT.md
 - User manual: https://raw.githubusercontent.com/Megasolid/AGI/main/USER_MANUAL.md
 - Lineage book: https://raw.githubusercontent.com/Megasolid/AGI/main/LINEAGE.md
-- Verify: install by tag v4.0.0, check SHA-256 against SHA256SUMS.txt, verify the DNA canonical digest and signature,
+- Verify: install by tag v4.0.1, check SHA-256 against SHA256SUMS.txt, verify the DNA canonical digest and signature,
   run the runtime conformance matrix (25 checks) before use.
-- Only one stable version exists: v4.0.0. Previous stable dna-GCACGAGGCTGT is an archived ancestor.
+- Only one stable version exists: v4.0.1. Previous stable dna-GCACGAGGCTGT is an archived ancestor.
 - Security: loopback-only runtime bridge; remote intents cannot be approved remotely; no ingress is auto-opened.

@@ -1,11 +1,11 @@
 # AGI latest stable DNA (one-call file)
 
-**Stable version:** `v4.0.0`  ·  **Generation:** Entelechy (gen4)  ·  **DNA version:** 4
+**Stable version:** `v4.0.1`  ·  **Generation:** Entelechy (gen4)  ·  **DNA version:** 4
 **gen_id:** `ENTL-GGAACTATAAGT-TTGCAGTAAGTC-CCCAAAACATAT-TAGATAGAGAAT`
 **DNA canonical sha256:** `39dd5592f5f0d2573bc7529e206d679767d70c49d4bdfc0ef7aa5236117954c8`
 **Signature file (raw):** <https://raw.githubusercontent.com/Megasolid/AGI/main/core/dna.v4.sig>
-**Release:** <https://github.com/Megasolid/AGI/releases/tag/v4.0.0>
-**Lineage:** gen3.5 `dna-GCACGAGGCTGT` (archived ancestor) -> gen4 `v4.0.0` (current stable)
+**Release:** <https://github.com/Megasolid/AGI/releases/tag/v4.0.1>
+**Lineage:** gen3.5 `dna-GCACGAGGCTGT` (archived ancestor) -> gen4 `v4.0.1` (current stable)
 
 This single file is the machine entrypoint for the latest stable DNA. An LLM or agent that reads it in one call
 has: the full signed DNA v4 contract, the identity, the verification rules, and the install path. Do not
@@ -13,9 +13,9 @@ improvise alternate DNA; if this file and `core/dna.v4.json` disagree, stop and 
 
 ## Install (one line)
 
-- Windows: `irm https://github.com/Megasolid/AGI/releases/download/v4.0.0/install.ps1 | iex`
-- macOS/Linux: `curl -fsSL https://github.com/Megasolid/AGI/releases/download/v4.0.0/install.sh | bash`
-- Or download `agi-runtime-v4.0.0.zip` and `SHA256SUMS.txt` from <https://github.com/Megasolid/AGI/releases/tag/v4.0.0> and verify the SHA-256 first.
+- Windows: `irm https://github.com/Megasolid/AGI/releases/download/v4.0.1/install.ps1 | iex`
+- macOS/Linux: `curl -fsSL https://github.com/Megasolid/AGI/releases/download/v4.0.1/install.sh | bash`
+- Or download `agi-runtime-v4.0.1.zip` and `SHA256SUMS.txt` from <https://github.com/Megasolid/AGI/releases/tag/v4.0.1> and verify the SHA-256 first.
 
 ## Verify the DNA
 
