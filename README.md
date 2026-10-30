@@ -16,7 +16,7 @@ Three ideas shape it:
 (28 October 2026). Alpha means usable — and honest about what is not finished yet. The limitations are listed
 below rather than hidden. One official repository, one signed manifest, one update pool.
 
-> **Beta available:** **AGI Entelechy** (gen4 / DNA v4) — now **beta 4** (MCP SSE + conformance matrix + Linux cold boot) —
+> **Beta available:** **AGI Entelechy** (gen4 / DNA v4) — now **beta 5** (event stream + migration dry-run + tunnel plan) —
 > a separate, opt-in public prerelease: [read the announcement](BETA-ANNOUNCEMENT.md). It never migrates a
 > stable install; stable remains `dna-GCACGAGGCTGT`.
 
