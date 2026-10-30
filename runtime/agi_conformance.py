@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""agi_conformance - beta conformance matrix for AGI Entelechy (C-beta1..C-beta19).
+"""agi_conformance - beta conformance matrix for AGI Entelechy (C-beta1..C-beta22).
 
 Runs against an isolated sandbox copy (never live state) and returns a per-check verdict. This is the beta
 analogue of the gen3 C1-C6 matrix: it proves the DNA contract, runtime intents, recall, sensorium, budgets,
@@ -11,6 +11,7 @@ CLI:
 import argparse
 import json
 import pathlib
+import secrets
 import shutil
 import sys
 import tempfile
@@ -25,6 +26,7 @@ import agi_bridge  # noqa: E402
 import agi_master  # noqa: E402
 import agi_migrate  # noqa: E402
 import agi_passport  # noqa: E402
+import agi_policy  # noqa: E402
 import agi_runtime  # noqa: E402
 import agi_seats  # noqa: E402
 import agi_tunnel  # noqa: E402
@@ -45,7 +47,7 @@ def _http(method, url, token=None, body=None, headers=None, timeout=8):
         return e.code, dict(e.headers), e.read().decode()
 
 
-def run(sandbox):
+def run(sandbox, include_stability=True):
     root = pathlib.Path(sandbox).resolve()
     checks = []
 
@@ -74,12 +76,13 @@ def run(sandbox):
     ck("C-beta4", "memory recall: FTS5 + vector RRF fusion", rec.get("fusion") == "rrf(fts5,hash-vector)"
        and len(rec.get("hits") or []) > 0 and v.get("backend") in ("hash-vector", "sqlite-vec"), v.get("backend"))
 
-    q = rt.propose_intent("remember", {"text": "conformance write"}, nonce="conf-1")
-    q2 = rt.propose_intent("remember", {"text": "conformance write"}, nonce="conf-1")
+    conf_nonce = "conf-" + secrets.token_hex(6)
+    q = rt.propose_intent("remember", {"text": "conformance write"}, nonce=conf_nonce)
+    q2 = rt.propose_intent("remember", {"text": "conformance write"}, nonce=conf_nonce)
     guest = rt.approve_intent(q.get("id"), actor="guest")
     appr = rt.approve_intent(q.get("id"), actor="Master")
     again = rt.approve_intent(q.get("id"), actor="Master")
-    denied = rt.approve_intent(rt.fetch("https://example.com").get("id"), actor="Master")
+    denied = rt.approve_intent(rt.fetch("https://example.com/conf/" + conf_nonce).get("id"), actor="Master")
     ck("C-beta5", "intents: idempotent, Master-only, execute-once, fetch denied",
        q.get("status") == "pending" and q2.get("idempotent") and not guest.get("ok")
        and appr.get("executed") and not again.get("ok") and denied.get("status") == "denied")
@@ -146,18 +149,22 @@ def run(sandbox):
        and "never" in (tplan.get("note") or "").lower(), tchk.get("verdict"))
 
     # beta.6/beta.7: device-key seat ceremony (ed25519 or hmac) + unbounded event window
+    run_tag = secrets.token_hex(3)
+    seat_member = "conf-seat-" + run_tag
+    ed_member = "conf-ed25519-" + run_tag
+    remote_member = "conf-remote-seat-" + run_tag
     ss = agi_seats.Seats(root)
-    en = ss.enroll("conf-seat")
-    ch = ss.challenge("conf-seat")
-    proof = (agi_seats.Seats.sign_with_key(en.get("device_key"), "conf-seat", ch.get("nonce"))
+    en = ss.enroll(seat_member)
+    ch = ss.challenge(seat_member)
+    proof = (agi_seats.Seats.sign_with_key(en.get("device_key"), seat_member, ch.get("nonce"))
              if en.get("mode") == "ed25519"
-             else agi_seats.Seats.hmac_proof(en.get("device_key"), "conf-seat", ch.get("nonce")))
-    login = ss.login("conf-seat", ch.get("nonce"), proof)
-    replay = ss.login("conf-seat", ch.get("nonce"), proof)
+             else agi_seats.Seats.hmac_proof(en.get("device_key"), seat_member, ch.get("nonce")))
+    login = ss.login(seat_member, ch.get("nonce"), proof)
+    replay = ss.login(seat_member, ch.get("nonce"), proof)
     seat_status = ss.status()
     ck("C-beta12", "seat ceremony: enroll, challenge-response, replay blocked, no key material in status",
        en.get("ok") and login.get("ok") and not replay.get("ok")
-       and any(x.get("member") == "conf-seat" and x.get("status") == "active" for x in seat_status.get("seats", []))
+       and any(x.get("member") == seat_member and x.get("status") == "active" for x in seat_status.get("seats", []))
        and "key_secret" not in json.dumps(seat_status), (login.get("status"), replay.get("error")))
     sse_bridge = agi_bridge.Bridge(root)
     sse_tok = sse_bridge.init_token(("read",))["token"]
@@ -177,16 +184,16 @@ def run(sandbox):
 
     # beta.7: ed25519 public-key seats, Master ceremony, remote seat tools, rollback proof
     by = agi_seats.Seats(root)
-    en2 = by.enroll("conf-ed25519")
-    ch2 = by.challenge("conf-ed25519")
-    proof2 = (agi_seats.Seats.sign_with_key(en2.get("device_key"), "conf-ed25519", ch2.get("nonce"))
-              if en2.get("mode") == "ed25519" else agi_seats.Seats.hmac_proof(en2.get("device_key"), "conf-ed25519", ch2.get("nonce")))
-    login2 = by.login("conf-ed25519", ch2.get("nonce"), proof2)
+    en2 = by.enroll(ed_member)
+    ch2 = by.challenge(ed_member)
+    proof2 = (agi_seats.Seats.sign_with_key(en2.get("device_key"), ed_member, ch2.get("nonce"))
+              if en2.get("mode") == "ed25519" else agi_seats.Seats.hmac_proof(en2.get("device_key"), ed_member, ch2.get("nonce")))
+    login2 = by.login(ed_member, ch2.get("nonce"), proof2)
     st2 = by.status()
-    seat2 = [x for x in st2.get("seats", []) if x.get("member") == "conf-ed25519"]
+    seat2 = [x for x in st2.get("seats", []) if x.get("member") == ed_member]
     ck("C-beta14", "seats: ed25519 public-key mode (or hmac fallback), replay blocked",
        en2.get("ok") and login2.get("ok") and (seat2 and seat2[0].get("mode") in ("ed25519", "hmac"))
-       and not by.login("conf-ed25519", ch2.get("nonce"), proof2).get("ok"), (en2.get("mode"), login2.get("status")))
+       and not by.login(ed_member, ch2.get("nonce"), proof2).get("ok"), (en2.get("mode"), login2.get("status")))
 
     if agi_master.HAVE_CRYPTO:
         mc = agi_master.ceremony(root)
@@ -213,13 +220,13 @@ def run(sandbox):
         rtools = json.loads(lr).get("result", {}).get("tools", [])
         _, _, cr = _http("POST", rb_base + "/mcp", rb_tok,
                          {"jsonrpc": "2.0", "id": 2, "method": "tools/call",
-                          "params": {"name": "seat_challenge", "arguments": {"member": "conf-ed25519"}}})
+                          "params": {"name": "seat_challenge", "arguments": {"member": ed_member}}})
         rchal = json.loads(((json.loads(cr).get("result") or {}).get("content") or [{}])[0].get("text", "{}"))
-        rproof = (agi_seats.Seats.sign_with_key(en2.get("device_key"), "conf-ed25519", rchal.get("nonce"))
-                  if en2.get("mode") == "ed25519" else agi_seats.Seats.hmac_proof(en2.get("device_key"), "conf-ed25519", rchal.get("nonce")))
+        rproof = (agi_seats.Seats.sign_with_key(en2.get("device_key"), ed_member, rchal.get("nonce"))
+                  if en2.get("mode") == "ed25519" else agi_seats.Seats.hmac_proof(en2.get("device_key"), ed_member, rchal.get("nonce")))
         _, _, lr2 = _http("POST", rb_base + "/mcp", rb_tok,
                           {"jsonrpc": "2.0", "id": 3, "method": "tools/call",
-                           "params": {"name": "seat_login", "arguments": {"member": "conf-ed25519",
+                           "params": {"name": "seat_login", "arguments": {"member": ed_member,
                                                                           "nonce": rchal.get("nonce"), "proof": rproof}}})
         rlogin = json.loads(((json.loads(lr2).get("result") or {}).get("content") or [{}])[0].get("text", "{}"))
     finally:
@@ -250,22 +257,22 @@ def run(sandbox):
         tools8 = {t["name"] for t in (json.loads(tl).get("result") or {}).get("tools", [])}
         _, _, er = _http("POST", base8 + "/mcp", tok8,
                          {"jsonrpc": "2.0", "id": 2, "method": "tools/call",
-                          "params": {"name": "seat_enroll", "arguments": {"member": "conf-remote-seat",
+                          "params": {"name": "seat_enroll", "arguments": {"member": remote_member,
                                                                           "mode": "auto"}}})
         enrolled = json.loads(((json.loads(er).get("result") or {}).get("content") or [{}])[0].get("text", "{}"))
         read8 = b8.init_token(("read",))["token"]
         _, _, er2 = _http("POST", base8 + "/mcp", read8,
                           {"jsonrpc": "2.0", "id": 3, "method": "tools/call",
-                           "params": {"name": "seat_enroll", "arguments": {"member": "conf-remote-2"}}})
+                           "params": {"name": "seat_enroll", "arguments": {"member": remote_member + "-2"}}})
         scope8 = json.loads(er2).get("error", {})
         if agi_master.HAVE_CRYPTO:
             if not agi_master.identity(root).get("ok"):
                 agi_master.ceremony(root)
-            p8 = agi_passport.issue(root, "conf-remote-seat", note="conformance")
-            v8 = agi_passport.verify(root, "conf-remote-seat")
+            p8 = agi_passport.issue(root, remote_member, note="conformance")
+            v8 = agi_passport.verify(root, remote_member)
             _, _, pv = _http("POST", base8 + "/mcp", read8,
                              {"jsonrpc": "2.0", "id": 4, "method": "tools/call",
-                              "params": {"name": "passport_verify", "arguments": {"member": "conf-remote-seat"}}})
+                              "params": {"name": "passport_verify", "arguments": {"member": remote_member}}})
             pvres = json.loads(((json.loads(pv).get("result") or {}).get("content") or [{}])[0].get("text", "{}"))
         else:
             p8, v8, pvres = {"ok": True}, {"ok": True}, {"ok": True}
@@ -279,6 +286,51 @@ def run(sandbox):
        p8.get("ok") and v8.get("ok") and all((v8.get("checks") or {}).values()) and pvres.get("ok"),
        (p8.get("error"), v8.get("error")))
 
+    # beta.9: ML-DSA dual signing, remote issuance policy gate, stability gate
+    ident_now = agi_master.identity(root)
+    if agi_master.HAVE_MLDSA and (ident_now.get("ident") or {}).get("mldsa"):
+        dfile = root / "state" / "dual-sign-test.txt"
+        dfile.write_text("dual signing test", encoding="utf-8")
+        ds = agi_master.sign_file(root, dfile)
+        dv = agi_master.verify_file(root, dfile, ds.get("sig_file"))
+        dfile.write_text("tampered", encoding="utf-8")
+        dt = agi_master.verify_file(root, dfile, ds.get("sig_file"))
+        ck("C-beta20", "Master dual signing (Ed25519 + ML-DSA-65), tamper rejected",
+           ds.get("ok") and "ml-dsa-65" in (ds.get("algos") or []) and dv.get("ok") and not dt.get("ok"),
+           (ds.get("algos"), dv.get("ok"), dt.get("ok")))
+    else:
+        ck("C-beta20", "Master ML-DSA dual signing skipped (not available in this environment)", True, "skipped")
+
+    c9 = agi_bridge.Bridge(root)
+    t9 = c9.init_token(("read", "write"))["token"]
+    srv9 = agi_bridge.ThreadingHTTPServer(("127.0.0.1", 0), agi_bridge.make_handler(c9))
+    threading.Thread(target=srv9.serve_forever, daemon=True).start()
+    base9 = "http://127.0.0.1:%d" % srv9.server_address[1]
+
+    def call9(i, name, args):
+        _, _, r = _http("POST", base9 + "/mcp", t9, {"jsonrpc": "2.0", "id": i, "method": "tools/call",
+                                                     "params": {"name": name, "arguments": args}})
+        return json.loads(((json.loads(r).get("result") or {}).get("content") or [{}])[0].get("text", "{}"))
+
+    try:
+        agi_policy.set_value(root, "remote_passport_issue_enabled", False)
+        deny = call9(1, "passport_issue", {"member": remote_member})
+        agi_policy.set_value(root, "remote_passport_issue_enabled", True)
+        allow = call9(2, "passport_issue", {"member": remote_member, "note": "policy-enabled"})
+    finally:
+        srv9.shutdown()
+    ck("C-beta21", "remote passport issuance is denied by default policy and allowed only after local enablement",
+       (not deny.get("ok")) and "disabled by policy" in (deny.get("error") or "") and allow.get("ok"),
+       (deny.get("error"), allow.get("error")))
+
+    if include_stability:
+        import agi_stability
+        stab = agi_stability.run(root, runs=2)
+        ck("C-beta22", "stability gate: 2 cold conformance runs PASS", stab.get("ok") and stab.get("runs") == 2,
+           [r.get("failed") for r in stab.get("results", [])])
+    else:
+        ck("C-beta22", "stability gate skipped (nested stability run)", True, "skipped")
+
     passed = sum(1 for x in checks if x["ok"])
     return {"schema": SCHEMA, "sandbox": str(root), "checks": checks,
             "passed": passed, "total": len(checks),
@@ -286,7 +338,7 @@ def run(sandbox):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Beta conformance matrix (C-beta1..C-beta19)")
+    ap = argparse.ArgumentParser(description="Beta conformance matrix (C-beta1..C-beta22)")
     ap.add_argument("--root", required=True)
     ap.add_argument("--out", default="state/archive/evolution/beta-conformance-run.json")
     a = ap.parse_args(argv)

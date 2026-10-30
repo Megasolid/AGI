@@ -1,23 +1,26 @@
-# AGI Entelechy beta 8 - user manual (minimal)
+# AGI Entelechy beta 9 - user manual (minimal)
 
-## Seats / Master / Passports
+## Master (dual signing)
 ```
-python runtime/agi_master.py --root <sandbox> --ceremony
-python runtime/agi_seats.py --root <sandbox> --enroll NAME            # key once
-python runtime/agi_seats.py --root <sandbox> --challenge NAME
-python runtime/agi_seats.py --root <sandbox> --sign NAME NONCE --key <DEVICE_KEY>
-python runtime/agi_seats.py --root <sandbox> --login NAME NONCE <PROOF>
-python runtime/agi_passport.py --root <sandbox> --issue NAME
-python runtime/agi_passport.py --root <sandbox> --verify NAME
-python runtime/agi_passport.py --root <sandbox> --list
+python runtime/agi_master.py --root <sandbox> --ceremony      # Ed25519 + ML-DSA-65 if available
+python runtime/agi_master.py --root <sandbox> --sign FILE
+python runtime/agi_master.py --root <sandbox> --verify FILE SIG
 ```
-Passports bind member + gen_id + DNA sha + seat public key and are Master-signed; verification cross-checks all of
-them. Tamper is rejected. Ed25519 needs `cryptography`; seats fall back to HMAC.
+Signatures list their `algos` (ed25519, ml-dsa-65). Tamper fails. Private keys are local files (no HSM).
 
-## Bridge (MCP, 16 tools)
-Remote enrollment/passport tools require scopes (`seat_enroll` = write; `seat_status`, `passport_*` = read);
-`approve_intent` is always refused remotely. Event stream: Last-Event-ID replay, `?window=0` unbounded.
+## Policy gate
+Remote passport issuance is OFF by default:
+```
+python runtime/agi_policy.py --root <sandbox> --show
+python runtime/agi_policy.py --root <sandbox> --set remote_passport_issue_enabled=true   # local decision
+```
+MCP `passport_issue` requires write scope AND this enablement; otherwise it is refused.
 
-## Migration / tunnel / conformance
-`agi_migrate.py` dry-run + `--snapshot-db` / `--restore-db` rollback proof. `agi_tunnel.py --plan` only - tunnel E2E
-is blocked on this host (no tunnel binary), relay mailbox is the proven transport. `agi_conformance.py` PASS 20/20.
+## Stability
+```
+python runtime/agi_stability.py --root <sandbox> --runs 2
+```
+Runs the full conformance matrix on fresh cold copies; verdict STABLE only when every run passes.
+
+## Conformance
+`agi_conformance.py --root <sandbox>` -> C-beta1..C-beta22 (23 checks), PASS required before experiments.

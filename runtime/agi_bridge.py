@@ -50,7 +50,7 @@ TOOL_SCOPES = {"status": "read", "recall": "read", "poll_intent": "read", "evolv
                "remember": "write", "boot": "write", "propose_intent": "write", "fetch": "write",
                "snapshot": "write", "seat_challenge": "read", "seat_login": "read",
                "seat_status": "read", "passport_list": "read", "passport_verify": "read",
-               "seat_enroll": "write"}
+               "seat_enroll": "write", "passport_issue": "write"}
 TOOL_SPECS = [
     {"name": "status", "description": "runtime + sensorium status",
      "inputSchema": {"type": "object", "properties": {}}},
@@ -87,6 +87,9 @@ TOOL_SPECS = [
      "inputSchema": {"type": "object", "properties": {}}},
     {"name": "passport_verify", "description": "verify a Master-signed passport (beta.8)",
      "inputSchema": {"type": "object", "properties": {"member": {"type": "string"}}, "required": ["member"]}},
+    {"name": "passport_issue", "description": "issue a Master-signed passport - disabled by default policy (beta.9)",
+     "inputSchema": {"type": "object", "properties": {"member": {"type": "string"}, "note": {"type": "string"}},
+                     "required": ["member"]}},
     {"name": "approve_intent", "description": "DENIED remotely: Master approval is local-only",
      "inputSchema": {"type": "object", "properties": {"id": {"type": "string"}}}},
 ]
@@ -210,6 +213,14 @@ class Bridge:
                     res = s.enroll(args.get("member"), args.get("mode") or "auto")
                 else:
                     res = s.status()
+            elif name == "passport_issue":
+                import agi_passport
+                import agi_policy
+                if not agi_policy.allowed(self.root):
+                    res = {"ok": False, "error": "remote passport issuance is disabled by policy; "
+                                                  "enable it locally in state/passport_policy.json"}
+                else:
+                    res = agi_passport.issue(self.root, args.get("member"), args.get("note") or "")
             elif name in ("passport_list", "passport_verify"):
                 import agi_passport
                 if name == "passport_list":
