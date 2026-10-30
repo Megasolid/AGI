@@ -1,25 +1,28 @@
-# AGI Entelechy beta 3 - user manual (minimal)
+# AGI Entelechy beta 4 - user manual (minimal)
 
-## Run
+## Runtime
 ```
 python runtime/agi_runtime.py --root <sandbox> --status
 python runtime/agi_runtime.py --root <sandbox> --index-vectors
+```
+10 verbs; writes are intents; Master approval is local-only; fetch/exec denied; recall fuses FTS5 + vector
+(hash-vector fallback, `sqlite-vec` when present) and reports the backend.
+
+## Bridge & MCP
+```
 python runtime/agi_bridge.py --root <sandbox> --init-token
 python runtime/agi_bridge.py --root <sandbox> --serve --port 8766
 ```
+Loopback only; bearer tokens with read/write scopes. POST /mcp JSON-RPC: initialize (session header), tools/list
+(10 tools), tools/call, ping. JSON by default; add `Accept: text/event-stream` for SSE responses
+(`event: message`); GET /mcp with SSE Accept returns a keepalive ping stream. Remote approve_intent is refused.
 
-## HTTP surface (loopback only)
-- `GET /health` open; `GET /status`, `GET /intent/<id>` need read scope; `POST /intent` needs write scope.
-- `POST /mcp` JSON-RPC 2.0: `initialize`, `tools/list`, `tools/call`, `ping`; responses carry `Mcp-Session-Id`.
-- `GET /mcp` returns 405 (SSE streaming not in beta.3).
+## Conformance
+```
+python runtime/agi_conformance.py --root <sandbox> --out conformance.json
+```
+C-beta1..C-beta8: identity, DNA integrity, contract, runtime, recall, intents, Sensorium, bridge/approval
+locality/scopes/loopback, budgets. Verdict PASS required before adoption experiments.
 
 ## Safety
-Intents queue; only a local Master approves them; MCP `approve_intent` is refused by design. No inbound public port;
-the outbound relay mailbox (`--relay <dir>`) simulates a tunnel. fetch/exec remain denied.
-
-## Recall
-FTS5 always; after `--index-vectors` recall fuses a 128-dim hash-vector with RRF and reports
-`fusion: rrf(fts5,hash-vector)`.
-
-## Verified environments
-Windows (project venv) and Linux WSL2 kernel 6.18 / Python 3.10.12 - cold-copy boot PASS on both.
+No inbound public port, no remote approval, no destructive migration. Beta is a research artifact.

@@ -229,6 +229,21 @@ def make_handler(bridge):
         def log_message(self, *args):
             pass
 
+        def _send_sse(self, events, extra=None):
+            """Server-Sent Events response: events = [(event_name, data_obj_or_str), ...]."""
+            self.send_response(200)
+            self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Connection", "close")
+            for k, v in (extra or {}).items():
+                self.send_header(k, v)
+            self.end_headers()
+            for name, data in events:
+                if not isinstance(data, str):
+                    data = json.dumps(data, sort_keys=True)
+                self.wfile.write(("event: %s\ndata: %s\n\n" % (name, data)).encode())
+                self.wfile.flush()
+
         def do_GET(self):
             if not self._loopback():
                 return self._send(403, {"ok": False, "error": "loopback only"})
@@ -246,8 +261,18 @@ def make_handler(bridge):
                     return self._send(401, {"ok": False, "error": err})
                 return self._send(200, bridge.poll(path[len("/intent/"):]))
             if path == "/mcp":
-                return self._send(405, {"ok": False, "error": "SSE stream not supported in beta.3; POST JSON-RPC"},
-                                  extra={"Allow": "POST"})
+                if "text/event-stream" not in (self.headers.get("Accept") or ""):
+                    return self._send(405, {"ok": False, "error": "GET /mcp requires Accept: text/event-stream "
+                                                                   "(SSE keepalive) or POST JSON-RPC"},
+                                      extra={"Allow": "POST, GET"})
+                ok, err, scopes = bridge._token_scopes(self.headers.get("Authorization"))
+                if not ok:
+                    return self._send(401, {"jsonrpc": "2.0", "id": None,
+                                            "error": {"code": -32000, "message": err}})
+                sid = self.headers.get("Mcp-Session-Id") or ("mcp-" + secrets.token_hex(8))
+                return self._send_sse([("ping", {"jsonrpc": "2.0", "method": "ping",
+                                                 "params": {"session": sid}})],
+                                      extra={"Mcp-Session-Id": sid})
             return self._send(404, {"ok": False, "error": "not found"})
 
         def do_POST(self):
@@ -269,6 +294,10 @@ def make_handler(bridge):
                 extra = {"Mcp-Session-Id": new_sid} if new_sid else (
                     {"Mcp-Session-Id": self.headers.get("Mcp-Session-Id")}
                     if self.headers.get("Mcp-Session-Id") else None)
+                if "text/event-stream" in (self.headers.get("Accept") or ""):
+                    if resp is None:
+                        return self._send(202, {}, extra=extra)
+                    return self._send_sse([("message", resp)], extra=extra)
                 if resp is None:
                     return self._send(202, {}, extra=extra)
                 return self._send(200, resp, extra=extra)

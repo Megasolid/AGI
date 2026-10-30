@@ -98,9 +98,25 @@ class Runtime:
                 "dna_version": self.dna.get("generation", {}).get("dna_version"),
                 "gen_id": self.dna.get("generation", {}).get("gen_id"),
                 "index_items": items, "pending_intents": pending,
+                "recall_backend": self._vec_backend(),
                 "sensorium": {"present": bool(perc_text), "digest_first_line": perc_text.splitlines()[0] if perc_text else None,
                               "digest_sha256": _sha(perc_text.encode()) if perc_text else None},
                 "ts": _now()}
+
+    def _vec_backend(self):
+        con = self._con()
+        try:
+            con.execute("SELECT vec_version()").fetchone()
+            return "sqlite-vec"
+        except sqlite3.Error:
+            pass
+        try:
+            n = con.execute("SELECT count(*) FROM items_vec").fetchone()[0]
+        except sqlite3.Error:
+            n = 0
+        finally:
+            con.close()
+        return "hash-vector" if n else "fts5"
 
     def recall(self, query, k=5):
         if not query:
@@ -138,7 +154,7 @@ class Runtime:
         con.commit()
         n = con.execute("SELECT count(*) FROM items_vec").fetchone()[0]
         con.close()
-        return {"ok": True, "vectors": n, "dim": 128}
+        return {"ok": True, "vectors": n, "dim": 128, "backend": self._vec_backend()}
 
     def _vector_hits(self, query, k=5):
         con = self._con()
