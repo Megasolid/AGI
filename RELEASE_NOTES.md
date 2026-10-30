@@ -26,6 +26,10 @@ Known limits: local Master keys (no HSM), no destructive migration of the archiv
 
 # AGI release notes
 
+## Prior releases (history)
+
+The sections below are kept verbatim for the record. They are superseded by stable `v4.0.0`.
+
 ---
 All public pre-stable releases in one place. Each section is the note published with that tag; install instructions always follow the latest release on the releases page.
 

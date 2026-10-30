@@ -1,6 +1,7 @@
 # Security policy
 
-**Current release:** alpha.stable, `dna-GCACGAGGCTGT` (28 October 2026), first genetically identified generation.
+**Current release:** `v4.0.0` - AGI Entelechy (gen4, DNA v4), released 30 October 2026. The previous
+stable `dna-GCACGAGGCTGT` (gen3.5) is archived as its ancestor.
 
 ## Reporting a vulnerability
 
@@ -21,7 +22,7 @@ do not open a public issue for an unpatched vulnerability.
   has no access to the signature implementation and only checks hashes.
 - Branch protection on this repository is limited by the hosting plan. History is additionally protected by local
   gated pushes and CI, and by the fact that every artefact is hash-pinned in signed manifests.
-- Alpha software has not been through an independent third-party security audit.
+- This software has not been through an independent third-party security audit.
 
 ## Threat model in one line
 

@@ -13,8 +13,9 @@ there are no feature branches and no rewriting of published history (no force-pu
 
 ## Releases are immutable tags
 
-Each release is identified by its **DNA tag** — for this generation, `dna-GCACGAGGCTGT` — with legacy semantic
-version tags (`v0.1.0` … `v0.4.3`) kept only as history. A tag is a promise: the bytes it points at never change.
+Each release is identified by its **release tag** — the current stable is `v4.0.0` (gen4 Entelechy, DNA v4);
+the previous genetic tag `dna-GCACGAGGCTGT` (gen3.5) and legacy semantic tags (`v0.1.0` … `v0.4.3`) are kept
+only as history. A tag is a promise: the bytes it points at never change.
 
 Content is organised by date and class so any past release can be read or cloned:
 
