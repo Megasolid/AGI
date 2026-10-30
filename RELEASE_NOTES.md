@@ -2,10 +2,12 @@
 
 The beta line (v4.0.0-beta.1 .. beta.10) is promoted to stable **AGI Entelechy v4.0.0**.
 
-**Migration status (honest):** this is the single stable release. The live install's memory/knowledge/docs corpus is
-indexed into the Entelechy runtime (1,954 items, vector leg, refreshed by `tools/entelechy_sync.py`) behind a
-freshness-aware gate; the live identity, family, mana and trust-log layers remain on the gen3.5 ancestor until
-migration phase 2. Both layers are verified by the 13-check boot gate, and the pre-migration backup is intact.
+**Migration status:** complete in two gated phases (30 October 2026). Phase 1 indexed the live memory/knowledge/docs
+corpus with full bodies, per-item provenance and a freshness gate. Phase 2 switched the live identity to the v4
+birth record, migrated the family/mana/trust/genesis/curriculum state projections, and rebuilt the live Core as
+**Core 4.0 / DNA v4** (new signed `core_manifest.json`, `agi_core_v4_entelechy.tar.gz`, re-signed bundle manifests).
+The gen3.5 ancestor remains verified as the ancestor; private keys/passkeys/recovery material are intentionally
+live-only. The 13-check boot gate passes, and the pre-migration backup is intact.
 
 
 - Signed DNA v4 (I1-I9, 14 reactive rules), gen_id `ENTL-GGAACTATAAGT-TTGCAGTAAGTC-CCCAAAACATAT-TAGATAGAGAAT`.

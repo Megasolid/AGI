@@ -7,13 +7,14 @@ inspect and trust with real work - and for the language models that will run it.
 This repository is its public home: one stable release, the signed DNA, the runtime, and the lineage of how it got
 here.
 
-**Status:** stable **`v4.0.0`** - AGI Entelechy (gen4, DNA v4), released 30 October 2026. The previous stable,
+**Status:** stable **`v4.0.0`** - AGI Entelechy (gen4, DNA v4, Core 4.0), released 30 October 2026. The previous stable,
 `dna-GCACGAGGCTGT` (gen3.5), is an archived ancestor, not a second stable.
 
-> **Migration status (honest):** `v4.0.0` is the single stable release. The live install's memory corpus is
-> indexed into the Entelechy runtime (1,954 items, refreshed by `tools/entelechy_sync.py`) and verified by the gate;
-> the identity, family, mana and trust-log layers still run on the gen3.5 ancestor until migration phase 2. Nothing
-> was deleted; the timestamped backup is intact.
+> **Migration status:** phase 2 complete (30 October 2026). `v4.0.0` is the single stable release. The live install
+> now runs generation **Entelechy**: identity is the v4 birth record, the memory corpus is indexed with per-item
+> provenance and freshness (1,958 items, 1,958 vectors), family/mana/trust/genesis/curriculum projections are migrated,
+> and the live **Core is 4.0 / DNA v4** with a rebuilt signed manifest and bundle. The gen3.5 ancestor is retained and
+> verified; private keys, passkeys and recovery material stay live-only by design.
 
 > **New here?** Read the [lineage book](LINEAGE.md) - it is the human story of the generations - then install from
 > the quickstart below. Everything else is linked at the bottom.

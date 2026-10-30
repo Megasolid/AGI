@@ -50,10 +50,12 @@ never a public unauthenticated port. The tunnel helper only plans.
 
 ## Migration, backup and rollback
 
-**Migration is in phase 1.** The live memory/knowledge/docs corpus is indexed into the Entelechy runtime and kept
-current by `tools/entelechy_sync.py` (idempotent; source keys; vectors rebuilt; gate freshness refreshed). The live
-identity, family, mana and trust-log layers still run on the gen3.5 ancestor until phase 2; nothing was deleted and
-the timestamped backup remains intact.
+**Migration is complete (phase 2).** The live memory/knowledge/docs corpus is indexed into the Entelechy runtime and
+kept current by `tools/entelechy_sync.py` (idempotent; full bodies; per-item provenance; vectors rebuilt; gate
+freshness refreshed). The live identity is the v4 birth record, the family/mana/trust/genesis/curriculum state
+projections are migrated, and the live Core is **4.0 / DNA v4** with a rebuilt signed manifest and bundle. The
+gen3.5 ancestor is retained and verified; private keys, passkeys and recovery material stay live-only. Nothing was
+deleted and the timestamped backup remains intact.
 
 
 `agi_migrate.py` imports a legacy memory tree into a beta index: dry-run by default, source hash verified unchanged,
