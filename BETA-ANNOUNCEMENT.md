@@ -5,6 +5,11 @@
 AGI's first **LLM-runtime-native** generation is available as a public beta prerelease:
 <https://github.com/Megasolid/AGI/releases/tag/v4.0.0-beta.1>
 
+*Update, 30 October 2026: **beta 8 is out** - remote seat enrollment over MCP, Master-signed member passports
+(binding gen_id + DNA sha + seat public key), a public beta changelog covering beta 1..8, and conformance extended
+to C-beta1..C-beta19 (20 checks). Tunnel E2E remains blocked on this host (no tunnel binary); the outbound relay
+mailbox is the proven transport. <https://github.com/Megasolid/AGI/releases/tag/v4.0.0-beta.8>
+
 *Update, 30 October 2026: **beta 7 is out** - Ed25519 public-key seats (private key stays on the device), a local
 Master Ed25519 ceremony for signing passports/seeds, remote seat login over MCP, and a migration snapshot/rollback
 proof. Conformance is now C-beta1..C-beta17 (18 checks). <https://github.com/Megasolid/AGI/releases/tag/v4.0.0-beta.7>
