@@ -1,26 +1,25 @@
-# AGI Entelechy beta 9 - user manual (minimal)
+# AGI Entelechy beta 10 - user manual (minimal)
 
-## Master (dual signing)
+## Audit trail
+Every passport issuance (local or MCP) appends to `<sandbox>/state/audit.jsonl`:
 ```
-python runtime/agi_master.py --root <sandbox> --ceremony      # Ed25519 + ML-DSA-65 if available
-python runtime/agi_master.py --root <sandbox> --sign FILE
-python runtime/agi_master.py --root <sandbox> --verify FILE SIG
+python runtime/agi_passport.py --root <sandbox> --audit
 ```
-Signatures list their `algos` (ed25519, ml-dsa-65). Tamper fails. Private keys are local files (no HSM).
+Entries carry seq, ts, event, member, actor (local/mcp), passport_sha256, signature algos.
 
-## Policy gate
-Remote passport issuance is OFF by default:
+## Release signing (dual)
 ```
-python runtime/agi_policy.py --root <sandbox> --show
-python runtime/agi_policy.py --root <sandbox> --set remote_passport_issue_enabled=true   # local decision
+python runtime/agi_release.py --root <sandbox> --sign [FILE ...]
+python runtime/agi_release.py --root <sandbox> --verify
 ```
-MCP `passport_issue` requires write scope AND this enablement; otherwise it is refused.
+Artifacts (default: DNA, seed, notes present in the tree) are signed Ed25519 + ML-DSA-65 and recorded in
+`state/release_signatures.json`; verification re-hashes and checks both signatures; tamper fails.
 
-## Stability
+## Stability window
 ```
-python runtime/agi_stability.py --root <sandbox> --runs 2
+python runtime/agi_stability.py --root <sandbox> --runs 5
 ```
-Runs the full conformance matrix on fresh cold copies; verdict STABLE only when every run passes.
+Runs the full C-beta matrix on fresh cold copies. Evidence only - the beta does not claim beta-stable by itself.
 
-## Conformance
-`agi_conformance.py --root <sandbox>` -> C-beta1..C-beta22 (23 checks), PASS required before experiments.
+## Everything else
+Seats, passports, policy gate, bridge/MCP (17 tools), migration + rollback, tunnel plan: see INSTALL/USER notes.

@@ -38,7 +38,7 @@ def _paths(root):
     return pathlib.Path(root).resolve() / "state" / "passports"
 
 
-def issue(root, member, note=""):
+def issue(root, member, note="", actor="local"):
     root = pathlib.Path(root).resolve()
     member = str(member or "").strip()
     if not member:
@@ -72,9 +72,46 @@ def issue(root, member, note=""):
     sig = agi_master.sign_file(root, p)
     if not sig.get("ok"):
         return {"ok": False, "error": "master signing failed: %s" % sig.get("error")}
+    audit = _audit_append(root, {"event": "passport_issued", "member": member, "actor": str(actor or "local"),
+                                 "passport": p.name, "passport_sha256": hashlib.sha256(p.read_bytes()).hexdigest(),
+                                 "algos": sig.get("algos"), "gen_id": payload["gen_id"], "note": str(note or "")})
     return {"ok": True, "schema": SCHEMA, "member": member, "passport": str(p), "signature": sig.get("sig_file"),
             "passport_sha256": hashlib.sha256(p.read_bytes()).hexdigest(), "gen_id": payload["gen_id"],
-            "dna_sha256": payload["dna_sha256"], "issuer_fingerprint": pub.get("fingerprint")}
+            "dna_sha256": payload["dna_sha256"], "issuer_fingerprint": pub.get("fingerprint"),
+            "algos": sig.get("algos"), "audit_seq": audit.get("seq")}
+
+
+def _audit_path(root):
+    return pathlib.Path(root).resolve() / "state" / "audit.jsonl"
+
+
+def _audit_append(root, entry):
+    p = _audit_path(root)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    seq = 1
+    if p.is_file():
+        try:
+            seq = sum(1 for _ in p.open("r", encoding="utf-8")) + 1
+        except Exception:
+            seq = 1
+    rec = {"seq": seq, "ts": __import__("datetime").datetime.now(
+        __import__("datetime").timezone.utc).isoformat(timespec="seconds"), **entry}
+    with p.open("a", encoding="utf-8") as fh:
+        fh.write(json.dumps(rec, sort_keys=True) + "\n")
+    return rec
+
+
+def list_audit(root, limit=50):
+    p = _audit_path(root)
+    rows = []
+    if p.is_file():
+        for line in p.read_text(encoding="utf-8", errors="ignore").splitlines():
+            try:
+                rows.append(json.loads(line))
+            except Exception:
+                continue
+    return {"ok": True, "schema": "agi-audit/1", "events": rows[-int(limit):], "count": len(rows),
+            "note": "append-only issuance audit; seq is monotonic per sandbox"}
 
 
 def verify(root, member):
@@ -127,12 +164,15 @@ def main(argv=None):
     ap.add_argument("--issue", metavar="MEMBER")
     ap.add_argument("--verify", metavar="MEMBER")
     ap.add_argument("--list", action="store_true")
+    ap.add_argument("--audit", action="store_true")
     ap.add_argument("--note", default="")
     a = ap.parse_args(argv)
     if a.issue:
         r = issue(a.root, a.issue, a.note)
     elif a.verify:
         r = verify(a.root, a.verify)
+    elif a.audit:
+        r = list_audit(a.root)
     else:
         r = list_passports(a.root)
     print(json.dumps(r, indent=1))

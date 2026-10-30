@@ -1,24 +1,23 @@
-# AGI Entelechy beta 9 - release notes
+# AGI Entelechy beta 10 - release notes
 
-Tag: `v4.0.0-beta.9` - branch `beta/entelechy` - **public beta prerelease**. Stable gen3.5 `dna-GCACGAGGCTGT` untouched.
+Tag: `v4.0.0-beta.10` - branch `beta/entelechy` - **public beta prerelease**. Stable gen3.5 `dna-GCACGAGGCTGT` untouched.
 
-## Added in beta 9
-- **Post-quantum dual signing**: Master ceremony now creates Ed25519 + ML-DSA-65 keys (when `cryptography` exposes
-  `mldsa`); file signatures carry both; verification requires both when present, with an honest skip on older builds.
-  Master-signed passports inherit dual signatures automatically.
-- **Policy-gated remote passport issuance**: `state/passport_policy.json`, OFF by default; MCP `passport_issue`
-  (write scope) is refused until a local operator enables it; refusal message names the policy.
-- **Stability gate** (`runtime/agi_stability.py`): K cold conformance runs; STABLE only when all pass.
-  This release: **2 runs, 23/23 each, STABLE**.
-- **Conformance extended** to C-beta1..C-beta22 (**23 checks**) -> PASS 23/23.
-- **Tunnel E2E still blocked**: no `cloudflared`/`tailscale` binary installed and network exposure needs explicit
-  approval; the outbound relay mailbox remains the proven transport.
+## Added in beta 10
+- **Issuance audit trail**: passport issuance (local or MCP) appends an append-only `state/audit.jsonl` event with
+  sequence, timestamp, member, actor, passport sha and signature algos; `agi_passport.py --audit` lists it.
+- **Dual-signed release artifacts** (`runtime/agi_release.py`): DNA / seed / notes signed with the Master
+  Ed25519 + ML-DSA-65 keys, recorded in `state/release_signatures.json`; verify re-hashes and checks both signatures;
+  tamper rejected.
+- **Stability window evidence**: 5 cold conformance runs, **25/25 each -> STABLE** (about 4 s per run).
+- **Conformance extended** to C-beta1..C-beta24 (**25 checks**) -> PASS 25/25.
+- **Tunnel E2E still blocked**: no tunnel binary installed and network exposure needs explicit approval; the relay
+  mailbox remains the proven transport. The beta does not claim beta-stable; stable remains gen3.5.
 
 ## Verification
 runtime 15/15, beta_2 13/13, beta_3 13/13, beta_4 10/10, beta_5 10/10, beta_6 9/9, beta_7 10/10, beta_8 10/10,
-beta_9 10/10, proposal 12/12, sensorium 9/9; conformance PASS 23/23; stability STABLE (2x); leak 0; hygiene 0;
-gate 12/12; Windows + Linux cold boots PASS.
+beta_9 10/10, beta_10 9/9, proposal 12/12, sensorium 9/9; conformance 25/25; stability window STABLE (5x);
+leak 0; hygiene 0; gate 12/12; Windows + Linux cold boots PASS.
 
 ## Known limits
-ML-DSA requires a supporting `cryptography`; Master keys are local files (no HSM); tunnel E2E blocked/needs approval;
-no destructive migration of live state; no license chosen.
+ML-DSA requires a supporting `cryptography`; Master keys local (no HSM); tunnel E2E blocked/needs approval; no
+destructive migration of live state; no license chosen.

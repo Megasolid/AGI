@@ -220,7 +220,7 @@ class Bridge:
                     res = {"ok": False, "error": "remote passport issuance is disabled by policy; "
                                                   "enable it locally in state/passport_policy.json"}
                 else:
-                    res = agi_passport.issue(self.root, args.get("member"), args.get("note") or "")
+                    res = agi_passport.issue(self.root, args.get("member"), args.get("note") or "", actor="mcp")
             elif name in ("passport_list", "passport_verify"):
                 import agi_passport
                 if name == "passport_list":

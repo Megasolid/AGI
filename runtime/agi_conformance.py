@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""agi_conformance - beta conformance matrix for AGI Entelechy (C-beta1..C-beta22).
+"""agi_conformance - beta conformance matrix for AGI Entelechy (C-beta1..C-beta24).
 
 Runs against an isolated sandbox copy (never live state) and returns a per-check verdict. This is the beta
 analogue of the gen3 C1-C6 matrix: it proves the DNA contract, runtime intents, recall, sensorium, budgets,
@@ -27,6 +27,7 @@ import agi_master  # noqa: E402
 import agi_migrate  # noqa: E402
 import agi_passport  # noqa: E402
 import agi_policy  # noqa: E402
+import agi_release  # noqa: E402
 import agi_runtime  # noqa: E402
 import agi_seats  # noqa: E402
 import agi_tunnel  # noqa: E402
@@ -331,6 +332,32 @@ def run(sandbox, include_stability=True):
     else:
         ck("C-beta22", "stability gate skipped (nested stability run)", True, "skipped")
 
+    # beta.10: issuance audit trail + dual-signed release artifacts
+    audit = agi_passport.list_audit(root)
+    events = audit.get("events") or []
+    ck("C-beta23", "issuance audit trail: append-only events with actor + sha",
+       audit.get("ok") and len(events) >= 1
+       and all(e.get("event") == "passport_issued" and e.get("actor") and e.get("passport_sha256") for e in events),
+       len(events))
+
+    if agi_master.HAVE_CRYPTO:
+        rs = agi_release.sign_artifacts(root)
+        rv = agi_release.verify_artifacts(root)
+        first = (rs.get("artifacts") or [{}])[0].get("artifact")
+        rv_bad = {"ok": False}
+        if first and (root / first).is_file():
+            f = root / first
+            original = f.read_bytes()
+            f.write_bytes(original + b"\ntamper\n")
+            rv_bad = agi_release.verify_artifacts(root)
+            f.write_bytes(original)
+        ck("C-beta24", "release artifacts dual-signed (Ed25519 + ML-DSA-65 when available), tamper rejected",
+           rs.get("ok") and rv.get("ok") and not rv_bad.get("ok")
+           and (not agi_master.HAVE_MLDSA or any("ml-dsa-65" in (a.get("algos") or []) for a in rv.get("artifacts", []))),
+           (rs.get("error"), rv.get("verdict")))
+    else:
+        ck("C-beta24", "release artifact signing skipped (cryptography absent)", True, "skipped")
+
     passed = sum(1 for x in checks if x["ok"])
     return {"schema": SCHEMA, "sandbox": str(root), "checks": checks,
             "passed": passed, "total": len(checks),
@@ -338,7 +365,7 @@ def run(sandbox, include_stability=True):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Beta conformance matrix (C-beta1..C-beta22)")
+    ap = argparse.ArgumentParser(description="Beta conformance matrix (C-beta1..C-beta24)")
     ap.add_argument("--root", required=True)
     ap.add_argument("--out", default="state/archive/evolution/beta-conformance-run.json")
     a = ap.parse_args(argv)
