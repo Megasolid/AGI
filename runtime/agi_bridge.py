@@ -48,7 +48,7 @@ SSE_UNBOUNDED = 0.0
 # scope required per tool; approve_intent is intentionally absent (local-only)
 TOOL_SCOPES = {"status": "read", "recall": "read", "poll_intent": "read", "evolve_propose": "read",
                "remember": "write", "boot": "write", "propose_intent": "write", "fetch": "write",
-               "snapshot": "write"}
+               "snapshot": "write", "seat_challenge": "read", "seat_login": "read"}
 TOOL_SPECS = [
     {"name": "status", "description": "runtime + sensorium status",
      "inputSchema": {"type": "object", "properties": {}}},
@@ -70,6 +70,12 @@ TOOL_SPECS = [
      "inputSchema": {"type": "object", "properties": {"note": {"type": "string"}}}},
     {"name": "evolve_propose", "description": "validate a reactive-DNA genome proposal (read-only)",
      "inputSchema": {"type": "object", "properties": {"genome": {"type": "object"}}}},
+    {"name": "seat_challenge", "description": "issue a device-key seat challenge (beta.7)",
+     "inputSchema": {"type": "object", "properties": {"member": {"type": "string"}}, "required": ["member"]}},
+    {"name": "seat_login", "description": "verify a seat signature over its challenge (beta.7)",
+     "inputSchema": {"type": "object", "properties": {"member": {"type": "string"}, "nonce": {"type": "string"},
+                                                       "proof": {"type": "string"}},
+                     "required": ["member", "nonce", "proof"]}},
     {"name": "approve_intent", "description": "DENIED remotely: Master approval is local-only",
      "inputSchema": {"type": "object", "properties": {"id": {"type": "string"}}}},
 ]
@@ -182,7 +188,15 @@ class Bridge:
             need = TOOL_SCOPES[name]
             if need not in scopes:
                 return err(-32001, "token lacks %r scope for tool %r" % (need, name)), None
-            res = self.rt.handle(name, args)
+            if name in ("seat_challenge", "seat_login"):
+                import agi_seats
+                s = agi_seats.Seats(self.root)
+                if name == "seat_challenge":
+                    res = s.challenge(args.get("member"))
+                else:
+                    res = s.login(args.get("member"), args.get("nonce"), args.get("proof"))
+            else:
+                res = self.rt.handle(name, args)
             if name in ("remember", "propose_intent", "snapshot", "fetch") and res.get("ok"):
                 iid = res.get("id") or (res.get("queued") or {}).get("id")
                 self.publish("tool_call", {"tool": name, "intent_id": iid, "status": res.get("status") or "queued"})

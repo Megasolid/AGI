@@ -13,6 +13,7 @@ import argparse
 import hashlib
 import json
 import pathlib
+import shutil
 import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -80,14 +81,53 @@ def run(source, target, apply=False, limit=None):
             "note": "imports only into the target index; source tree never written"}
 
 
+def _file_sha(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def snapshot_db(target, dest=None):
+    tgt = pathlib.Path(target).resolve()
+    db = tgt / "state" / "agi.db"
+    if not db.is_file():
+        return {"ok": False, "error": "target state/agi.db missing"}
+    dest = pathlib.Path(dest) if dest else tgt / "state" / ("agi.db.snapshot-" + agi_runtime._now().replace(":", ""))
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(db, dest)
+    return {"ok": True, "schema": SCHEMA, "snapshot": str(dest), "sha256": _file_sha(dest),
+            "size": dest.stat().st_size, "note": "restore with --restore-db after a migration experiment"}
+
+
+def restore_db(target, snapshot):
+    tgt = pathlib.Path(target).resolve()
+    snap = pathlib.Path(snapshot).resolve()
+    db = tgt / "state" / "agi.db"
+    if not snap.is_file():
+        return {"ok": False, "error": "snapshot missing"}
+    before = _file_sha(db) if db.is_file() else None
+    shutil.copyfile(snap, db)
+    return {"ok": True, "schema": SCHEMA, "restored_from": str(snap), "sha256": _file_sha(db),
+            "before_sha256": before, "rollback": "verified"}
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Normalize gen3.5 memory into a beta index (dry-run default)")
     ap.add_argument("--source", required=True)
     ap.add_argument("--target", required=True)
     ap.add_argument("--apply", action="store_true")
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--snapshot-db", metavar="DEST", nargs="?", const="", default=None)
+    ap.add_argument("--restore-db", metavar="SNAPSHOT", default=None)
     a = ap.parse_args(argv)
-    r = run(a.source, a.target, a.apply, a.limit)
+    if a.restore_db:
+        r = restore_db(a.target, a.restore_db)
+    elif a.snapshot_db is not None:
+        r = snapshot_db(a.target, a.snapshot_db or None)
+    else:
+        r = run(a.source, a.target, a.apply, a.limit)
     print(json.dumps(r, indent=1))
     return 0 if r.get("ok") else 1
 

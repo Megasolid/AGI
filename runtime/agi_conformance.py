@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""agi_conformance - beta conformance matrix for AGI Entelechy (C-beta1..C-beta13).
+"""agi_conformance - beta conformance matrix for AGI Entelechy (C-beta1..C-beta17).
 
 Runs against an isolated sandbox copy (never live state) and returns a per-check verdict. This is the beta
 analogue of the gen3 C1-C6 matrix: it proves the DNA contract, runtime intents, recall, sensorium, budgets,
@@ -22,6 +22,7 @@ import urllib.request
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import agi_bridge  # noqa: E402
+import agi_master  # noqa: E402
 import agi_migrate  # noqa: E402
 import agi_runtime  # noqa: E402
 import agi_seats  # noqa: E402
@@ -108,7 +109,7 @@ def run(sandbox):
     finally:
         srv.shutdown()
     ck("C-beta7", "bridge: MCP initialize/tools, approval local-only, write scope enforced, loopback",
-       code == 200 and init.get("result", {}).get("protocolVersion") and len(tools) == 10
+       code == 200 and init.get("result", {}).get("protocolVersion") and len(tools) >= 12
        and appr_remote.get("code") == -32003 and scope_err.get("code") == -32001 and loopback,
        {"tools": len(tools), "approval": appr_remote.get("code"), "scope": scope_err.get("code")})
 
@@ -143,16 +144,19 @@ def run(sandbox):
        isinstance(tchk.get("any_available"), bool) and len(tchk.get("security") or []) >= 3
        and "never" in (tplan.get("note") or "").lower(), tchk.get("verdict"))
 
-    # beta.6: device-key seat ceremony + unbounded event window
+    # beta.6/beta.7: device-key seat ceremony (ed25519 or hmac) + unbounded event window
     ss = agi_seats.Seats(root)
     en = ss.enroll("conf-seat")
     ch = ss.challenge("conf-seat")
-    proof = agi_seats.Seats.proof(en.get("device_key"), "conf-seat", ch.get("nonce"))
+    proof = (agi_seats.Seats.sign_with_key(en.get("device_key"), "conf-seat", ch.get("nonce"))
+             if en.get("mode") == "ed25519"
+             else agi_seats.Seats.hmac_proof(en.get("device_key"), "conf-seat", ch.get("nonce")))
     login = ss.login("conf-seat", ch.get("nonce"), proof)
     replay = ss.login("conf-seat", ch.get("nonce"), proof)
     seat_status = ss.status()
     ck("C-beta12", "seat ceremony: enroll, challenge-response, replay blocked, no key material in status",
-       en.get("ok") and login.get("ok") and not replay.get("ok") and seat_status.get("active") == 1
+       en.get("ok") and login.get("ok") and not replay.get("ok")
+       and any(x.get("member") == "conf-seat" and x.get("status") == "active" for x in seat_status.get("seats", []))
        and "key_secret" not in json.dumps(seat_status), (login.get("status"), replay.get("error")))
     sse_bridge = agi_bridge.Bridge(root)
     sse_tok = sse_bridge.init_token(("read",))["token"]
@@ -170,6 +174,70 @@ def run(sandbox):
        code_sse == 200 and sse_elapsed < 5.0 and agi_bridge.SSE_UNBOUNDED == 0.0
        and agi_bridge.SSE_DEFAULT_WINDOW > 0, (code_sse, round(sse_elapsed, 2)))
 
+    # beta.7: ed25519 public-key seats, Master ceremony, remote seat tools, rollback proof
+    by = agi_seats.Seats(root)
+    en2 = by.enroll("conf-ed25519")
+    ch2 = by.challenge("conf-ed25519")
+    proof2 = (agi_seats.Seats.sign_with_key(en2.get("device_key"), "conf-ed25519", ch2.get("nonce"))
+              if en2.get("mode") == "ed25519" else agi_seats.Seats.hmac_proof(en2.get("device_key"), "conf-ed25519", ch2.get("nonce")))
+    login2 = by.login("conf-ed25519", ch2.get("nonce"), proof2)
+    st2 = by.status()
+    seat2 = [x for x in st2.get("seats", []) if x.get("member") == "conf-ed25519"]
+    ck("C-beta14", "seats: ed25519 public-key mode (or hmac fallback), replay blocked",
+       en2.get("ok") and login2.get("ok") and (seat2 and seat2[0].get("mode") in ("ed25519", "hmac"))
+       and not by.login("conf-ed25519", ch2.get("nonce"), proof2).get("ok"), (en2.get("mode"), login2.get("status")))
+
+    if agi_master.HAVE_CRYPTO:
+        mc = agi_master.ceremony(root)
+        ident = agi_master.identity(root)
+        mfile = root / "state" / "master-test.txt"
+        mfile.write_text("master ceremony test", encoding="utf-8")
+        ms = agi_master.sign_file(root, mfile)
+        mv = agi_master.verify_file(root, mfile, ms.get("sig_file"))
+        mfile.write_text("tampered", encoding="utf-8")
+        mt = agi_master.verify_file(root, mfile, ms.get("sig_file"))
+        ck("C-beta15", "Master Ed25519 ceremony: sign/verify, tamper rejected",
+           (mc.get("ok") or ident.get("ok")) and ms.get("ok") and mv.get("ok") and not mt.get("ok"),
+           (mc.get("ok"), ms.get("ok"), mv.get("ok"), mt.get("ok")))
+    else:
+        ck("C-beta15", "Master Ed25519 ceremony skipped (cryptography absent)", True, "skipped")
+
+    rb = agi_bridge.Bridge(root)
+    rb_tok = rb.init_token(("read", "write"))["token"]
+    rb_srv = agi_bridge.ThreadingHTTPServer(("127.0.0.1", 0), agi_bridge.make_handler(rb))
+    threading.Thread(target=rb_srv.serve_forever, daemon=True).start()
+    rb_base = "http://127.0.0.1:%d" % rb_srv.server_address[1]
+    try:
+        _, _, lr = _http("POST", rb_base + "/mcp", rb_tok, {"jsonrpc": "2.0", "id": 1, "method": "tools/list"})
+        rtools = json.loads(lr).get("result", {}).get("tools", [])
+        _, _, cr = _http("POST", rb_base + "/mcp", rb_tok,
+                         {"jsonrpc": "2.0", "id": 2, "method": "tools/call",
+                          "params": {"name": "seat_challenge", "arguments": {"member": "conf-ed25519"}}})
+        rchal = json.loads(((json.loads(cr).get("result") or {}).get("content") or [{}])[0].get("text", "{}"))
+        rproof = (agi_seats.Seats.sign_with_key(en2.get("device_key"), "conf-ed25519", rchal.get("nonce"))
+                  if en2.get("mode") == "ed25519" else agi_seats.Seats.hmac_proof(en2.get("device_key"), "conf-ed25519", rchal.get("nonce")))
+        _, _, lr2 = _http("POST", rb_base + "/mcp", rb_tok,
+                          {"jsonrpc": "2.0", "id": 3, "method": "tools/call",
+                           "params": {"name": "seat_login", "arguments": {"member": "conf-ed25519",
+                                                                          "nonce": rchal.get("nonce"), "proof": rproof}}})
+        rlogin = json.loads(((json.loads(lr2).get("result") or {}).get("content") or [{}])[0].get("text", "{}"))
+    finally:
+        rb_srv.shutdown()
+    ck("C-beta16", "remote seat tools over MCP (challenge + signed login)",
+       {t["name"] for t in rtools} >= {"seat_challenge", "seat_login"} and rchal.get("ok") and rlogin.get("ok"),
+       (len(rtools), rlogin.get("error")))
+
+    snap = agi_migrate.snapshot_db(root)
+    with tempfile.TemporaryDirectory() as td:
+        src2 = pathlib.Path(td) / "src"
+        (src2 / "memory").mkdir(parents=True)
+        (src2 / "memory" / "MEMORY.md").write_text("rollback\tline\n", encoding="utf-8")
+        agi_migrate.run(src2, root, apply=True, limit=1)
+    restored = agi_migrate.restore_db(root, snap.get("snapshot"))
+    ck("C-beta17", "migration rollback proof: snapshot -> apply -> restore sha matches",
+       snap.get("ok") and restored.get("ok") and restored.get("sha256") == snap.get("sha256"),
+       (snap.get("sha256"), restored.get("sha256")))
+
     passed = sum(1 for x in checks if x["ok"])
     return {"schema": SCHEMA, "sandbox": str(root), "checks": checks,
             "passed": passed, "total": len(checks),
@@ -177,7 +245,7 @@ def run(sandbox):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Beta conformance matrix (C-beta1..C-beta13)")
+    ap = argparse.ArgumentParser(description="Beta conformance matrix (C-beta1..C-beta17)")
     ap.add_argument("--root", required=True)
     ap.add_argument("--out", default="state/archive/evolution/beta-conformance-run.json")
     a = ap.parse_args(argv)
