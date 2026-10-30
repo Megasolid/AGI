@@ -2,6 +2,12 @@
 
 The beta line (v4.0.0-beta.1 .. beta.10) is promoted to stable **AGI Entelechy v4.0.0**.
 
+**Migration status (honest):** this is the single stable release. The live install's memory/knowledge/docs corpus is
+indexed into the Entelechy runtime (1,954 items, vector leg, refreshed by `tools/entelechy_sync.py`) behind a
+freshness-aware gate; the live identity, family, mana and trust-log layers remain on the gen3.5 ancestor until
+migration phase 2. Both layers are verified by the 13-check boot gate, and the pre-migration backup is intact.
+
+
 - Signed DNA v4 (I1-I9, 14 reactive rules), gen_id `ENTL-GGAACTATAAGT-TTGCAGTAAGTC-CCCAAAACATAT-TAGATAGAGAAT`.
 - Thin MCP-shaped runtime (10 verbs); intents with execute-once Master approval; FTS5 + hash-vector RRF recall.
 - MCP bridge: JSON, SSE, event stream with Last-Event-ID replay; loopback-only with scoped bearer tokens.

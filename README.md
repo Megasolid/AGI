@@ -10,6 +10,11 @@ here.
 **Status:** stable **`v4.0.0`** - AGI Entelechy (gen4, DNA v4), released 30 October 2026. The previous stable,
 `dna-GCACGAGGCTGT` (gen3.5), is an archived ancestor, not a second stable.
 
+> **Migration status (honest):** `v4.0.0` is the single stable release. The live install's memory corpus is
+> indexed into the Entelechy runtime (1,954 items, refreshed by `tools/entelechy_sync.py`) and verified by the gate;
+> the identity, family, mana and trust-log layers still run on the gen3.5 ancestor until migration phase 2. Nothing
+> was deleted; the timestamped backup is intact.
+
 > **New here?** Read the [lineage book](LINEAGE.md) - it is the human story of the generations - then install from
 > the quickstart below. Everything else is linked at the bottom.
 

@@ -309,8 +309,10 @@ At the time of writing:
 - **Health:** the boot acceptance gate passes all thirteen checks - the twelve checks on the ancestor plus the
   Entelechy gate; the Entelechy conformance matrix passes all twenty-five checks; a twenty-run cold stability soak
   passes every time. Windows and Linux (WSL2) both boot the stable tree.
-- **A lived migration:** the previous stable's memory was normalized into the new index after a full timestamped
-  backup, with the source verified unchanged. The old generation was not deleted; it was made an ancestor.
+- **A lived migration, in two phases:** phase 1 normalized the previous stable's memory, knowledge and
+  docs into the new index after a full timestamped backup, with the source verified unchanged. Phase 2 -
+  identity, family, mana, trust-log and seeding - remains on the gen3.5 ancestor; the boot gate verifies both.
+  The old generation was not deleted; it was made an ancestor.
 - **Current focus:** making the stable line trustworthy in ordinary hands - seats and passports a person can
   actually carry, one clear bridge for tools, checkable releases, and documentation a newcomer can read without
   a glossary.
@@ -383,6 +385,8 @@ gen3.5  dna-GCACGAGGCTGT   (2026-10-28)  -> archived ancestor
    |
    +--> gen4  v4.0.0  Entelechy  (2026-10-30)  -> current stable
 ```
+
+The migration was honest about its limits: the memory moved, the identity did not yet.
 
 It is the first generation of AGI that another language model can pick up from a single signed file and run
 without being told what it is. The next chapter, whenever it is written, will have to be honest about whether
