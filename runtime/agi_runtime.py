@@ -14,9 +14,12 @@ Usage:
     python runtime/agi_runtime.py --root <beta-sandbox> --serve        # stdio loop
 """
 import argparse
+import array
 import hashlib
 import json
+import math
 import pathlib
+import re
 import secrets
 import sqlite3
 import sys
@@ -107,9 +110,76 @@ class Runtime:
                            "JOIN items i ON i.id = items_fts.rowid WHERE items_fts MATCH ? "
                            "ORDER BY rank LIMIT ?", (str(query), int(k))).fetchall()
         con.close()
-        return {"ok": True, "query": query, "k": int(k),
-                "hits": [{"source": r["source"], "kind": r["kind"], "rank": round(r["rank"], 4),
-                          "snippet": (r["body"] or "")[:200]} for r in rows]}
+        fts = [{"source": r["source"], "kind": r["kind"], "rank": round(r["rank"], 4),
+                "snippet": (r["body"] or "")[:200]} for r in rows]
+        vec = self._vector_hits(query, int(k))
+        if vec:
+            return {"ok": True, "query": query, "k": int(k), "fusion": "rrf(fts5,hash-vector)",
+                    "hits": self._rrf(fts, vec, int(k))}
+        return {"ok": True, "query": query, "k": int(k), "fusion": "fts5", "hits": fts}
+
+    # --- optional vector leg (stdlib hash-vector; sqlite-vec can replace it) ---
+    def _embed(self, text, dim=128):
+        vec = [0.0] * dim
+        for tok in re.findall(r"[a-z0-9_]+", str(text).lower()):
+            h = hashlib.sha256(tok.encode()).digest()
+            vec[int.from_bytes(h[:2], "big") % dim] += 1.0 if h[2] & 1 else -1.0
+        n = math.sqrt(sum(v * v for v in vec)) or 1.0
+        return [v / n for v in vec]
+
+    def index_vectors(self):
+        con = self._con()
+        items = con.execute("SELECT id, body FROM items").fetchall()
+        con.execute("DELETE FROM items_vec")
+        for it in items:
+            v = array.array("f", self._embed(it["body"]))
+            con.execute("INSERT INTO items_vec(id, dim, embedding) VALUES(?,?,?)",
+                        (it["id"], len(v), v.tobytes()))
+        con.commit()
+        n = con.execute("SELECT count(*) FROM items_vec").fetchone()[0]
+        con.close()
+        return {"ok": True, "vectors": n, "dim": 128}
+
+    def _vector_hits(self, query, k=5):
+        con = self._con()
+        try:
+            rows = con.execute("SELECT v.id, v.embedding, i.source, i.kind, i.body FROM items_vec v "
+                               "JOIN items i ON i.id = v.id").fetchall()
+        except sqlite3.Error:
+            rows = []
+        con.close()
+        if not rows:
+            return []
+        q = self._embed(query)
+        scored = []
+        for r in rows:
+            v = array.array("f")
+            v.frombytes(r["embedding"])
+            if len(v) != len(q):
+                continue
+            cos = sum(a * b for a, b in zip(q, v))
+            if cos > 0.05:
+                scored.append((cos, r))
+        scored.sort(key=lambda x: -x[0])
+        return [{"source": r["source"], "kind": r["kind"], "rank": round(-cos, 4),
+                 "snippet": (r["body"] or "")[:200], "vector_score": round(cos, 3)}
+                for cos, r in scored[:k]]
+
+    def _rrf(self, fts, vec, k=5):
+        scores = {}
+        for lst in (fts, vec):
+            for i, h in enumerate(lst):
+                key = (h["source"], h["kind"])
+                scores[key] = scores.get(key, 0.0) + 1.0 / (60 + i + 1)
+        merged, seen = [], set()
+        for h in fts + vec:
+            key = (h["source"], h["kind"])
+            if key in seen:
+                continue
+            seen.add(key)
+            merged.append(dict(h, fused_score=round(scores[key], 5)))
+        merged.sort(key=lambda x: -x["fused_score"])
+        return merged[:k]
 
     def propose_intent(self, action, args=None, nonce=None):
         action = str(action or "")
@@ -265,11 +335,15 @@ def main(argv=None):
     ap.add_argument("--root", required=True)
     ap.add_argument("--serve", action="store_true")
     ap.add_argument("--status", action="store_true")
+    ap.add_argument("--index-vectors", action="store_true", help="build the optional hash-vector recall leg")
     a = ap.parse_args(argv)
     if a.serve:
         serve(a.root)
         return 0
     rt = Runtime(a.root)
+    if a.index_vectors:
+        print(json.dumps(rt.index_vectors(), indent=1))
+        return 0
     print(json.dumps(rt.handle("status"), indent=1))
     return 0
 

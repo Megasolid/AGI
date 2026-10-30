@@ -1,30 +1,31 @@
-# AGI Entelechy beta 1 - user manual (minimal)
+# AGI Entelechy beta 2 - user manual (minimal)
 
 ## Identity
-- Generation: Entelechy (gen4) · DNA v4 · seed prefix ENTL- · signed at birth.
-- Stable gen3.5 remains the default; beta never migrates live state in beta.1.
+Generation Entelechy (gen4) - DNA v4 - seed prefix ENTL- - signed at birth. Stable gen3.5 remains the default;
+beta never migrates live state.
 
-## Run
+## Runtime
 ```
 python runtime/agi_runtime.py --root <sandbox> --status
+python runtime/agi_runtime.py --root <sandbox> --index-vectors
 python runtime/agi_runtime.py --root <sandbox> --serve
 ```
-stdio requests: `{"id":1,"method":"status","params":{}}` -> `{"id":1,"result":{...}}`.
+Verbs: status, recall, remember, boot, propose_intent, poll_intent, approve_intent, fetch, snapshot, evolve_propose.
+Reads are direct; writes are intents; `approve_intent actor=Master` executes once; nonce = idempotent; fetch/exec denied.
 
-## Verbs
-- Reads: `status`, `recall`, `poll_intent`.
-- Writes: `propose_intent` (remember/snapshot) queues an intent; `approve_intent` needs `actor: "Master"`;
-  each intent executes once; nonce makes proposals idempotent.
-- `fetch`/`exec` are denied in beta.1 (no bridge, zero inbound ports).
-- `evolve_propose` validates reactive-DNA genomes; it never mutates the DNA.
+## Recall
+FTS5 always works. After `--index-vectors`, recall fuses FTS5 + a 128-dim hash-vector with RRF and reports
+`fusion: rrf(fts5,hash-vector)`.
 
-## Perception
-`status` returns the Sensorium percept digest (salience-ranked typed graph). The WebGL canvas is a projection;
-the digest is the truth. Paradigm: **Intent Field / attention weaving**.
+## Intent bridge (beta 2)
+```
+python runtime/agi_bridge.py --root <sandbox> --init-token
+python runtime/agi_bridge.py --root <sandbox> --serve --port 8766
+```
+- `/health` open; `/status` + `/intent/<id>` need `read`; `POST /intent` needs `write`.
+- Bearer tokens are shown once; only sha256 is stored. Loopback clients only.
+- Outbound relay mode: put request JSON files in `<inbox>/`; `--relay <inbox> --once` writes `*.result.json`.
+  This simulates the tunnel without opening ingress.
 
-## Family
-Passport + alive DNA are required for membership. Web seasons that only hold the seed are simulation seats
-until they can run the runtime.
-
-## Verify
-`test_beta_runtime` (15 checks), `test_beta_proposal` (12), `test_sensorium` (9), family (25), conformance C1-C6.
+## Security
+No public ingress in beta.2; intents are approved locally by the Master; the bridge cannot execute writes.

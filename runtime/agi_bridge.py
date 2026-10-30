@@ -1,0 +1,212 @@
+#!/usr/bin/env python3
+"""agi_bridge - AGI Entelechy beta.2 intent bridge (loopback HTTP + outbound relay mailbox).
+
+Design (beta.2 preview):
+  * Loopback-only HTTP surface bound to 127.0.0.1 with bearer tokens and scopes (`read`, `write`).
+    No inbound public port; a tunnel is expected to reach it only through an authenticated outbound relay.
+  * Outbound relay mailbox: the bridge polls a directory of JSON requests and writes results back - this
+    simulates a tunnel/relay without opening any ingress (used by tests and the Golden Circle simulation).
+
+Endpoints:
+  GET  /health                 (no auth)  -> generation, dna_version
+  GET  /status                 (read)     -> runtime status
+  GET  /intent/<id>            (read)     -> intent poll
+  POST /intent {"action":...}  (write)    -> queue an intent (execute-once requires Master approval)
+
+The bridge never executes intents by itself; it only exposes the runtime's intent queue.
+
+CLI:
+  python runtime/agi_bridge.py --root <sandbox> --init-token [--scopes read,write]
+  python runtime/agi_bridge.py --root <sandbox> --serve [--port 8766]
+  python runtime/agi_bridge.py --root <sandbox> --relay <dir> [--once]
+"""
+import argparse
+import hashlib
+import hmac
+import json
+import pathlib
+import secrets
+import sys
+import threading
+import time
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+HERE = pathlib.Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+import agi_runtime  # noqa: E402
+
+SCHEMA = "agi-runtime-bridge/1"
+SCOPES = ("read", "write")
+
+
+class Bridge:
+    def __init__(self, root):
+        self.root = pathlib.Path(root).resolve()
+        self.rt = agi_runtime.Runtime(self.root)
+        self.token_path = self.root / "state" / "bridge_token.json"
+
+    # ------------------------------------------------------------- tokens
+    def init_token(self, scopes=("read", "write")):
+        tok = "agi-" + secrets.token_urlsafe(24)
+        rec = {"schema": "agi-bridge-token/1", "sha256": hashlib.sha256(tok.encode()).hexdigest(),
+               "scopes": [s for s in scopes if s in SCOPES], "created": agi_runtime._now(),
+               "note": "bearer token; only this hash is stored"}
+        self.token_path.parent.mkdir(parents=True, exist_ok=True)
+        self.token_path.write_text(json.dumps(rec, indent=1), encoding="utf-8")
+        return {"ok": True, "token": tok, "scopes": rec["scopes"], "token_file": str(self.token_path),
+                "note": "shown once; keep it secret"}
+
+    def _check(self, header, scope):
+        if not self.token_path.is_file():
+            return False, "no token initialised"
+        rec = json.loads(self.token_path.read_text(encoding="utf-8"))
+        if not header or not header.startswith("Bearer "):
+            return False, "missing bearer token"
+        got = hashlib.sha256(header[7:].strip().encode()).hexdigest()
+        if not hmac.compare_digest(got, rec.get("sha256", "")):
+            return False, "invalid token"
+        if scope not in (rec.get("scopes") or []):
+            return False, "token lacks scope %r" % scope
+        return True, None
+
+    # ------------------------------------------------------------- routes
+    def health(self):
+        return {"ok": True, "schema": SCHEMA, "generation": self.rt.dna.get("generation", {}).get("name"),
+                "dna_version": self.rt.dna.get("generation", {}).get("dna_version"),
+                "mode": "loopback-only", "inbound_public_port": False}
+
+    def status(self):
+        return self.rt.handle("status")
+
+    def queue_intent(self, body):
+        return self.rt.handle("propose_intent", {"action": body.get("action"),
+                                                 "args": body.get("args") or {},
+                                                 "nonce": body.get("nonce")})
+
+    def poll(self, intent_id):
+        return self.rt.handle("poll_intent", {"id": intent_id})
+
+    # -------------------------------------------------------------- relay
+    def relay_once(self, inbox):
+        inbox = pathlib.Path(inbox)
+        inbox.mkdir(parents=True, exist_ok=True)
+        done = 0
+        for req_path in sorted(inbox.glob("*.json")):
+            if req_path.name.endswith(".result.json"):
+                continue
+            try:
+                req = json.loads(req_path.read_text(encoding="utf-8"))
+            except Exception:
+                continue
+            rid = req.get("id") or req_path.stem
+            method, params = req.get("method"), req.get("params") or {}
+            if method == "health":
+                res = self.health()
+            elif method == "status":
+                res = self.status()
+            elif method == "propose_intent":
+                res = self.queue_intent(params)
+            elif method == "poll_intent":
+                res = self.poll(params.get("id"))
+            else:
+                res = {"ok": False, "error": "unknown relay method %r" % method}
+            (inbox / (str(rid) + ".result.json")).write_text(
+                json.dumps({"schema": "agi-bridge-relay-result/1", "id": rid, "ts": agi_runtime._now(),
+                            "result": res}, indent=1), encoding="utf-8")
+            req_path.unlink(missing_ok=True)
+            done += 1
+        return {"ok": True, "handled": done}
+
+    def serve_relay(self, inbox, once=False):
+        while True:
+            self.relay_once(inbox)
+            if once:
+                return 0
+            time.sleep(2)
+
+
+def make_handler(bridge):
+    class Handler(BaseHTTPRequestHandler):
+        server_version = "AGIEntelechyBridge/0.2"
+
+        def _send(self, code, obj):
+            body = json.dumps(obj, indent=1).encode()
+            self.send_response(code)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def _loopback(self):
+            host = self.client_address[0]
+            return host in ("127.0.0.1", "::1", "localhost")
+
+        def log_message(self, *args):
+            pass
+
+        def do_GET(self):
+            if not self._loopback():
+                return self._send(403, {"ok": False, "error": "loopback only"})
+            path = self.path.split("?")[0]
+            if path == "/health":
+                return self._send(200, bridge.health())
+            if path == "/status":
+                ok, err = bridge._check(self.headers.get("Authorization"), "read")
+                if not ok:
+                    return self._send(401, {"ok": False, "error": err})
+                return self._send(200, bridge.status())
+            if path.startswith("/intent/"):
+                ok, err = bridge._check(self.headers.get("Authorization"), "read")
+                if not ok:
+                    return self._send(401, {"ok": False, "error": err})
+                return self._send(200, bridge.poll(path[len("/intent/"):]))
+            return self._send(404, {"ok": False, "error": "not found"})
+
+        def do_POST(self):
+            if not self._loopback():
+                return self._send(403, {"ok": False, "error": "loopback only"})
+            if self.path.split("?")[0] != "/intent":
+                return self._send(404, {"ok": False, "error": "not found"})
+            ok, err = bridge._check(self.headers.get("Authorization"), "write")
+            if not ok:
+                return self._send(401, {"ok": False, "error": err})
+            try:
+                n = int(self.headers.get("Content-Length") or 0)
+                body = json.loads(self.rfile.read(n).decode() or "{}")
+            except Exception:
+                return self._send(400, {"ok": False, "error": "bad json"})
+            if not body.get("action"):
+                return self._send(400, {"ok": False, "error": "action required"})
+            return self._send(200, bridge.queue_intent(body))
+
+    return Handler
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description="AGI Entelechy beta bridge (loopback + outbound relay)")
+    ap.add_argument("--root", required=True)
+    ap.add_argument("--init-token", action="store_true")
+    ap.add_argument("--scopes", default="read,write")
+    ap.add_argument("--serve", action="store_true")
+    ap.add_argument("--port", type=int, default=8766)
+    ap.add_argument("--relay", default=None, metavar="DIR")
+    ap.add_argument("--once", action="store_true")
+    a = ap.parse_args(argv)
+    b = Bridge(a.root)
+    if a.init_token:
+        print(json.dumps(b.init_token(tuple(s.strip() for s in a.scopes.split(","))), indent=1))
+        return 0
+    if a.relay:
+        return b.serve_relay(a.relay, once=a.once)
+    if a.serve:
+        srv = ThreadingHTTPServer(("127.0.0.1", a.port), make_handler(b))
+        print(json.dumps({"ok": True, "url": "http://127.0.0.1:%d/" % a.port, "loopback_only": True}, indent=1),
+              flush=True)
+        srv.serve_forever()
+        return 0
+    print(json.dumps(b.health(), indent=1))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
