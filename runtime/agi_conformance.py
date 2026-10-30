@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""agi_conformance - beta conformance matrix for AGI Entelechy (C-beta1..C-beta11).
+"""agi_conformance - beta conformance matrix for AGI Entelechy (C-beta1..C-beta13).
 
 Runs against an isolated sandbox copy (never live state) and returns a per-check verdict. This is the beta
 analogue of the gen3 C1-C6 matrix: it proves the DNA contract, runtime intents, recall, sensorium, budgets,
@@ -24,6 +24,7 @@ sys.path.insert(0, str(HERE))
 import agi_bridge  # noqa: E402
 import agi_migrate  # noqa: E402
 import agi_runtime  # noqa: E402
+import agi_seats  # noqa: E402
 import agi_tunnel  # noqa: E402
 
 SCHEMA = "agi-entelechy/conformance-matrix/1"
@@ -142,6 +143,33 @@ def run(sandbox):
        isinstance(tchk.get("any_available"), bool) and len(tchk.get("security") or []) >= 3
        and "never" in (tplan.get("note") or "").lower(), tchk.get("verdict"))
 
+    # beta.6: device-key seat ceremony + unbounded event window
+    ss = agi_seats.Seats(root)
+    en = ss.enroll("conf-seat")
+    ch = ss.challenge("conf-seat")
+    proof = agi_seats.Seats.proof(en.get("device_key"), "conf-seat", ch.get("nonce"))
+    login = ss.login("conf-seat", ch.get("nonce"), proof)
+    replay = ss.login("conf-seat", ch.get("nonce"), proof)
+    seat_status = ss.status()
+    ck("C-beta12", "seat ceremony: enroll, challenge-response, replay blocked, no key material in status",
+       en.get("ok") and login.get("ok") and not replay.get("ok") and seat_status.get("active") == 1
+       and "key_secret" not in json.dumps(seat_status), (login.get("status"), replay.get("error")))
+    sse_bridge = agi_bridge.Bridge(root)
+    sse_tok = sse_bridge.init_token(("read",))["token"]
+    sse_srv = agi_bridge.ThreadingHTTPServer(("127.0.0.1", 0), agi_bridge.make_handler(sse_bridge))
+    threading.Thread(target=sse_srv.serve_forever, daemon=True).start()
+    sse_base = "http://127.0.0.1:%d" % sse_srv.server_address[1]
+    try:
+        t0 = time.time()
+        code_sse, _, body_sse = _http("GET", sse_base + "/mcp?window=1", sse_tok, None,
+                                      {"Accept": "text/event-stream"}, timeout=8)
+        sse_elapsed = time.time() - t0
+    finally:
+        sse_srv.shutdown()
+    ck("C-beta13", "unbounded window support: ?window=1 closes, window=0 is unbounded",
+       code_sse == 200 and sse_elapsed < 5.0 and agi_bridge.SSE_UNBOUNDED == 0.0
+       and agi_bridge.SSE_DEFAULT_WINDOW > 0, (code_sse, round(sse_elapsed, 2)))
+
     passed = sum(1 for x in checks if x["ok"])
     return {"schema": SCHEMA, "sandbox": str(root), "checks": checks,
             "passed": passed, "total": len(checks),
@@ -149,7 +177,7 @@ def run(sandbox):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Beta conformance matrix (C-beta1..C-beta8)")
+    ap = argparse.ArgumentParser(description="Beta conformance matrix (C-beta1..C-beta13)")
     ap.add_argument("--root", required=True)
     ap.add_argument("--out", default="state/archive/evolution/beta-conformance-run.json")
     a = ap.parse_args(argv)

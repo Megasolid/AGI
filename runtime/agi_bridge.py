@@ -42,6 +42,8 @@ import agi_runtime  # noqa: E402
 SCHEMA = "agi-runtime-bridge/1"
 SCOPES = ("read", "write")
 MCP_PROTOCOL = "2025-06-18"
+SSE_DEFAULT_WINDOW = 6.0   # bounded by default; ?window=0 means unbounded (client closes)
+SSE_UNBOUNDED = 0.0
 
 # scope required per tool; approve_intent is intentionally absent (local-only)
 TOOL_SCOPES = {"status": "read", "recall": "read", "poll_intent": "read", "evolve_propose": "read",
@@ -284,8 +286,9 @@ def make_handler(bridge):
                 self.wfile.write(("event: %s\ndata: %s\n\n" % (name, data)).encode())
                 self.wfile.flush()
 
-        def _send_sse_stream(self, sid, last_event_id):
-            """Long-lived MCP event stream: replay from Last-Event-ID, then live events + heartbeats."""
+        def _send_sse_stream(self, sid, last_event_id, window=None):
+            """MCP event stream: replay from Last-Event-ID, then live events + heartbeats.
+            window is a bounded number of seconds (default SSE_DEFAULT_WINDOW); 0 = unbounded until the client closes."""
             self.send_response(200)
             self.send_header("Content-Type", "text/event-stream; charset=utf-8")
             self.send_header("Cache-Control", "no-store")
@@ -293,14 +296,15 @@ def make_handler(bridge):
             self.send_header("Mcp-Session-Id", sid)
             self.end_headers()
             last = int(last_event_id or 0)
+            win = SSE_DEFAULT_WINDOW if window is None else float(window)
             try:
                 for rec in bridge.replay(last):
                     self.wfile.write(("id: %d\nevent: %s\ndata: %s\n\n"
                                       % (rec["seq"], rec["type"], json.dumps(rec, sort_keys=True))).encode())
                     last = rec["seq"]
-                deadline = time.time() + 6.0
+                deadline = (time.time() + win) if win and win > 0 else None
                 next_ping = time.time() + 2.0
-                while time.time() < deadline:
+                while deadline is None or time.time() < deadline:
                     fresh = bridge.replay(last)
                     for rec in fresh:
                         self.wfile.write(("id: %d\nevent: %s\ndata: %s\n\n"
@@ -345,7 +349,16 @@ def make_handler(bridge):
                 last = self.headers.get("Last-Event-ID") or 0
                 if not str(last).isdigit():
                     last = 0
-                return self._send_sse_stream(sid, int(last))
+                window = None
+                if "?" in self.path:
+                    from urllib.parse import parse_qs, urlparse
+                    q = parse_qs(urlparse(self.path).query)
+                    if "window" in q:
+                        try:
+                            window = float(q["window"][0])
+                        except Exception:
+                            window = None
+                return self._send_sse_stream(sid, int(last), window)
             return self._send(404, {"ok": False, "error": "not found"})
 
         def do_POST(self):

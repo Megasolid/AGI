@@ -1,25 +1,23 @@
-# AGI Entelechy beta 5 - user manual (minimal)
+# AGI Entelechy beta 6 - user manual (minimal)
 
 ## Runtime & recall
-`agi_runtime.py --status`, `--index-vectors`, `--serve`. 10 verbs; writes are intents; Master approval local-only;
-recall fuses FTS5 + vector (RRF) and reports `recall_backend`.
+`agi_runtime.py --status`, `--index-vectors`, `--serve`. Intents queue; only the local Master approves;
+fetch/exec denied; recall fuses FTS5 + vector and reports `recall_backend`.
 
-## Bridge & event stream
-`agi_bridge.py --init-token`, `--serve --port 8766`, `--relay <dir>`.
-- MCP: POST /mcp JSON or SSE; GET /mcp with `Accept: text/event-stream` replays events after `Last-Event-ID`,
-  then streams live events + heartbeats for a bounded 6 s window.
-- Intents queue; remote approval refused. Loopback only; tokens scoped read/write.
-
-## Migration (normalization step)
+## Seats (beta 6)
 ```
-python runtime/agi_migrate.py --source <live AGI> --target <sandbox>            # dry-run
-python runtime/agi_migrate.py --source <live AGI> --target <sandbox> --apply    # target index only
+python runtime/agi_seats.py --root <sandbox> --enroll NAME   # key shown ONCE
+python runtime/agi_seats.py --root <sandbox> --challenge NAME
+python runtime/agi_seats.py --root <sandbox> --login NAME NONCE PROOF
+python runtime/agi_seats.py --root <sandbox> --status
 ```
-Source is verified unchanged; same-tree targets are refused.
+Proof = HMAC-SHA256(device_key, "agi-seat-login/v1:<member>:<nonce>"). Nonces are single-use and expire; status
+shows hashes/status only. Seat secrets live in the local sandbox DB (local-only beta ceremony; Ed25519 is beta.7).
 
-## Tunnel (plan only)
-`agi_tunnel.py --check` / `--plan --port 8766 [--hostname]` prints reviewed commands + security policy
-(access policy, token, rotate after exposure). It never starts a tunnel.
+## Bridge / event stream
+Default stream is bounded 6 s; `GET /mcp?window=0` keeps it open until the client closes. Events replay from
+`Last-Event-ID`. Remote approval is refused by design.
 
-## Conformance
-`agi_conformance.py --root <sandbox>` -> C-beta1..C-beta11; PASS required before adoption experiments.
+## Migration / tunnel / conformance
+`agi_migrate.py` dry-run default (source read-only), `agi_tunnel.py --plan` (never starts), 
+`agi_conformance.py --root <sandbox>` -> C-beta1..C-beta13 PASS 14/14.
