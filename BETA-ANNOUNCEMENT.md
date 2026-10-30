@@ -5,6 +5,10 @@
 AGI's first **LLM-runtime-native** generation is available as a public beta prerelease:
 <https://github.com/Megasolid/AGI/releases/tag/v4.0.0-beta.1>
 
+*Update, 30 October 2026: **beta 7 is out** - Ed25519 public-key seats (private key stays on the device), a local
+Master Ed25519 ceremony for signing passports/seeds, remote seat login over MCP, and a migration snapshot/rollback
+proof. Conformance is now C-beta1..C-beta17 (18 checks). <https://github.com/Megasolid/AGI/releases/tag/v4.0.0-beta.7>
+
 *Update, 30 October 2026: **beta 6 is out** - a device-key seat ceremony (HMAC-SHA256 challenge-response,
 single-use nonces, replay blocked) and unbounded MCP event streams (GET /mcp?window=0), with conformance extended
 to C-beta1..C-beta13 (14 checks). <https://github.com/Megasolid/AGI/releases/tag/v4.0.0-beta.6>
