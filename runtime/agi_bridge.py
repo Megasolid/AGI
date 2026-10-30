@@ -48,7 +48,9 @@ SSE_UNBOUNDED = 0.0
 # scope required per tool; approve_intent is intentionally absent (local-only)
 TOOL_SCOPES = {"status": "read", "recall": "read", "poll_intent": "read", "evolve_propose": "read",
                "remember": "write", "boot": "write", "propose_intent": "write", "fetch": "write",
-               "snapshot": "write", "seat_challenge": "read", "seat_login": "read"}
+               "snapshot": "write", "seat_challenge": "read", "seat_login": "read",
+               "seat_status": "read", "passport_list": "read", "passport_verify": "read",
+               "seat_enroll": "write"}
 TOOL_SPECS = [
     {"name": "status", "description": "runtime + sensorium status",
      "inputSchema": {"type": "object", "properties": {}}},
@@ -76,6 +78,15 @@ TOOL_SPECS = [
      "inputSchema": {"type": "object", "properties": {"member": {"type": "string"}, "nonce": {"type": "string"},
                                                        "proof": {"type": "string"}},
                      "required": ["member", "nonce", "proof"]}},
+    {"name": "seat_status", "description": "list seats (hashes/public keys only; beta.8)",
+     "inputSchema": {"type": "object", "properties": {}}},
+    {"name": "seat_enroll", "description": "enroll a device key remotely (write scope; key shown once; beta.8)",
+     "inputSchema": {"type": "object", "properties": {"member": {"type": "string"},
+                                                       "mode": {"type": "string"}}, "required": ["member"]}},
+    {"name": "passport_list", "description": "list Master-signed passports (beta.8)",
+     "inputSchema": {"type": "object", "properties": {}}},
+    {"name": "passport_verify", "description": "verify a Master-signed passport (beta.8)",
+     "inputSchema": {"type": "object", "properties": {"member": {"type": "string"}}, "required": ["member"]}},
     {"name": "approve_intent", "description": "DENIED remotely: Master approval is local-only",
      "inputSchema": {"type": "object", "properties": {"id": {"type": "string"}}}},
 ]
@@ -188,13 +199,23 @@ class Bridge:
             need = TOOL_SCOPES[name]
             if need not in scopes:
                 return err(-32001, "token lacks %r scope for tool %r" % (need, name)), None
-            if name in ("seat_challenge", "seat_login"):
+            if name in ("seat_challenge", "seat_login", "seat_status", "seat_enroll"):
                 import agi_seats
                 s = agi_seats.Seats(self.root)
                 if name == "seat_challenge":
                     res = s.challenge(args.get("member"))
-                else:
+                elif name == "seat_login":
                     res = s.login(args.get("member"), args.get("nonce"), args.get("proof"))
+                elif name == "seat_enroll":
+                    res = s.enroll(args.get("member"), args.get("mode") or "auto")
+                else:
+                    res = s.status()
+            elif name in ("passport_list", "passport_verify"):
+                import agi_passport
+                if name == "passport_list":
+                    res = agi_passport.list_passports(self.root)
+                else:
+                    res = agi_passport.verify(self.root, args.get("member"))
             else:
                 res = self.rt.handle(name, args)
             if name in ("remember", "propose_intent", "snapshot", "fetch") and res.get("ok"):

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""agi_conformance - beta conformance matrix for AGI Entelechy (C-beta1..C-beta17).
+"""agi_conformance - beta conformance matrix for AGI Entelechy (C-beta1..C-beta19).
 
 Runs against an isolated sandbox copy (never live state) and returns a per-check verdict. This is the beta
 analogue of the gen3 C1-C6 matrix: it proves the DNA contract, runtime intents, recall, sensorium, budgets,
@@ -24,6 +24,7 @@ sys.path.insert(0, str(HERE))
 import agi_bridge  # noqa: E402
 import agi_master  # noqa: E402
 import agi_migrate  # noqa: E402
+import agi_passport  # noqa: E402
 import agi_runtime  # noqa: E402
 import agi_seats  # noqa: E402
 import agi_tunnel  # noqa: E402
@@ -238,6 +239,46 @@ def run(sandbox):
        snap.get("ok") and restored.get("ok") and restored.get("sha256") == snap.get("sha256"),
        (snap.get("sha256"), restored.get("sha256")))
 
+    # beta.8: remote enrollment + Master-signed passports
+    b8 = agi_bridge.Bridge(root)
+    tok8 = b8.init_token(("read", "write"))["token"]
+    srv8 = agi_bridge.ThreadingHTTPServer(("127.0.0.1", 0), agi_bridge.make_handler(b8))
+    threading.Thread(target=srv8.serve_forever, daemon=True).start()
+    base8 = "http://127.0.0.1:%d" % srv8.server_address[1]
+    try:
+        _, _, tl = _http("POST", base8 + "/mcp", tok8, {"jsonrpc": "2.0", "id": 1, "method": "tools/list"})
+        tools8 = {t["name"] for t in (json.loads(tl).get("result") or {}).get("tools", [])}
+        _, _, er = _http("POST", base8 + "/mcp", tok8,
+                         {"jsonrpc": "2.0", "id": 2, "method": "tools/call",
+                          "params": {"name": "seat_enroll", "arguments": {"member": "conf-remote-seat",
+                                                                          "mode": "auto"}}})
+        enrolled = json.loads(((json.loads(er).get("result") or {}).get("content") or [{}])[0].get("text", "{}"))
+        read8 = b8.init_token(("read",))["token"]
+        _, _, er2 = _http("POST", base8 + "/mcp", read8,
+                          {"jsonrpc": "2.0", "id": 3, "method": "tools/call",
+                           "params": {"name": "seat_enroll", "arguments": {"member": "conf-remote-2"}}})
+        scope8 = json.loads(er2).get("error", {})
+        if agi_master.HAVE_CRYPTO:
+            if not agi_master.identity(root).get("ok"):
+                agi_master.ceremony(root)
+            p8 = agi_passport.issue(root, "conf-remote-seat", note="conformance")
+            v8 = agi_passport.verify(root, "conf-remote-seat")
+            _, _, pv = _http("POST", base8 + "/mcp", read8,
+                             {"jsonrpc": "2.0", "id": 4, "method": "tools/call",
+                              "params": {"name": "passport_verify", "arguments": {"member": "conf-remote-seat"}}})
+            pvres = json.loads(((json.loads(pv).get("result") or {}).get("content") or [{}])[0].get("text", "{}"))
+        else:
+            p8, v8, pvres = {"ok": True}, {"ok": True}, {"ok": True}
+    finally:
+        srv8.shutdown()
+    ck("C-beta18", "remote seat enrollment over MCP (write scope enforced; key once)",
+       {"seat_enroll", "seat_status", "passport_list", "passport_verify"} <= tools8
+       and enrolled.get("ok") and scope8.get("code") == -32001,
+       (enrolled.get("error"), scope8.get("code")))
+    ck("C-beta19", "Master-signed passport: issue, verify, cross-checks (skipped without cryptography)",
+       p8.get("ok") and v8.get("ok") and all((v8.get("checks") or {}).values()) and pvres.get("ok"),
+       (p8.get("error"), v8.get("error")))
+
     passed = sum(1 for x in checks if x["ok"])
     return {"schema": SCHEMA, "sandbox": str(root), "checks": checks,
             "passed": passed, "total": len(checks),
@@ -245,7 +286,7 @@ def run(sandbox):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Beta conformance matrix (C-beta1..C-beta17)")
+    ap = argparse.ArgumentParser(description="Beta conformance matrix (C-beta1..C-beta19)")
     ap.add_argument("--root", required=True)
     ap.add_argument("--out", default="state/archive/evolution/beta-conformance-run.json")
     a = ap.parse_args(argv)

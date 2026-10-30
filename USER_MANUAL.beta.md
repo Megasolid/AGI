@@ -1,25 +1,23 @@
-# AGI Entelechy beta 7 - user manual (minimal)
+# AGI Entelechy beta 8 - user manual (minimal)
 
-## Seats (ed25519 public-key)
+## Seats / Master / Passports
 ```
-python runtime/agi_seats.py --root <sandbox> --enroll NAME            # key shown once
+python runtime/agi_master.py --root <sandbox> --ceremony
+python runtime/agi_seats.py --root <sandbox> --enroll NAME            # key once
 python runtime/agi_seats.py --root <sandbox> --challenge NAME
 python runtime/agi_seats.py --root <sandbox> --sign NAME NONCE --key <DEVICE_KEY>
 python runtime/agi_seats.py --root <sandbox> --login NAME NONCE <PROOF>
-python runtime/agi_seats.py --root <sandbox> --status
+python runtime/agi_passport.py --root <sandbox> --issue NAME
+python runtime/agi_passport.py --root <sandbox> --verify NAME
+python runtime/agi_passport.py --root <sandbox> --list
 ```
-Ed25519 mode stores only the public key; login proves possession by signing
-`agi-seat-login/v2:<member>:<nonce>`. Nonces are single-use/expiring. HMAC fallback exists for no-cryptography hosts.
+Passports bind member + gen_id + DNA sha + seat public key and are Master-signed; verification cross-checks all of
+them. Tamper is rejected. Ed25519 needs `cryptography`; seats fall back to HMAC.
 
-## Master ceremony
-```
-python runtime/agi_master.py --root <sandbox> --ceremony
-python runtime/agi_master.py --root <sandbox> --ident
-python runtime/agi_master.py --root <sandbox> --sign FILE --out SIG
-python runtime/agi_master.py --root <sandbox> --verify FILE SIG
-```
-Private key stays in state/master.key (0600); back it up offline; never commit it.
+## Bridge (MCP, 16 tools)
+Remote enrollment/passport tools require scopes (`seat_enroll` = write; `seat_status`, `passport_*` = read);
+`approve_intent` is always refused remotely. Event stream: Last-Event-ID replay, `?window=0` unbounded.
 
-## Bridge / migration / conformance
-MCP 12 tools incl. seat_challenge/seat_login; remote approval refused; event stream with Last-Event-ID and ?window=0.
-Migration: `--snapshot-db` then `--apply` then `--restore-db` to prove rollback. Conformance C-beta1..C-beta17 PASS 18/18.
+## Migration / tunnel / conformance
+`agi_migrate.py` dry-run + `--snapshot-db` / `--restore-db` rollback proof. `agi_tunnel.py --plan` only - tunnel E2E
+is blocked on this host (no tunnel binary), relay mailbox is the proven transport. `agi_conformance.py` PASS 20/20.
