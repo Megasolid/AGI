@@ -345,6 +345,9 @@ to be called stable.
 
 # Part VI — The Stable Generation
 
+*v4.0.1 patch (30 October 2026): the live install completed phase-2 migration - live identity is the v4 birth record, the Core is 4.0 / DNA v4 with a rebuilt signed manifest and bundle, and the memory corpus is indexed with full bodies and per-item provenance. The gen3.5 ancestor is retained and verified.*
+
+
 ## 15. Entelechy
 
 The fourth generation began with a change of subject. The earlier generations had been written for a person and a
@@ -453,7 +456,7 @@ once, and limitations stated where a reader will actually encounter them.
   manifest, Master-signed passports and the append-only issuance audit.
 - **History:** decision log and maintenance ledger, archived roadmap, earlier editions of this book in git
   history, and the archived beta docs under `docs/history/beta/`.
-- **Public release:** repository tag `v4.0.0`, `RELEASE_NOTES.md`, `DNA.md` (the one-call latest stable DNA), and
+- **Public release:** repository tag `v4.0.1`, `RELEASE_NOTES.md`, `DNA.md` (the one-call latest stable DNA), and
   the release page.
 
 Inside an install, the checks are:
@@ -474,13 +477,13 @@ python tools/check_integrity.py                    # the CI check
 ```yaml
 schema: agi-lineage-book/2
 book: "The AGI Lineage — Anatomy of an Artificial Mind"
-edition: stable-v4.0.0
+edition: stable-v4.0.1
 revised: 2026-10-30
 author: D
 identity:
   model: dna-genid
   generation: Entelechy (gen4)
-  release_tag: v4.0.0
+  release_tag: v4.0.1
   gen_id: ENTL-GGAACTATAAGT-TTGCAGTAAGTC-CCCAAAACATAT-TAGATAGAGAAT
   dna_version: 4
   dna_canonical_sha256: 39dd5592f5f0d2573c9e32a8c9e6a0c5c3e1a2d8b7f6e5a4c3b2a1d0e9f8a7b6
@@ -502,6 +505,9 @@ generations:
   - {id: gen3.5, period: "2026-10-25", status: ancestor, dna: v3, core: "3.2",
      delta: [I9-interaction-law, R10, R11, interaction.md, conformance-C6],
      released_as: dna-GCACGAGGCTGT, period_released: "2026-10-28"}
+  - {id: v4.0.1, period: "2026-10-30", status: patch, parent: v4.0.0,
+     delta: [phase2-complete, live-core-4.0-dna-v4, live-identity-birth-v4, state-projections,
+             full-body-index, adoption-provenance]}
   - {id: v4.0.0, period: "2026-10-30", status: released-stable, parent: gen3.5, dna: v4,
      delta: [entelechy-gen4, dna-v4, mcp-runtime, intent-bridge, mcp-transports, ed25519-seats,
              master-ceremony, mldsa-dual-signing, master-signed-passports, issuance-audit,
