@@ -140,7 +140,7 @@ What to tell the user, in plain words:
 ## 7. Report back (one line, then details if asked)
 
 ```
-AGI v4.0.0 installed at <path> — sha256 42154791… verified — cold boot READY, gate 12/12.
+AGI v4.0.0 installed at <path> — sha256 0412d6bb… verified — cold boot READY, gate 13/13.
 ```
 
 Include: version, install path, the verified sha256, whether a venv was created, and the command to start
