@@ -5,6 +5,10 @@
 AGI's first **LLM-runtime-native** generation is available as a public beta prerelease:
 <https://github.com/Megasolid/AGI/releases/tag/v4.0.0-beta.1>
 
+*Update, 30 October 2026: **beta 3 is out** - MCP Streamable HTTP transport on the loopback bridge
+(JSON-RPC initialize/tools/list/tools/call; remote approval refused by design), and the beta now boots cold on
+**Linux** (WSL2 kernel 6.18, Python 3.10) as well as Windows. <https://github.com/Megasolid/AGI/releases/tag/v4.0.0-beta.3>
+
 *Update, 30 October 2026:* **beta 2 is out** - loopback intent bridge with bearer tokens + scopes, an
 outbound relay mailbox (no inbound public port), and a fused FTS5 + hash-vector recall leg.
 <https://github.com/Megasolid/AGI/releases/tag/v4.0.0-beta.2>
