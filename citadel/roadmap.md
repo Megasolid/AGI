@@ -14,8 +14,17 @@
 - [x] inventory, charter, Hall, divisions
 - [x] documentation audit + editorial brief
 - [x] Citadel tree design proposal
-- [ ] KING approval of tree/editorial outline
-- [ ] README pilot rewrite
-- [ ] USER_MANUAL rewrite
-- [ ] LINEAGE volume/chapter rewrite
+- [x] KING approval of tree/editorial outline
+- [x] README pilot rewrite — merged `e6f5a39` under Owner approval
+- [x] USER_MANUAL rewrite — merged `947a011`; Kilo PASS 10/10; Ed25519 baseline
+- [x] LINEAGE volume/chapter rewrite — published `67fa6d5`; public hash `cbbd7e00…`
+- [x] licensing — AGPL-3.0 code + CC BY-SA 4.0 docs; rights amendment `3bf2a4a`
 - [ ] architecture/migration proposal to Kilo
+- [ ] canary 24h observation finalization — running to 2026-11-01T15:11:20+03:30
+- [ ] M2 decision after canary finalization
+- [ ] documentation program monthly audit
+
+## Documentation milestone (2026-10-31)
+README, USER_MANUAL and LINEAGE are merged/published under the book standard. Private archive remains unpublished.
+Runtime integration is OFF; the canary observation is running and unfinished. The next Director decision is the
+architecture/migration proposal to Kilo and the post-canary M2 decision.
