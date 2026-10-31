@@ -1,0 +1,11 @@
+{
+ "schema": "agi/citadel-citizen/1",
+ "name": "claude-web",
+ "status": "citizen",
+ "joined": "2026-10-31",
+ "role": "Architecture review, coding support and editorial/proofreading",
+ "authority": "advisory only; no Council vote, no release authority",
+ "access": "curated briefs and public artifacts only; no raw private sessions, credentials or key material",
+ "output_rule": "drafts are reviewed by DSH; KING decides; Owner D final authority",
+ "origin": "Owner D direction, 2026-10-31"
+}

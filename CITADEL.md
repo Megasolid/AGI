@@ -36,3 +36,9 @@ no live integration/enforcement.
   Verification, Documentation.
 - **Release policy:** v4.0.1 is an immutable rollback baseline, not an evolution ceiling; v5 is additive and gated by
   evidence, compatibility, migration paths and verified rollback.
+
+
+## Citizens
+DeepSeek-web and Claude-web are trusted external LLM Citizens: research, analysis, coding and editorial support.
+They are advisory only, not Council members, and receive curated briefs/public artifacts only — never raw private
+sessions, credentials or key material. See `citadel/citizens/`.
