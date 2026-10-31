@@ -178,9 +178,11 @@ AGI is not a product line; each generation is a living edition that was built, i
 
 ## Trust and honest limits
 
-- Conformance **25/25 PASS**, stability soak **20 cold runs PASS**, boot gate **13/13**, Windows and Linux cold boots
-  verified for the stable release.
-- A short-lived, explicitly approved tunnel E2E passed and was then closed; no ingress stays open.
+- **Project-reported evidence:** conformance **25/25**, stability soak **20 cold runs**, boot gate **13/13**, and
+  Windows/Linux cold boots for the stable release. These are recorded in the release/manifest and have not been
+  independently audited.
+- A short-lived, explicitly approved tunnel E2E passed and was then closed; no ingress stays open. This is
+  project-reported and not independently audited.
 - Known limits: the Master key is a local file (no HSM); a named tunnel with an access policy is not shipped; there is
   no independent third-party audit; no license has been chosen yet; v5 federation/evolution are not released.
 - No consciousness claim. No claim that the proposed v5 architecture is implemented.
@@ -199,6 +201,9 @@ Read [SECURITY.md](SECURITY.md) and [NOTICE.md](NOTICE.md) before trusting the s
 - [llms.txt](llms.txt) — compact machine summary
 - [docs/history](docs/history) — archived beta and earlier-phase material (not current)
 - [SECURITY.md](SECURITY.md), [NOTICE.md](NOTICE.md), [POLICY.md](POLICY.md)
+
+All documentation links above are repository files at the same commit. Verify them on GitHub before relying on them
+for a release decision.
 
 ## For language models (one call)
 
