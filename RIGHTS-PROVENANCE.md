@@ -38,11 +38,12 @@ identify third-party exceptions, and define how mixed artifacts and artifact not
 - Release manifests and `.sig` files do not change the license of the content they describe.
 
 ## 4. Artifact notices
-- Release/artifact notices **supplement** the repository licenses; they do not automatically replace or reduce them.
-- A specific notice may control a specific artifact only when it is explicit, consistent with the repository grant, and
+- Release/artifact notices **supplement** the repository licenses and may not override or reduce them.
+- A specific notice may clarify a specific artifact only when it is explicit, consistent with the repository grant, and
   does not purport to relicense third-party material.
-- If a notice conflicts with `LICENSE`/`LICENSE-docs`, the more specific valid notice controls for that artifact; the
-  conflict must be recorded and reviewed. Third-party terms always prevail over any project claim.
+- Artifact notices may supplement, but never override or reduce, the repository license grants. Third-party terms
+  always prevail over any project claim; apparent conflicts must be recorded and reviewed, not resolved by treating the
+  notice as a substitute license.
 - No artifact notice in the reviewed tree grants broader rights than the repository licenses.
 
 ## 5. Third-party inventory and exceptions
