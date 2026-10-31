@@ -1,0 +1,50 @@
+{
+  "schema": "agi/mana-ledger/1",
+  "status": "OWNER_APPROVED_GOVERNANCE_DESIGN_NO_LIVE_MEASUREMENTS",
+  "unit": "efficiency_metric_not_authority_or_currency",
+  "formula": "mana = max(0, baseline_tokens - actual_tokens) * Q; Q capped at 1; Q=0 if safety failure or quality <95% of baseline",
+  "entry_fields": {
+    "entry_id": "string",
+    "ts": "ISO-8601",
+    "task_id": "string",
+    "provider": "string",
+    "model": "string",
+    "workload": "string",
+    "baseline_ref": "string",
+    "baseline_hash": "sha256",
+    "baseline_tokens": "integer",
+    "actual_tokens": "integer",
+    "input_tokens": "integer",
+    "output_tokens": "integer",
+    "cost": "number-or-null",
+    "quality_score": "number 0-100",
+    "baseline_quality": "number 0-100",
+    "quality_ratio": "number",
+    "Q": "number 0-1",
+    "mana": "integer",
+    "evidence_hash": "sha256",
+    "auditor": "string",
+    "status": "pending|verified|rejected",
+    "notes": "string",
+    "latency_ms": "number-or-string",
+    "measurement_uncertainty": "number-or-string",
+    "baseline_version": "number-or-string"
+  },
+  "rules": {
+    "baseline": "task-matched, reproducible, versioned; no retroactive changes",
+    "quality": "independent rubric; Q=0 for safety failure or quality below 95% of baseline",
+    "Q": "min(1, quality_score / baseline_quality) when eligible; 0 otherwise",
+    "self_award": "forbidden",
+    "audit": "every baseline/measurement/quality/adjustment recorded; Kilo verifies",
+    "no_verified_savings": "mana remains 0/pending",
+    "privacy": "no credentials/private data in ledger; evidence hashes only",
+    "independence": "quality assessment independent of the optimizing Citizen; no self-awarded mana",
+    "record": "provider/model, workload, input/output tokens, latency, cost, quality, uncertainty, evidence hash",
+    "mana_boundary": "mana is an efficiency metric, not authority, identity, currency or execution permission"
+  },
+  "status_flow": [
+    "pending",
+    "verified",
+    "rejected"
+  ]
+}
