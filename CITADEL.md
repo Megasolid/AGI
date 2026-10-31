@@ -23,5 +23,5 @@ No federation, family/public sharing, identity mutation, autonomous evolution, s
 Signed task envelopes authorize scope, not code execution. Human approval is required before consequential actions.
 v4.0.1 release artifacts remain immutable.
 
-Current task: `citadel/tasks/cit-kilo-m2-20261031-13.json` — corrected deterministic verification for M2 staging
-(v12 verifier input hash fixed); no live integration/enforcement.
+Current task: `citadel/tasks/cit-kilo-m2-20261031-14.json` — deterministic verification with corrected verifier input
+hash; no live integration/enforcement.
