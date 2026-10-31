@@ -34,3 +34,6 @@ backup operations station when DSH is unavailable or out of tokens.
 
 ### Token independence
 Kilo uses its local Desktop/server and station model; it does not depend on DSH token balance for approved backup work.
+
+
+Operational runbook: [kilo-backup-runbook.md](../stations/kilo-backup-runbook.md). Handoff template: [backup-handoff-template.json](../stations/backup-handoff-template.json).

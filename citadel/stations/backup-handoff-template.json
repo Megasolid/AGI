@@ -1,0 +1,22 @@
+{
+  "schema": "agi/kilo-backup-task/1",
+  "task_id": "EXACT-ID",
+  "issued_by": "Owner D | KING",
+  "station": "kilo",
+  "objective": "one-sentence objective",
+  "scope": ["allowed action 1", "allowed action 2"],
+  "constraints": [
+    "read-only unless explicitly stated",
+    "no identity/federation/runtime/release authority",
+    "no credentials or private archive",
+    "no live external API calls unless explicitly approved",
+    "work only in C:\\Users\\D\\AGI\\AGI-KILO"
+  ],
+  "inputs": [{"path": "path", "sha256": "sha256:..."}],
+  "forbidden_actions": ["merge", "publish", "direct main push", "secret access", "runtime integration"],
+  "acceptance": ["evidence report", "hashes of inspected/created files", "unresolved gaps listed"],
+  "evidence_output": "C:\\Users\\D\\AGI\\AGI-KILO\\state\\kilo\\",
+  "deadline": "ISO-8601 or none",
+  "stop_conditions": ["privacy issue", "credential exposure", "scope violation", "service failure"],
+  "owner_final_authority": true
+}
