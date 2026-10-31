@@ -1,0 +1,10 @@
+{"ts": "2026-10-31T14:53:01+0330", "host": "host-dsh-local", "path": "recall", "would_allow": 1967, "would_deny": 0, "reasons": {}}
+{"ts": "2026-10-31T14:53:01+0330", "host": "host-dsh-local", "path": "search", "would_allow": 1967, "would_deny": 0, "reasons": {}}
+{"ts": "2026-10-31T14:53:01+0330", "host": "host-dsh-local", "path": "export_metadata", "would_allow": 1967, "would_deny": 0, "reasons": {}}
+{"ts": "2026-10-31T14:53:01+0330", "host": "host-dsh-local", "path": "snapshot", "would_allow": 1967, "would_deny": 0, "reasons": {}}
+{"ts": "2026-10-31T14:53:01+0330", "host": "host-dsh-local", "path": "adapter", "would_allow": 1967, "would_deny": 0, "reasons": {}}
+{"ts": "2026-10-31T14:53:01+0330", "host": "host-external", "path": "recall", "would_allow": 0, "would_deny": 1967, "reasons": {"missing-grant": 1967}}
+{"ts": "2026-10-31T14:53:01+0330", "host": "host-external", "path": "search", "would_allow": 0, "would_deny": 1967, "reasons": {"missing-grant": 1967}}
+{"ts": "2026-10-31T14:53:01+0330", "host": "host-external", "path": "export_metadata", "would_allow": 0, "would_deny": 1967, "reasons": {"missing-grant": 1967}}
+{"ts": "2026-10-31T14:53:01+0330", "host": "host-external", "path": "snapshot", "would_allow": 0, "would_deny": 1967, "reasons": {"missing-grant": 1967}}
+{"ts": "2026-10-31T14:53:01+0330", "host": "host-external", "path": "adapter", "would_allow": 0, "would_deny": 1967, "reasons": {"missing-grant": 1967}}

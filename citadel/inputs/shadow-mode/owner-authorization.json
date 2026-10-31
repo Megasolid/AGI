@@ -1,0 +1,19 @@
+{
+ "schema": "agi-v5/owner-authorization/1",
+ "ts": "2026-10-31T11:22:00+00:00",
+ "owner": "D",
+ "response": "ok.",
+ "scope": "shadow-mode execution exactly within frozen plan agi-v5-m2-host-auth-shadow-mode-plan-20261031.md and freeze agi-v5-m2-host-auth-shadow-freeze-20261031.json",
+ "constraints": [
+  "DSH local only",
+  "read-only policy evaluation/logging",
+  "no enforcement",
+  "no writes",
+  "AGI_M2_HOST_AUTH=off",
+  "abort authority Owner D + Director GPT; 15-minute rollback decision",
+  "no federation/identity mutation/autonomous evolution"
+ ],
+ "freeze_sha256": "58fe013fac90cf6b9383bf1e230791fa52eb4107e32c985242894a5ae151f8c0",
+ "plan_sha256": "6f95cfb54d443a6bfcbfebf4adb1da79753558c1efd1d16f82980631dfe4f716",
+ "status": "OWNER_APPROVED_PENDING_DIRECTOR_SAME_SCOPE"
+}
