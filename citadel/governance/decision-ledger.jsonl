@@ -3,3 +3,4 @@
 {"ts": "2026-10-31", "id": "CITADEL-0003", "decision": "v4.0.1 becomes immutable rollback baseline, not evolution ceiling; v5 additive", "authority": "KING GPT-web"}
 {"ts": "2026-10-31", "id": "CITADEL-0004", "decision": "Documentation program approved for editorial planning: README first, then USER_MANUAL, then LINEAGE as a book", "authority": "KING GPT-web"}
 {"ts": "2026-10-31", "id": "CITADEL-0005", "decision": "Citadel tree design proposed (non-destructive, additive) for KING review", "authority": "DSH under KING"}
+{"ts": "2026-10-31", "id": "CITADEL-0006", "decision": "README pilot PR #1 merged under Owner D explicit approval; KING stale HOLD cited superseded b339a4b; current 792d2b3 addressed all cited factual issues", "authority": "Owner D (final authority)"}
