@@ -57,3 +57,11 @@
   → read-only provider metrics proposal → bounded inner-loop proposal → integration proposal.
 - Kilo R5 review: PASS 9/9; research manifest SHA-256 `7415d627b3128d7c2eb7801d5a7c3b0e89946f6353d0c7ce9fb6a9c77e87b3a0`; no implementation/live APIs.
 - Window remains research-only; M2 canary untouched; M3-B..E unauthorized; runtime OFF.
+
+
+## R6 and final research-window close
+- R6 decision register D-01..D-10: unresolved decisions with options/trade-offs/evidence/recommended defaults/reviewers.
+- Kilo R6 review: PASS 6/6; no decision adopted; no implementation/live APIs.
+- R1–R6 blueprint frozen. Final research manifest SHA-256 `52557a8c7282e92bd5ecaa33c1eb378e34f163334d126cc8441de4f9096799fb`; freeze manifest SHA-256 `92d56bab1717116aa327a02364f3b1436d73477b88412b0c6d4670fead500368`.
+- Research window closed at completion; no extension. M2 canary untouched; M3-B..E unauthorized; runtime OFF.
+- Next: wait for full canary window/final evidence; M2 decision; then M3-B proposal only if approved.
