@@ -27,7 +27,7 @@ from datetime import datetime, timezone
 
 SCHEMA = "agi-runtime/1"
 VERBS = ("status", "recall", "remember", "boot", "propose_intent", "poll_intent", "approve_intent", "fetch",
-         "snapshot", "evolve_propose")
+         "snapshot", "evolve_propose", "export_metadata")
 WRITE_ACTIONS = ("remember", "snapshot", "boot_note")
 FORBIDDEN_ACTIONS = ("fetch", "exec", "shell")
 
@@ -228,14 +228,22 @@ class Runtime:
 
     def approve_intent(self, intent_id, actor="Master"):
         con = self._con()
+
+        def _deny(iid, reason):
+            aid = "dec-" + secrets.token_hex(6)
+            con.execute("INSERT INTO decisions(id,intent_id,actor,decision,note,ts) VALUES(?,?,?,?,?,?)",
+                        (aid, str(iid) if iid else None, str(actor), "denied", str(reason)[:500], _now()))
+            con.commit()
+            return {"ok": False, "error": reason, "denied": True, "reason": reason, "audit_id": aid}
+
         try:
             if str(actor) != "Master":
-                return {"ok": False, "error": "only Master may approve intents"}
+                return _deny(intent_id, "only Master may approve intents")
             row = con.execute("SELECT * FROM intents WHERE id=?", (str(intent_id),)).fetchone()
             if not row:
-                return {"ok": False, "error": "unknown intent"}
+                return _deny(intent_id, "unknown intent")
             if row["status"] != "pending":
-                return {"ok": False, "error": "intent already %s" % row["status"]}
+                return _deny(row["id"], "intent already %s" % row["status"])
             action, args = row["action"], json.loads(row["args_json"] or "{}")
             if action in FORBIDDEN_ACTIONS:
                 con.execute("UPDATE intents SET status='denied', decided=?, decision=? WHERE id=?",
@@ -248,7 +256,7 @@ class Runtime:
             if action == "remember":
                 body = str(args.get("text") or "").strip()
                 if not body:
-                    return {"ok": False, "error": "remember needs text"}
+                    return _deny(row["id"], "remember needs text")
                 kind = str(args.get("kind") or "memory")
                 source = str(args.get("source") or "runtime-intent:" + row["id"])
                 cur = con.execute("INSERT INTO items(kind,source,sha256,ts,trust,sensitivity,body) VALUES(?,?,?,?,?,?,?)",
@@ -258,10 +266,13 @@ class Runtime:
                 result = {"stored": True, "source": source, "sha256": _sha(body.encode())}
             elif action == "snapshot":
                 sid = "snap-" + secrets.token_hex(5)
-                digest = _sha(json.dumps({"ts": _now(), "note": args.get("note")}).encode())
+                raw_note = str(args.get("note") or "")
+                note_sha = _sha(raw_note.encode()) if raw_note else None
+                ts_now = _now()
+                digest = _sha(json.dumps({"ts": ts_now, "note_sha256": note_sha}).encode())
                 con.execute("INSERT INTO snapshots(id,ts,digest,note) VALUES(?,?,?,?)",
-                            (sid, _now(), digest, str(args.get("note") or "")))
-                result = {"snapshot": sid, "digest": digest}
+                            (sid, ts_now, digest, "[redacted]" if raw_note else ""))
+                result = {"snapshot": sid, "digest": digest, "note_redacted": True}
             else:
                 result = {"noted": True, "action": action}
             con.execute("UPDATE intents SET status='approved', decided=?, decision=?, result_json=? WHERE id=?",
@@ -270,6 +281,26 @@ class Runtime:
                         ("dec-" + secrets.token_hex(6), row["id"], "Master", "approved", action, _now()))
             con.commit()
             return {"ok": True, "intent": row["id"], "action": action, "executed": True, "result": result}
+        finally:
+            con.close()
+
+    def export_metadata(self, kind=None, limit=200):
+        """Metadata-only export: allowlisted fields, never bodies or private memory."""
+        allow = ("id", "kind", "source", "sha256", "ts", "trust", "sensitivity")
+        con = self._con()
+        try:
+            lim = max(1, min(int(limit or 200), 1000))
+            sql = "SELECT " + ", ".join(allow) + " FROM items"
+            args = []
+            if kind:
+                sql += " WHERE kind=?"
+                args.append(str(kind))
+            sql += " ORDER BY id LIMIT ?"
+            args.append(lim)
+            rows = con.execute(sql, args).fetchall()
+            items = [{k: row[k] for k in allow} for row in rows]
+            return {"ok": True, "schema": "agi-export-metadata/1", "mode": "metadata_only",
+                    "redacted": True, "private_bodies": False, "count": len(items), "items": items}
         finally:
             con.close()
 
@@ -327,6 +358,8 @@ class Runtime:
                 return self.snapshot(params.get("note", ""))
             if method == "evolve_propose":
                 return self.evolve_propose(params.get("genome"))
+            if method == "export_metadata":
+                return self.export_metadata(params.get("kind"), params.get("limit", 200))
             return {"ok": False, "error": "unknown method %r (known: %s)" % (method, ",".join(VERBS))}
         except Exception as e:
             return {"ok": False, "error": "%s: %s" % (type(e).__name__, e)}

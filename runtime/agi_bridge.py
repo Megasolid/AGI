@@ -10,7 +10,7 @@ Design (beta.3):
     ping). `approve_intent` is always denied remotely: approval is local-only (Master).
 
 Endpoints:
-  GET  /health                 (no auth)  -> generation, dna_version
+  GET  /health                 (no auth)  -> liveness only (identity/build metadata redacted)
   GET  /status                 (read)     -> runtime status
   GET  /intent/<id>            (read)     -> intent poll
   POST /intent {"action":...}  (write)    -> queue an intent (execute-once requires Master approval)
@@ -47,6 +47,7 @@ SSE_UNBOUNDED = 0.0
 
 # scope required per tool; approve_intent is intentionally absent (local-only)
 TOOL_SCOPES = {"status": "read", "recall": "read", "poll_intent": "read", "evolve_propose": "read",
+               "export_metadata": "read",
                "remember": "write", "boot": "write", "propose_intent": "write", "fetch": "write",
                "snapshot": "write", "seat_challenge": "read", "seat_login": "read",
                "seat_status": "read", "passport_list": "read", "passport_verify": "read",
@@ -90,6 +91,8 @@ TOOL_SPECS = [
     {"name": "passport_issue", "description": "issue a Master-signed passport - disabled by default policy (beta.9)",
      "inputSchema": {"type": "object", "properties": {"member": {"type": "string"}, "note": {"type": "string"}},
                      "required": ["member"]}},
+    {"name": "export_metadata", "description": "metadata-only export (allowlisted fields; no private bodies)",
+     "inputSchema": {"type": "object", "properties": {"kind": {"type": "string"}, "limit": {"type": "integer"}}}},
     {"name": "approve_intent", "description": "DENIED remotely: Master approval is local-only",
      "inputSchema": {"type": "object", "properties": {"id": {"type": "string"}}}},
 ]
@@ -238,9 +241,9 @@ class Bridge:
 
     # ------------------------------------------------------------- routes
     def health(self):
-        return {"ok": True, "schema": SCHEMA, "generation": self.rt.dna.get("generation", {}).get("name"),
-                "dna_version": self.rt.dna.get("generation", {}).get("dna_version"),
-                "mode": "loopback-only", "inbound_public_port": False}
+        # liveness only; generation/build identity is redacted from unauthenticated health
+        return {"ok": True, "schema": SCHEMA, "mode": "loopback-only",
+                "inbound_public_port": False, "identity_redacted": True}
 
     def status(self):
         return self.rt.handle("status")
