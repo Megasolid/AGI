@@ -28,3 +28,10 @@
 README, USER_MANUAL and LINEAGE are merged/published under the book standard. Private archive remains unpublished.
 Runtime integration is OFF; the canary observation is running and unfinished. The next Director decision is the
 architecture/migration proposal to Kilo and the post-canary M2 decision.
+
+
+## M2 / M3 status (2026-10-31)
+- M2: staged; canary running to 2026-11-01T15:11:20+03:30; closure gated on final evidence + Kilo + KING + Owner.
+- M3-A: charter approved for planning only; detailed work breakdown under KING review.
+- M3-B..E: not authorized; each requires separate proposal, Kilo review, KING review and Owner approval.
+- Runtime integration OFF; no live APIs/credentials.
