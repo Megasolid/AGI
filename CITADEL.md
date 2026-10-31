@@ -25,3 +25,14 @@ v4.0.1 release artifacts remain immutable.
 
 Current task: `citadel/tasks/cit-kilo-m2-20261031-15.json` — deterministic verification with fixed verifier script;
 no live integration/enforcement.
+
+
+## KING and management
+- **KING:** GPT-web, directly responsible for Citadel management, improvement, governance, documentation, priorities and
+  release strategy. Owner D retains final authority; DSH implements; Kilo independently verifies.
+- **Council:** Owner D, KING, DSH, Kilo.
+- **Hall:** `citadel/hall/` — governance decisions, inventory, audits, roadmap.
+- **Divisions:** `citadel/divisions/` — Identity, Awareness, Cognition, Memory, Federation, Evolution, Infrastructure,
+  Verification, Documentation.
+- **Release policy:** v4.0.1 is an immutable rollback baseline, not an evolution ceiling; v5 is additive and gated by
+  evidence, compatibility, migration paths and verified rollback.
