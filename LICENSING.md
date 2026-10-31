@@ -26,6 +26,6 @@ Chosen by Owner D on 2026-10-31. This is a licensing record, not legal advice.
   state the split; if inseparable, code portions are AGPL-3.0 and prose is CC BY-SA 4.0.
 - Diagrams/images: default CC BY-SA 4.0 unless a specific notice says otherwise; currently none tracked.
 - Datasets: require an explicit dataset license/notice; currently no public licensed datasets are tracked.
-- Release/artifact notices **supplement** these licenses and do not automatically override them; a specific valid notice
-  may control its artifact, third-party terms always prevail, and conflicts must be recorded.
+- Release/artifact notices **supplement** these licenses and may not override or reduce them; a specific notice may
+  clarify its artifact, third-party terms always prevail, and apparent conflicts must be recorded and reviewed.
 - External dependencies are not vendored or relicensed; each keeps its own terms.
