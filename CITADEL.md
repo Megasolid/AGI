@@ -23,5 +23,5 @@ No federation, family/public sharing, identity mutation, autonomous evolution, s
 Signed task envelopes authorize scope, not code execution. Human approval is required before consequential actions.
 v4.0.1 release artifacts remain immutable.
 
-Current task: `citadel/tasks/cit-kilo-m2-20261031-07.json` — independent review of shadow-mode evidence; no canary
-or enforcement authorization.
+Current task: `citadel/tasks/cit-kilo-m2-20261031-08.json` — independent review of the canary proposal (Stage 1
+recall-only, DSH local); no canary execution.

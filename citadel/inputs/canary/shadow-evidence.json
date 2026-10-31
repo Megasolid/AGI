@@ -1,0 +1,133 @@
+{
+ "schema": "agi-v5/shadow-run/1",
+ "ts": "2026-10-31T14:53:01+0330",
+ "mode": "shadow",
+ "enforcement": false,
+ "live_writes": false,
+ "flag": "off",
+ "hosts": [
+  "host-dsh-local",
+  "host-external"
+ ],
+ "paths": [
+  "recall",
+  "search",
+  "export_metadata",
+  "snapshot",
+  "adapter"
+ ],
+ "items": 1967,
+ "counts": {
+  "host-dsh-local": {
+   "recall": {
+    "would_allow": 1967,
+    "would_deny": 0,
+    "reasons": {}
+   },
+   "search": {
+    "would_allow": 1967,
+    "would_deny": 0,
+    "reasons": {}
+   },
+   "export_metadata": {
+    "would_allow": 1967,
+    "would_deny": 0,
+    "reasons": {}
+   },
+   "snapshot": {
+    "would_allow": 1967,
+    "would_deny": 0,
+    "reasons": {}
+   },
+   "adapter": {
+    "would_allow": 1967,
+    "would_deny": 0,
+    "reasons": {}
+   }
+  },
+  "host-external": {
+   "recall": {
+    "would_allow": 0,
+    "would_deny": 1967,
+    "reasons": {
+     "missing-grant": 1967
+    }
+   },
+   "search": {
+    "would_allow": 0,
+    "would_deny": 1967,
+    "reasons": {
+     "missing-grant": 1967
+    }
+   },
+   "export_metadata": {
+    "would_allow": 0,
+    "would_deny": 1967,
+    "reasons": {
+     "missing-grant": 1967
+    }
+   },
+   "snapshot": {
+    "would_allow": 0,
+    "would_deny": 1967,
+    "reasons": {
+     "missing-grant": 1967
+    }
+   },
+   "adapter": {
+    "would_allow": 0,
+    "would_deny": 1967,
+    "reasons": {
+     "missing-grant": 1967
+    }
+   }
+  }
+ },
+ "live_hashes_before": {
+  "state\\index\\agi.db": "a577ea638d95be01540ee82f032d031399b7829ca33af3419197f81638ba6b30",
+  "state\\entelechy\\runtime\\agi_runtime.py": "a8ce85e693bf81b32c3e83b94054a1943d9bcd99672f6902fb00038dba05ec85",
+  "state\\entelechy\\runtime\\agi_bridge.py": "9fc9fcdec1425fa9e145f3650e2a0afa080caa88b4608bbef07d3f273d54ecb6",
+  "state\\entelechy\\state\\agi.db": "f53d7b2c4cd991dd0746065b6af4c3b13f2462a0c2f3b6bd76562ef33cab7f17"
+ },
+ "live_hashes_after": {
+  "state\\index\\agi.db": "a577ea638d95be01540ee82f032d031399b7829ca33af3419197f81638ba6b30",
+  "state\\entelechy\\runtime\\agi_runtime.py": "a8ce85e693bf81b32c3e83b94054a1943d9bcd99672f6902fb00038dba05ec85",
+  "state\\entelechy\\runtime\\agi_bridge.py": "9fc9fcdec1425fa9e145f3650e2a0afa080caa88b4608bbef07d3f273d54ecb6",
+  "state\\entelechy\\state\\agi.db": "f53d7b2c4cd991dd0746065b6af4c3b13f2462a0c2f3b6bd76562ef33cab7f17"
+ },
+ "boot_gate": {
+  "rc": 0,
+  "tail": [
+   "boot gate: PASS in 2136 ms | manifest=True bundle=True selftest=True conformance_quick=True signature=True trust_log=True passport=True bundles=True activation=True public=True install=True identity=True entelechy=True"
+  ]
+ },
+ "m1": {
+  "rc": 0,
+  "tail": [
+   "}"
+  ]
+ },
+ "zero_leak_scan": {
+  "body_selected": false,
+  "log_bodies": false,
+  "clean": true
+ },
+ "authorizations": {
+  "owner": {
+   "path": "state\\agi5\\pilot\\owner-shadow-authorization-20261031.json",
+   "sha256": "1df5723a0b1712982cdc7451c41874f10e1ead478c9413a9f73b8e0ffd123183"
+  },
+  "director": {
+   "path": "state\\agi5\\pilot\\director-shadow-authorization-decision.json",
+   "sha256": "cc6cb0fa10a35a5fa685851a20ddab0a4d080022a60ddf7de8814e4b8ddd112d"
+  },
+  "plan": {
+   "sha256": "6f95cfb54d443a6bfcbfebf4adb1da79753558c1efd1d16f82980631dfe4f716"
+  },
+  "freeze": {
+   "sha256": "58fe013fac90cf6b9383bf1e230791fa52eb4107e32c985242894a5ae151f8c0"
+  }
+ },
+ "abort": false,
+ "note": "Read-only shadow evaluation: logs would-allow/deny; returns no data mutation; no enforcement."
+}
