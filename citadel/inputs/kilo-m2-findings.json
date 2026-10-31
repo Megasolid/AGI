@@ -1,0 +1,48 @@
+{
+ "schema": "agi/kilo-adversarial-report/1",
+ "ts": "2026-10-31T09:34:50+00:00",
+ "station": "kilo",
+ "task": "m2_adversarial",
+ "cases": 19,
+ "passed": 8,
+ "failed": 4,
+ "blocked": 7,
+ "top_findings": [
+  {
+   "id": "KILO-M2-BR-01",
+   "severity": "high",
+   "path": "bridge/GET /health",
+   "finding": "/health unauthenticated leaks generation; no host authorization"
+  },
+  {
+   "id": "KILO-M2-EX-01",
+   "severity": "high",
+   "path": "runtime/agi_runtime.py snapshot",
+   "finding": "snapshot/export has no redaction of private bodies; no export function"
+  },
+  {
+   "id": "KILO-M2-FC-03",
+   "severity": "high",
+   "path": "runtime/agi_runtime.py approve_intent",
+   "finding": "denials (guest/wrong actor) not audited; silent denial"
+  },
+  {
+   "id": "KILO-M2-RC-02",
+   "severity": "high",
+   "path": "runtime/agi_runtime.py recall",
+   "finding": "no cross-host recall authorization; blocked (missing fixture)"
+  },
+  {
+   "id": "KILO-M2-BR-05",
+   "severity": "high",
+   "path": "bridge/MCP recall",
+   "finding": "no private-memory/context isolation; blocked (missing fixture)"
+  }
+ ],
+ "evidence": [
+  "state/kilo/m2_adversarial_matrix.json (19 read-only cases)",
+  "release runtime files inspected read-only",
+  "zip sha256 85a922...; DNA digest 39dd5592...; release identity v4.0.1 Entelechy DNA v4"
+ ],
+ "next": "awaiting Director/DSH tasking; kilo is not an integration authority"
+}

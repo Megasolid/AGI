@@ -1,0 +1,73 @@
+{
+  "schema": "agi-citadel/task/0.2",
+  "task_id": "cit-kilo-m2-20261031-02",
+  "supersedes": "cit-kilo-m2-20261031-01",
+  "station": "kilo",
+  "issued_by": "dsh (Director-approved central tasking)",
+  "issued_at": "2026-10-31T09:43:18+00:00",
+  "objective": "Independently reproduce the Kilo M2 adversarial matrix, provide the full 19-case breakdown (8 passed / 4 failed / 7 blocked), retest after DSH fixes, and submit cross-host authorization and private-recall isolation tests. Read-only; no execution of DSH state.",
+  "scope": [
+    "reproduce all 19 read-only cases",
+    "clarify each failed/blocked case with expected vs actual",
+    "retest fixes after DSH remediation",
+    "cross-host authorization tests",
+    "private-recall isolation tests",
+    "report evidence hashes and reproducible fixtures"
+  ],
+  "constraints": [
+    "read-only repository access",
+    "no live AGI writes",
+    "no network exposure",
+    "no secrets/credentials",
+    "no DSH private memory",
+    "no auto-execution",
+    "PR-only report path"
+  ],
+  "inputs": [
+    {
+      "path": "citadel/inputs/m2-runtime-integration-plan.md",
+      "sha256": "sha256:d2ae094f14957dd2d319944faee2103f75b9457a6672441b062be83811b32d4c",
+      "hash_method": "sha256(lf_normalized_utf8)"
+    },
+    {
+      "path": "citadel/inputs/kilo-m2-findings.json",
+      "sha256": "sha256:1c999a25126c01ef21db368af061f54d99a1af6cc6b8c835675d03495d82097c",
+      "hash_method": "sha256(lf_normalized_utf8)"
+    },
+    {
+      "path": "release v4.0.1 runtime zip",
+      "sha256": "sha256:85a922540097315802509634a0e03e6a7940f4cf378a485fc93d2f00e85ec781",
+      "hash_method": "sha256(file)"
+    }
+  ],
+  "expected_report": {
+    "schema": "agi-citadel/report/0.1",
+    "fields": [
+      "task_id",
+      "station",
+      "decision",
+      "cases",
+      "passed",
+      "failed",
+      "blocked",
+      "findings",
+      "evidence",
+      "next"
+    ]
+  },
+  "authorization_scope": "Read-only independent review/test/report only; no live writes, no execution, no credentials, no network. Consequential actions require human approval.",
+  "human_approval_required": true,
+  "control_plane": "A+B hybrid: Git task files source of truth; GitHub Issues/PRs for human control",
+  "hash_method": "sha256(canonical_json(task excluding task_hash and signature)); canonical = sort_keys, separators=(',',':')",
+  "signature_method": "ML-DSA-65 over utf8(canonical_json(task excluding task_hash and signature))",
+  "task_hash": "sha256:e145a3c2b9e48d292365d8f10da0144767fe2e9fb02ba4f919830c0d9cc4ff28",
+  "signature": {
+    "schema": "agi-sig/1",
+    "alg": "ML-DSA-65",
+    "key_id": "a73eaa5d3c31e009",
+    "public_key_b64": "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",
+    "payload_sha256": "e145a3c2b9e48d292365d8f10da0144767fe2e9fb02ba4f919830c0d9cc4ff28",
+    "signature_b64": "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",
+    "signed_at": "2026-10-31T13:13:18+0330"
+  }
+}
