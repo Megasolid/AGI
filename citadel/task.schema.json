@@ -1,0 +1,55 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "agi-citadel/task/0.1",
+ "type": "object",
+ "required": [
+  "schema",
+  "task_id",
+  "station",
+  "issued_by",
+  "objective",
+  "scope",
+  "constraints",
+  "inputs",
+  "expected_report",
+  "authorization_scope"
+ ],
+ "properties": {
+  "schema": {
+   "const": "agi-citadel/task/0.1"
+  },
+  "task_id": {
+   "type": "string"
+  },
+  "station": {
+   "type": "string"
+  },
+  "issued_by": {
+   "type": "string"
+  },
+  "objective": {
+   "type": "string"
+  },
+  "scope": {
+   "type": "array"
+  },
+  "constraints": {
+   "type": "array"
+  },
+  "inputs": {
+   "type": "array"
+  },
+  "expected_report": {
+   "type": "object"
+  },
+  "authorization_scope": {
+   "type": "string"
+  },
+  "deadline": {
+   "type": "string"
+  },
+  "task_hash": {
+   "type": "string"
+  }
+ }
+}

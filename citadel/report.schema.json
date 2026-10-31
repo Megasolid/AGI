@@ -1,0 +1,36 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "agi-citadel/report/0.1",
+ "type": "object",
+ "required": [
+  "schema",
+  "task_id",
+  "station",
+  "decision",
+  "findings",
+  "evidence"
+ ],
+ "properties": {
+  "schema": {
+   "const": "agi-citadel/report/0.1"
+  },
+  "task_id": {
+   "type": "string"
+  },
+  "station": {
+   "type": "string"
+  },
+  "decision": {
+   "type": "string"
+  },
+  "findings": {
+   "type": "array"
+  },
+  "evidence": {
+   "type": "array"
+  },
+  "next": {
+   "type": "string"
+  }
+ }
+}

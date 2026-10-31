@@ -1,0 +1,58 @@
+{
+ "schema": "agi-citadel/task/0.1",
+ "task_id": "cit-kilo-m2-20261031-01",
+ "station": "kilo",
+ "issued_by": "dsh (Director-approved central tasking)",
+ "issued_at": "2026-10-31T09:35:48+00:00",
+ "objective": "Independently reproduce the Kilo M2 adversarial matrix, provide the full 19-case breakdown (8 passed / 4 failed / 7 blocked), retest after DSH fixes, and submit cross-host authorization and private-recall isolation tests. Read-only; no execution of DSH state.",
+ "scope": [
+  "reproduce all 19 read-only cases",
+  "clarify each failed/blocked case with expected vs actual",
+  "retest fixes after DSH remediation",
+  "cross-host authorization tests",
+  "private-recall isolation tests",
+  "report evidence hashes and reproducible fixtures"
+ ],
+ "constraints": [
+  "read-only repository access",
+  "no live AGI writes",
+  "no network exposure",
+  "no secrets/credentials",
+  "no DSH private memory",
+  "no auto-execution",
+  "PR-only report path"
+ ],
+ "inputs": [
+  {
+   "path": "release v4.0.1 zip sha256",
+   "sha256": "85a922540097315802509634a0e03e6a7940f4cf378a485fc93d2f00e85ec781"
+  },
+  {
+   "path": "state/archive/evolution/agi-v5-m2-runtime-integration-plan-20261031.md",
+   "sha256": "f99745be9b4253666eeb2d2117e5c20a3b479909153a30d16a4a6e22c7941821"
+  },
+  {
+   "path": "state/archive/evolution/kilo-m2-findings-20261031.json",
+   "sha256": "63892ce4a57fea46bff7ea5ceed68c47b7133babe36e19cc60101c699a5a6c15"
+  }
+ ],
+ "expected_report": {
+  "schema": "agi-citadel/report/0.1",
+  "fields": [
+   "task_id",
+   "station",
+   "decision",
+   "cases",
+   "passed",
+   "failed",
+   "blocked",
+   "findings",
+   "evidence",
+   "next"
+  ]
+ },
+ "authorization_scope": "Read-only independent review/test/report only; no live writes, no execution, no credentials, no network. Consequential actions require human approval.",
+ "human_approval_required": true,
+ "control_plane": "A+B hybrid: Git task files source of truth; GitHub Issues/PRs for human control",
+ "task_hash": "sha256:4bb60386e2329de630f880b791f6cb128549c15b275f755365cea89d366a68a1"
+}
