@@ -16,3 +16,4 @@
 {"ts": "2026-10-31", "id": "CITADEL-0016", "decision": "Owner D promotes Kilo to Official AGI Station and backup operations station when DSH is unavailable/out of tokens; no execution/governance/release authority", "authority": "Owner D"}
 {"ts": "2026-10-31", "id": "CITADEL-0017", "decision": "KING conditionally approves M3-A Cognitive Orchestration Foundation charter for planning only; M2 closure remains fully gated; M3-B..E need separate proposals/Owner approval", "authority": "KING; Owner final"}
 {"ts": "2026-10-31", "id": "CITADEL-0018", "decision": "KING approves M3-A work breakdown M3A-01..09 for planning; M2 full-window closure gates preserved; M3-B..E remain unauthorized", "authority": "KING; Owner final"}
+{"ts": "2026-10-31", "id": "CITADEL-0019", "decision": "Owner D grants a 2-hour autonomous research/planning evolution window under KING responsibility; M2/M3 gates and runtime boundaries preserved", "authority": "Owner D"}
