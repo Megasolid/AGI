@@ -202,6 +202,7 @@ Read [SECURITY.md](SECURITY.md) and [NOTICE.md](NOTICE.md) before trusting the s
 - [RELEASE_NOTES.md](RELEASE_NOTES.md) — what changed in this release
 - [DNA.md](DNA.md) — the latest stable DNA in one file (for humans and machines)
 - [llms.txt](llms.txt) — compact machine summary
+- [LICENSING.md](LICENSING.md) — code AGPL-3.0, documentation CC BY-SA 4.0
 - [docs/history](docs/history) — archived beta and earlier-phase material (not current)
 - [SECURITY.md](SECURITY.md), [NOTICE.md](NOTICE.md), [POLICY.md](POLICY.md)
 
