@@ -38,8 +38,9 @@ verification and continuity.
 **Stable:** `v4.0.1` — AGI Entelechy (gen4, DNA v4, Core 4.0), released 30 October 2026. The previous stable,
 `dna-GCACGAGGCTGT` (gen3.5), is an archived ancestor, not a second stable.
 
-**v4.0.1 is an immutable rollback baseline, not an evolution ceiling.** v5 development is additive, with compatibility
-contracts, migration paths and verified rollback. Generations advance by evidence, not naming.
+**v4.0.1 is an immutable rollback baseline, not an evolution ceiling.** The v5 architecture is proposed and not shipped;
+if approved, it must provide compatibility contracts, migration paths and rollback evidence. Generations advance by
+evidence, not naming.
 
 > **Stable vs proposed — read carefully:** v4.0.1 is what you can install and verify today. The **v5 Distributed
 > Cognitive Organism** (awareness kernel, memory taxonomy, governed federation, evolution engine) is design work and
@@ -80,6 +81,8 @@ Install version `v4.0.1`. Verify the download against `SHA256SUMS.txt` from the
 
 ## Architecture in one page
 
+*Conceptual architecture — not a deployment diagram. Only v4.0.1 components are shipped.*
+
 ```text
                  ┌──────────────────────────────────────────────┐
                  │  Citadel (public station / living platform)  │
@@ -110,8 +113,9 @@ Install version `v4.0.1`. Verify the download against `SHA256SUMS.txt` from the
   signed seed. The DNA is the durable contract; a model session is a temporary host.
 - **Runtime.** Explicit verbs, writes queued as intents, execute-once Master approval, snapshots and a conformance
   matrix that must pass before anything is called ready.
-- **Memory.** One local index with full-text and optional vector recall, per-item provenance, freshness and trust
-  labels. Memory classes, visibility enforcement and governed sharing are v5 design work, not shipped claims.
+- **Memory.** One local index with FTS5 and an optional 128-dimensional **local hash-vector** recall leg (a hash
+  sketch, not a learned semantic embedding), per-item provenance, freshness and trust labels. Memory classes,
+  visibility enforcement and governed sharing are v5 design work, not shipped claims.
 - **Bridge and governance.** A loopback MCP bridge with scoped tokens, a replayable event stream and no remote
   approval. Seats, a Master key and signed passports with an issuance audit.
 - **Lineage.** Previous generations are archived, verified ancestors. Nothing is deleted to make a new release look
