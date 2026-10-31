@@ -46,3 +46,14 @@
 - Prioritized research-gap register (P0 canary/M2, verifier independence, retention/egress, audit durability; P1 live
   capability metrics, MCP/A2A contract tests, provider drift; P2 pattern benchmarks, memory boundary, budget calibration).
 - Kilo R4 review: PASS 9/9; research manifest SHA-256 `34a4a6ffe38ef0a2abd0dc029d534f484153d25676abe8ea92fc6f06f36c415d`; no implementation/live APIs.
+
+
+## R5 — Blueprint and validation plan
+- Consolidated R1–R4 blueprint: roles, contracts, routing, verification, memory boundary, topology.
+- 10 architectural contradictions/unresolved decisions recorded (provider neutrality vs endpoint terms, aggregator
+  opacity, verifier independence, prototype-vs-runtime proof, state-machine rigidity, cost vs trust floors, memory
+  boundary, M2 vs M3 semantics, research speed vs gates, Citizen advice vs evidence).
+- Dependency-ordered validation plan **V0–V5**: M2 closure → offline verifier/audit/egress → offline MCP/A2A contracts
+  → read-only provider metrics proposal → bounded inner-loop proposal → integration proposal.
+- Kilo R5 review: PASS 9/9; research manifest SHA-256 `7415d627b3128d7c2eb7801d5a7c3b0e89946f6353d0c7ce9fb6a9c77e87b3a0`; no implementation/live APIs.
+- Window remains research-only; M2 canary untouched; M3-B..E unauthorized; runtime OFF.
