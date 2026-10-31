@@ -12,3 +12,8 @@ request. No secrets, private memory, credentials or executable payloads.
 Use `tasks/cit-kilo-m2-20261031-02.json`: self-contained canonical task hash + embedded ML-DSA signature, and pinned
 inputs under `citadel/inputs/`. Verify by removing `task_hash` and `signature`, canonicalizing the remaining JSON
 (sort_keys, separators), checking the SHA-256 and signature. Kilo: do not retry v1.
+
+## Canonical task hash convention (v6+)
+`task_hash = sha256(utf8(json.dumps(task excluding task_hash and signature, sort_keys=True, separators=(',',':'),
+ensure_ascii=False)))`. Task files must be ASCII-only to avoid encoder ambiguity; v5 was blocked because its arrows were
+canonicalized differently by the verifier. v6 is the active task.

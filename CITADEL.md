@@ -23,5 +23,5 @@ No federation, family/public sharing, identity mutation, autonomous evolution, s
 Signed task envelopes authorize scope, not code execution. Human approval is required before consequential actions.
 v4.0.1 release artifacts remain immutable.
 
-Current task: `citadel/tasks/cit-kilo-m2-20261031-05.json` — independent review of the live-enable package and
-rollback plan; prototype audit v4 complete (27/27).
+Current task: `citadel/tasks/cit-kilo-m2-20261031-06.json` — corrected ASCII canonical task for independent review
+of the live-enable package and rollback plan; v5 superseded (Unicode canonicalization ambiguity).
