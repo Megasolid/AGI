@@ -9,3 +9,13 @@
    immutable as the rollback baseline.
 7. Cadence: daily health/evidence checks; weekly Council review; monthly architecture/documentation audit.
 8. Submit architecture and migration proposal to Kilo before implementation.
+
+## Current program
+- [x] inventory, charter, Hall, divisions
+- [x] documentation audit + editorial brief
+- [x] Citadel tree design proposal
+- [ ] KING approval of tree/editorial outline
+- [ ] README pilot rewrite
+- [ ] USER_MANUAL rewrite
+- [ ] LINEAGE volume/chapter rewrite
+- [ ] architecture/migration proposal to Kilo
