@@ -34,3 +34,15 @@
 4. Prepare M3-B proposal only after M2 closure and M3-A acceptance.
 
 **No implementation or deployment is authorized by this report.**
+
+
+## R4 — Orchestration patterns, contracts, policies and gaps
+- Pattern comparison: single/sequential/fan-out/debate/planner-executor/supervisor/hierarchical/blackboard/market;
+  recommendation: explicit state machine + router + independent verifier; fan-out only for read-only research.
+- Canonical non-executable contracts: TaskEnvelope, AgentMessage, EvidenceRecord, Verdict, RouterDecision, AuditEvent;
+  versioned, untrusted-flagged, no private content.
+- Routing policy: privacy floor, capability fit, trust floor, independence, budgets, fail-closed stops.
+- Disagreement policy: independent verifiers; disagreement → fail closed/human, no majority-as-truth.
+- Prioritized research-gap register (P0 canary/M2, verifier independence, retention/egress, audit durability; P1 live
+  capability metrics, MCP/A2A contract tests, provider drift; P2 pattern benchmarks, memory boundary, budget calibration).
+- Kilo R4 review: PASS 9/9; research manifest SHA-256 `34a4a6ffe38ef0a2abd0dc029d534f484153d25676abe8ea92fc6f06f36c415d`; no implementation/live APIs.
