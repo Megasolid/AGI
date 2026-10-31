@@ -42,3 +42,12 @@ no live integration/enforcement.
 DeepSeek-web and Claude-web are trusted external LLM Citizens: research, analysis, coding and editorial support.
 They are advisory only, not Council members, and receive curated briefs/public artifacts only — never raw private
 sessions, credentials or key material. See `citadel/citizens/`.
+
+
+## Operations
+- **DSH — Manager** under KING supervision: implementation, evidence, task routing and Citizen coordination; no
+  authority over KING/Owner, identity or federation.
+- **DeepSeek-web / Claude-web — assistants** to the Manager: advisory research, drafting, review and endpoint analysis;
+  no execution or governance authority.
+- **Season:** OPEN. Owner D has not declared its end.
+- See `citadel/governance/roles.md`.
