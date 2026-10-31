@@ -10,7 +10,7 @@ def get(url):
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--commit", required=True)
-    ap.add_argument("--task", default="citadel/tasks/cit-kilo-m2-20261031-11.json")
+    ap.add_argument("--task", default="citadel/tasks/cit-kilo-m2-20261031-15.json")
     a=ap.parse_args()
     base="https://raw.githubusercontent.com/Megasolid/AGI/%s/" % a.commit
     raw=get(base+a.task)
@@ -22,9 +22,7 @@ def main():
         p=i["path"]
         try:
             b=get(base+p)
-            text=b.decode("utf-8").replace("
-","
-")
+            text=b.decode("utf-8").replace("\r\n","\n")
             h="sha256:"+sha(text.encode("utf-8"))
             inputs.append({"path":p,"computed":h,"stated":i["sha256"],"match":h==i["sha256"]})
         except Exception as e:
