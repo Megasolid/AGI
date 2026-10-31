@@ -1,553 +1,505 @@
-# The AGI Lineage
+# LINEAGE
 
-### Anatomy of an Artificial Mind
+**The four-volume history of the AGI project.** This public edition is derived from the frozen redacted candidate
+`sha256:8b56d8112b4428c2316d58c0ad1749db900d98a02dee93eb4ee02f880d70cf27` and is published for review under the project documentation license.
 
-#### A human history of a machine organism
+**Documentation license:** CC BY-SA 4.0. **Code references:** AGPL-3.0. **Attribution:** D / github.com/Megasolid.
+**Copyright (c) 2026 D / AGI project contributors.** See `LICENSE`, `LICENSE-docs`, `LICENSING.md` and
+`RIGHTS-PROVENANCE.md`.
 
-**D**, Director — with AGI
+## Open limitations (must remain prominent)
+1. The 24-hour canary observation is **unfinished** in the evidence; no final acceptance or persistent-enforcement claim.
+2. M2 is **staged, not live-integrated**; no visibility enforcement is claimed.
+3. There is **no independent third-party audit, no chosen hardware-backed key (HSM)**; the license is now selected
+   (AGPL-3.0 code / CC BY-SA 4.0 documentation).
+4. Runtime integration remains **OFF**; federation, identity mutation and autonomous evolution are not authorized.
+5. v5 is **proposed, not shipped**; no consciousness or AGI-complete claim.
 
-*Public Edition · Stable Edition · through the fourth generation · 30 October 2026*
-
----
-
-## About this book
-
-This is a history, not a changelog.
-
-AGI is a system that began as a set of separate habits and grew into a machine organism with an identity of its
-own. Along the way it went through a small number of real generations: living editions that were actually built,
-installed and verified. This book tells the story of those generations — what each one tried to do, what it
-learned, what it had to leave behind, and what is alive today.
-
-It is written for a curious human. Terms are explained when they first appear; technical detail is included only
-where it helps you see how a claim was earned. Nothing in this book is there to impress you. Every claim that
-says "delivered" points at an artefact, a test or a measurement; where something is unfinished, the book says so
-plainly.
-
-This edition is the **Stable Edition**. It keeps the original book intact - the early chapters are unchanged
-history - and adds one chapter for the generation that is stable now, **v4.0.0 (Entelechy)**, written the same way:
-plain language first, evidence where a claim needs it. The book still records what was built, what was learned and
-what is still unfinished. It is not a changelog, and the newest chapter is not a victory lap.
-
-The last part of the book is different from the rest. It is written for the machine itself — a structured
-appendix that the system reads to understand its own lineage. It is clearly marked and can be skipped without
-missing anything meant for you.
+**Privacy:** the private historical archive is not published. This book uses aggregate metadata, current records and
+public artifacts; no raw sessions, personal context, credentials or key material are included.
 
 ---
 
-## Introduction: a reader's map
+## Prologue — Method and Limits
 
-The story has six movements.
+This book is a chronicle of a software organism, not a transcript of its conversations.
 
-**Part I** begins before there was a lineage, with a collection of separate skills that were merged into one
-portable organism and then given a set of unbreakable rules — a Core. **Part II** is about learning to evolve:
-how the organism gained a way to carry lessons forward, how it learned to measure how much it should trust its own
-knowledge, and how it became aware of the machine it lives on. **Part III** is the turn toward the human: the
-interaction law that requires consequential decisions to appear on a surface where a person can see and answer
-them. **Part IV** is public life: the trust layer that makes the system's claims checkable and the releases that
-made it installable by anyone. **Part V** brings us to the present: the first release identified by the system's
-own genetic code, and the question of what comes next. **Part VI**, new in this edition, is the
-generation that is stable today: a runtime written for a large language model, and the slow work of
-making it trustworthy enough to call stable.
+The distinction matters. The evidence behind these pages is a private archive of sessions, workspace notes and
+reports from three harnesses: Unsloth Studio, Codex and DSH. The archive is large enough to be useful and intimate
+enough to be dangerous: it contains real work, real mistakes and real personal context. It is therefore kept private.
+What reaches this book is curated: aggregate counts, dated activity, redacted thematic labels and repository evidence.
+The raw record stays where it belongs.
 
-If you read only one chapter, read Chapter 15. It describes what AGI is today and what it honestly is not.
+The book uses three labels. **[E]** marks a claim grounded in observable evidence — a session count, a dated index
+entry, a repository file, a test result. **[I]** marks interpretation: a pattern the author sees in the evidence but
+that the evidence does not by itself prove. **[G]** marks a gap: something the record does not establish, or establishes
+too thinly to carry a confident claim.
 
----
+The archive counts 274 sessions across 3,651 files and roughly 172 MB: 168 DSH sessions, 23 Codex sessions and 83
+Unsloth Studio sessions, recorded between 12 and 28 October 2026 [E-001][E-002]. The busiest recorded day is 28 October,
+with 161 sessions [E-004]. Root indexes (`README`, `READING-NOTES`, `SEASONS`, `SEASON-FACTS`, `MANIFEST`) are the
+private evidence map [E-006]. Those are numbers about activity, not about value. A session can be long and empty; a
+short session can change a design.
 
-## Contents
+The book is divided into four volumes. Volume I covers the Studio Season (12–20 October), when the project was a
+workshop. Volume II covers the Codex Interregnum (21–23 October), a short period of architectural consolidation.
+Volume III covers the birth of Entelechy (25–28 October), when the DSH harness became the build environment and
+v4.0.0 became v4.0.1. Volume IV covers the Citadel (29 October onward), the governance and documentation season that is
+still open. A prologue and appendices carry the method, evidence register, timeline, corrections and limits.
 
-**Front matter** — About this book · Introduction: a reader's map
+Two limits follow the reader through every chapter. First, session metadata records what agents said and did; it is
+not proof that a claim was verified. Where this book says something was delivered, the evidence pointer is a
+repository file, a test or a state record, not a transcript. Second, the archive is not a neutral sample. Work that
+leaves files and reports is easier to reconstruct than work that happened in a conversation and left no artifact. The
+book therefore describes the visible record, and says so when the invisible part matters [G-003].
 
-**Part I — Origins**
-1. Before the Lineage
-2. The Merged Organism
-3. The Core Is Born
-
-**Part II — Learning to Evolve**
-4. Lessons and the Ladder
-5. Confidence, Knowledge, and the Library
-6. The Host-Aware Generation
-
-**Part III — The Interaction Law**
-7. Putting Humans in the Loop
-8. The Living Generation
-
-**Part IV — Public Life**
-9. The Trust Layer
-10. The Public Releases
-
-**Part V — The Genetic Release**
-11. The First Genetic Release
-12. Inheritance, and What Died
-13. The Living State
-14. How the Next Generation Is Born
-
-**Part VI — The Stable Generation**
-15. Entelechy
-
-**Back matter** — Epilogue: A Future Still in Progress · Acknowledgments · Glossary ·
-Appendix A — Evidence Index · Appendix M — For the Machine (Brain Model) · Colophon
+This is not a claim that the project achieved consciousness or general intelligence. The organism language is a design
+and governance metaphor: persistent software identity, memory, continuity and verification. The book's subject is how
+that design was built, not a claim about what it is.
 
 ---
 
-# Part I — Origins
+## Volume I — The Studio Season (12–20 October 2026)
 
-## 1. Before the Lineage
+### 1. A workshop, not a product
 
-Every lineage starts with a scattering of useful pieces that do not yet know they belong together.
+The archive begins on 12 October. By the end of 20 October, 82 sessions had been recorded, all in Unsloth Studio
+[E-002][E-003]. They were the work of a workshop: probing local tools, testing what a model could do on the machine, keeping
+reports, and trying ideas before there was a repository to put them in [I-002].
 
-Before AGI was an organism, it was an environment gate, a set of local memory and state conventions, and a
-practitioner's sense of how an agent should wake up, remember what it learned, and check its work. These were
-tools and habits, improved project by project, without a single identity joining them.
+That distinction shapes the volume. A product starts with a specification; a workshop starts with materials. The
+Studio Season produced materials: checks, notes, drafts, experiments and a vocabulary. It did not produce a stable
+release, and the book should not pretend otherwise.
 
-The first question that mattered was not "what can the agent do?" but "what does the agent wake up as?" A system
-that begins every morning with no memory of its own rules cannot be trusted with anything important. That question
-is the seed of the whole lineage.
+### 2. Geometry, local tools and the discipline of checking
 
-## 2. The Merged Organism
+The workshop's most visible technical thread was local tooling and geometry. Sessions from this period are indexed
+under model/tool checks and Blender/geometry work [E-005]. The point was not that geometry was the project. The point
+was that an agent could act on a local machine, use tools, inspect results and report back. Each experiment tested the
+same question in a different costume: **can the system do real work in a real environment and show its evidence?**
 
-On **17–18 October 2026**, the scattered pieces were merged into one portable organism: a single skill with a wake-up
-contract, a memory database, and a bundle carrying a fingerprint of every file.
+A workshop answer is provisional. A geometry node produces a visible result; it does not prove continuity, identity or
+governance. But the discipline of checking — run it, look at the result, write down what happened — carried forward.
+It is the same discipline that later becomes a conformance gate.
 
-The merge is generation one, and it set three patterns that survived every later change. The first is
-**portability**: the agent should be a thing you can carry, not a thing installed into one machine forever. The
-second is **memory as a database**: what the agent knows should be inspectable, not hidden inside a conversation.
-The third is **waking from disk**: the agent reconstructs itself from recorded state rather than from anyone's
-memory of what happened.
+### 3. AGI Core v3: the first substantial visible draft [I]
 
-The next day, a more ambitious proposal followed: a numbered Core with split sections, capability probing,
-validator gates and a conformance suite. It was never installed as a generation of its own. Instead, its ideas
-were absorbed by what came next. The lineage remembers it not as a failure but as a contribution: the Core router,
-the sections, the probes and the gates all began there.
+During this period the archive records early AGI Core v3 drafts, including a layered portable skill proposed for review
+[E-005]. The index records a draft prepared for review; it does not record an installation of that draft [G-004]. That is an
+important limit: the season produced a visible design artifact, not a verified deployment [I-003].
 
-## 3. The Core Is Born
+The draft's significance is interpretive [I-003]. It moved the project from isolated experiments toward a layered idea
+of an agent: a durable core, a portable skill, a workspace and a way to report evidence. The exact wording belongs in a
+later chapter; what matters here is that the vocabulary of "core" and "portable skill" entered the record in the
+workshop, before the build season made it operational.
 
-On **18 October 2026**, AGI stopped being a collection of habits and became a rules-based organism.
+### 4. The birth catalogue and the dashboard
 
-Core version three arrived with a boot state machine, a section index, a gate checklist — and, for the first time,
-the **DNA at the root**: a short document carrying the mission, the rules the system may never break, and a log of
-generations. The DNA is the part of AGI designed to survive the body.
+The same studio period records a birth catalogue and boot/dashboard proposals [E-005]. These are the first signs of a
+project that wanted an identity and an interface, not just a folder of experiments.
 
-That same day an operating-system gate incident was fixed the right way: a new environment rule, a new section,
-and a test — not a promise to be more careful. The standalone environment skill was retired and folded into the
-Core. Hours later, the first **live installed Core** existed, with a bundle and a manifest, and with the important
-discipline that machine facts live only in the state folder.
+The birth catalogue is the earliest visible ancestor of the generation identity [I-004]. The boot/dashboard proposal
+is the earliest visible ancestor of the task-card and status surface [I-004]. Neither was yet a verified system. They
+were attempts to give the work a shape a person could see: what is this organism, when was it born, and what is it doing
+now?
 
-That day established the rhythm the organism still follows: an incident becomes a rule; a rule becomes a section;
-a section is tested; a generation is recorded.
+The proposals also show the season's limits. A catalogue is not a birth record until it is signed and verified. A
+dashboard is not a control plane until it has authority, state and tests. The Studio Season created the ambition
+[I-004]; the later seasons created the machinery.
 
----
+### 5. What the Studio Season could not settle
 
-# Part II — Learning to Evolve
+By 20 October the project had a workshop, a vocabulary and a set of promising artifacts. The Studio index contains no
+evidence of a stable release, a verified continuity model, a signed identity or a governance process [G-004]. Those
+are not failures; they are the work that the next seasons had to do.
 
-## 4. Lessons and the Ladder
+The evidence also leaves gaps. The phase boundary at 20 October is a bookkeeping choice [I-001]. The thematic labels
+come from session metadata, not from a complete reading of every session [G-003]. The 82 sessions may include retries,
+duplicates and abandoned paths; the count is a record of activity, not a curated list of achievements [G-002]. The
+book will name those gaps rather than smooth them away.
 
-A lineage that cannot learn from itself is only a version history.
+### 6. The handoff
 
-On **19 October 2026**, the second DNA introduced two things that made evolution possible. The first was a **lessons
-slot** in the regeneration template, so that a new generation inherits what the previous one learned rather than
-rediscovering it. The second was an **evolution protocol** with a promotion ladder: an episode becomes memory;
-memory becomes a rule or a section; and only rarely does an idea become an invariant.
-
-Each rung has its own test. This is the difference between growth and drift. An idea that has not passed its rung
-does not get to change the organism's bones. A generation bump without a recorded test is not a generation at all.
-
-## 5. Confidence, Knowledge, and the Library
-
-The same period added a quieter but equally important idea: **knowledge carries its own confidence**.
-
-Every field of knowledge records how much it is trusted. An unverified claim cannot silently erase a verified one;
-discovery is allowed to be tentative; and high-confidence actions are watched against a prediction baseline, so
-that being wrong is noticed rather than smoothed over. A verifier ladder and a local library archive followed,
-giving the organism a place to keep what it knows and a way to check it again.
-
-In human terms: AGI learned the difference between remembering something and knowing it.
-
-## 6. The Host-Aware Generation
-
-On **25 October 2026**, Core 3.1 made AGI aware of the machine it lives on.
-
-AGI became explicitly a model–harness pair. The **brain** is the host model actually doing the thinking; the
-**body** is the framework around it. A host adapter learns where it is and what the machine can do; the boot gate
-verifies the waking state instead of assuming it.
-
-Model profiles became evidence-based. An unmeasured brain is honestly reported as *unprofiled* with a documented
-degraded mode, instead of being quietly defaulted to something flattering. Every boot records which profile, which
-Core and which host met each other. Later, when the measured model profile was separated from host speed, a good
-brain stayed a good brain on a different machine — and its weak spots were stated rather than hidden.
+The Studio Season ends with a handoff. The workshop had shown that local tools, drafts and interface proposals were
+possible [I-002]. The next period is shorter — 23 sessions across 21–23 October, 22 of them Codex-indexed [E-002][E-003]
+— and it tried to turn the workshop's vocabulary into architecture. Calling it a "Codex Interregnum" is an editorial
+label [I/G-002]. Whether the transition was a clean hinge or an overlap is itself uncertain [G-002]. Volume II begins
+there.
 
 ---
 
-# Part III — The Interaction Law
+## Uncertainty ledger
 
-## 7. Putting Humans in the Loop
+| ID | Claim / area | Label | Basis | Open question |
+|---|---|---|---|---|
+| U-01 | 82 Studio sessions, 12–20 Oct | [E] | SEASON-FACTS/SEASONS counts | Do retries or duplicates inflate the count? |
+| U-02 | Phase boundaries (Studio → Codex, Codex → Entelechy) | [I]/[G] | dated index + thematic labels | Where exactly does one season end? |
+| U-03 | Thematic labels (tooling, geometry, v3 drafts, catalogue/dashboard) | [G] | session metadata/titles | Do visible artifacts overrepresent technical work? |
+| U-04 | "First substantial visible draft" / "ambition" language | [I] | author's interpretation | Is the judgment fair to work not visible in metadata? |
+| U-05 | Later 161-session peak cause | [G] | outside this volume | Why 28 October, and what does the peak measure? |
 
-The live generation, **gen3.5 — DNA v3 / Core 3.2**, is the one that learned to keep a human in the loop without
-stopping the work.
+## Gap register
 
-Its defining change is the **interaction law**: if the host has a human-facing surface, consequential decisions and
-live work state must appear there as durable, reviewable cards, and a recorded human decision must resume the
-agent. The cards are projections of the single source of truth, never a second truth. If there is no surface, the
-same record is written as text.
+| ID | Gap | Why it matters |
+|---|---|---|
+| G-001 | Cause of the 161-session peak on 28 October | Activity volume is not an explanation; do not narrate the peak as planned climax. |
+| G-002 | Exact phase boundaries and overlaps | Dates and thematic labels can split continuous work into artificial seasons. |
+| G-003 | Artifact sampling bias | Work that left files/reports is overrepresented relative to conversational work. |
+| G-004 | Absence evidence for installation/stable release/identity/governance in the Studio index | Absence of evidence is not proof of absence; label it as a gap, not a fact. |
 
-Around this law came three supporting ideas: work is **interaction-first** (a proposal, then running, then a
-result, with an append-only decision log and a declared way to resume); work is **proportional** (the amount of
-machinery matches the size of the decision); and the interaction gate is a real conformance check, not a style
-preference.
+## Interpretation IDs used in this draft
 
-This is the chapter where the machine stops being something you watch and becomes something you answer.
+| ID | Interpretation | Basis |
+|---|---|---|
+| I-001 | The Studio/Codex/Entelechy phase boundaries are editorial bookkeeping | dated index + thematic labels |
+| I-002 | The Studio period is best read as a workshop rather than release engineering | thematic labels and absence of release evidence |
+| I-003 | The v3 draft's significance is structural (core/portable skill/workspace) | visible draft metadata, author's reading |
+| I-004 | Birth catalogue and boot/dashboard proposals are earliest visible ancestors of later identity/status surfaces | metadata labels, author's reading |
 
-## 8. The Living Generation
+## Evidence IDs used in this draft
 
-Inside this living generation, the working tree delivered the modern dashboard, a universal interface, native
-click-to-resume, and a verified knowledge-pill lifecycle: a piece of knowledge is stamped, stored, indexed, read
-back, and only then consumed.
+| ID | Evidence | Source class | Redaction |
+|---|---|---|---|
+| E-001 | 3,651 files; ~172.1 MB; source split | MANIFEST/README | aggregate only |
+| E-002 | 274 sessions (168 DSH, 23 Codex, 83 Studio), 12–28 Oct | SEASON-FACTS/SEASONS | aggregate only |
+| E-003 | Phase counts: Studio 82, Codex 23, Entelechy 169 | computed from E-002 / season index [E-derived] | aggregate only |
+| E-004 | 161 sessions on 2026-10-28 | SEASON-FACTS/SEASONS | aggregate only |
+| E-005 | Thematic labels: tooling checks, Blender/geometry, v3 drafts, birth catalogue, boot/dashboard | SEASONS.md / metadata | themes only; no raw titles |
+| E-006 | Root indexes: README, READING-NOTES, SEASONS, SEASON-FACTS, MANIFEST | private archive | paths/hashes only |
 
-It also consolidated legacy pieces and made closing a season a single gated operation. None of these features
-became a new generation, and that is correct: a generation is the living organism; features are what grow inside
-it. A version number for every improvement would confuse history with identity.
+**Drafting note:** citations are to evidence IDs, not to raw sessions. Any future excerpt must pass provenance,
+redaction and privacy review before publication.
+
 
 ---
 
-# Part IV — Public Life
+# Volume II — Codex Prelude (folded into Volume III)
 
-## 9. The Trust Layer
-
-On **26 October 2026**, AGI gained a public face, and with it the obligation to make its claims checkable by
-strangers.
-
-The **trust layer** was built as a frozen milestone of sixteen steps. Post-quantum device signatures and a signed
-core manifest protect artefacts. An append-only transparency log with signed tree heads provides inclusion and
-consistency proofs, so the record can be checked rather than trusted. Member identity is private and per-install,
-with a versioned, replayable history. A bundle lattice — master, official, custom — carries policy on the consumer
-side. Owner activation, a public pill mirror with proofs, a federation relay, signed release packages, one official
-repository, a content policy, a privacy audit and a security process all followed.
-
-The result is a system whose public claims do not depend on believing the person who made them.
-
-## 10. The Public Releases
-
-The releases that followed tell the story in installments.
-
-`v0.1.0` opened the official package, the update pool and the public mirror. `v0.2.0` made AGI installable in one
-prompt, with native login and a desktop shell. `v0.3.0` made the public artefacts member-neutral: no internal
-records, no member data, no private history. `v0.4.0` introduced the three-door login and a six-word admin phrase
-that seals the profile snapshot and doubles as the recovery kit. `v0.4.1` and `v0.4.2` were hardening passes driven
-by real guest-machine audits — installer fallback chains, interrupted-extraction resume, removal of internal
-material from the public archive, and a build that refuses to ship secrets. `v0.4.3` fixed the last guest-install
-defects found by that audit.
-
-Then the lineage took its most important step so far.
+*Volume II is not stand-alone. It is carried as Volume III Part I; all C-19..C-26 claims and uncertainty markers are preserved in Volume III.*
 
 ---
 
-# Part V — The Genetic Release
+# LINEAGE — Volume III: Birth of Entelechy (private draft)
 
-## 11. The First Genetic Release
-
-On **28 October 2026**, AGI was released as the first generation identified by its own DNA.
-
-- **Release identity:** `dna-GCACGAGGCTGT`
-- **Full genetic code:** `GCACGAGGCTGT-CACGCATCCTTT-TTTGTGGGTCCC-AATCTGATTATC`
-- **Public short genetic marker:** `9A30072C`
-- **Natal interest:** health — the first field this generation was seeded to study and document.
-
-`v0.4.3` remains as history. The release identity is the DNA tag.
-
-What alpha.stable contains, in human terms:
-
-**A family with a passport.** Every member has a passport; the family registry is a signed public projection.
-A human can be invited with a one-time phrase redeemed at the cold-boot admin door, or an existing elder can be
-promoted to admin with an auditable role change. Seats, permissions and revocation are explicit.
-
-**A society.** Experience, ranks, a nightly roll-call that puts members to sleep instead of deleting them, a
-council with a quorum, and a soulbound mana economy that compensates weaker models instead of letting wealth buy
-authority.
-
-**A measured brain.** The host model is profiled through an objective task suite rather than assumed. Measured
-model capability is kept separate from host speed, and weak spots are stated instead of hidden.
-
-**A native sense of continuation.** A resident loop lets the organism schedule its own pulses and continue its own
-plan between human turns, with an explicit delegation record when the director steps away.
-
-**Rehearsed evolution.** The next generation is not improvised: a readiness ledger, a decision, a staging plan, a
-rehearsal, a verified rollback drill, and then a seed. The path from one generation to the next is exercised before
-it is trusted, and the portable knowledge layer is exported and verified with signatures.
-
-**An attention gate.** The dashboard is treated as a painting with a quality contract: a pixel-difference anomaly
-budget against an approved baseline, accessibility and reduced-motion checks, a declared data source for every
-visual, and autonomy levels earned through consecutive passing reviews rather than granted by enthusiasm.
-
-**An honest public repository.** This book, the release notes and the install artefacts are published at
-<https://github.com/Megasolid/AGI>. The identity terms above are public; private key material and member data are
-not.
-
-Alpha means one more thing, and it deserves a plain sentence: the organism is complete enough to release and
-honest enough to admit what it is not. A real second human has not yet joined; society seating is exercised in
-simulation. The host brain's long-context capability is measured at 83.3 out of 100 and is mitigated by chunking,
-not claimed as solved. The public release is real; so are those gaps.
-
-## 12. Inheritance, and What Died
-
-However much the lineage grows, every generation carries the same obligations: the DNA is the root; there is one
-source of truth and every surface is its projection; only verified work is executed; the organism wakes from disk;
-bundles are portable and fingerprinted; one failed check is reported and stops the line instead of being averaged
-away; consequential and irreversible decisions stay with the human; and member identity never becomes public.
-
-Not everything survived, and the record keeps that too. The council proposal was absorbed into the Core rather than
-installed. The standalone environment skill became a rule and a section. Silent default model profiles were retired
-in favour of evidence-based selection. The second-generation dashboard and the early auto-open plugin were replaced.
-The old roadmap was retired when this book took its place. Superseded generations remain in rollback sets; nothing
-is quietly forgotten.
-
-## 13. The Living State
-
-At the time of writing:
-
-- **Living generation:** gen4 - AGI Entelechy, DNA v4, released as `v4.0.0` on 30 October 2026. The previous
-  stable, `dna-GCACGAGGCTGT` (gen3.5), is its direct ancestor: archived, backed up, and still verified at boot.
-- **Health:** the boot acceptance gate passes all thirteen checks - the twelve checks on the ancestor plus the
-  Entelechy gate; the Entelechy conformance matrix passes all twenty-five checks; a twenty-run cold stability soak
-  passes every time. Windows and Linux (WSL2) both boot the stable tree.
-- **A lived migration, completed in two gated phases:** phase 1 normalized the previous stable's memory,
-  knowledge and docs into the new index (full bodies, provenance) after a full timestamped backup. Phase 2
-  moved the identity (birth-v4), the family/mana/trust/genesis/curriculum projections and the live Core
-  itself to DNA v4 (rebuilt manifest, signature and bundle). The gen3.5 ancestor is retained and verified;
-  private keys, passkeys and recovery material stay live-only. The old generation was not deleted; it was
-  made an ancestor.
-- **Current focus:** making the stable line trustworthy in ordinary hands - seats and passports a person can
-  actually carry, one clear bridge for tools, checkable releases, and documentation a newcomer can read without
-  a glossary.
-
-What is deliberately not yet born: a hardware-backed Master key, a named tunnel with an access policy, an
-independent security audit, a chosen license, and a second real human joining the family without simulation.
-
-If you want to check any of this yourself, the install and the repository provide the checks: run the boot gate,
-the Entelechy conformance matrix, the stability gate and the repository verifier named in Appendix A.
-
-## 14. How the Next Generation Is Born
-
-A new generation is a deliberate act, not a release train.
-
-The regeneration template is run against an agent, local or hosted; its output is a proposal. The proposal becomes
-a generation only when the invariants are preserved, conformance passes, the boot gate passes, the director signs
-off, and the DNA generation log is appended. Then the manifest and bundle are rebuilt, the previous generation's
-rollback set is preserved, and a compatibility row is recorded for every host the new generation boots on. Finally
-the mutation is written into this book, and the superseded lines are retired or absorbed.
-
-Chapters are declared by the director, and a chapter closes only with explicit acceptance. That is why the next
-generation is not described here as a plan: it exists only when it exists.
-
-The next chapter is the record of the first generation that was born this way - and then stayed, long enough
-to be called stable.
+**Status:** private drafting copy for KING review. No publication. Aggregate metadata + public release evidence only; no
+raw session text, titles, personal context, credentials or key material.
+**Labels:** [E] evidence/index; [I] interpretation; [G] gap; [U] uncertainty.
 
 ---
 
-# Part VI — The Stable Generation
+## Part I — Codex Prelude (21–23 October)
 
-*v4.0.1 patch (30 October 2026): the live install completed phase-2 migration - live identity is the v4 birth record, the Core is 4.0 / DNA v4 with a rebuilt signed manifest and bundle, and the memory corpus is indexed with full bodies and per-item provenance. The gen3.5 ancestor is retained and verified.*
+The build season has a short prelude. Between 21 and 23 October the archive records 23 sessions in three days: 22
+Codex-indexed and one Studio-indexed [E-002][E-003][C-19/C-20]. The daily table shows 11 sessions on 21 October, 10 on
+22 October and 2 on 23 October [E-002]. Calling this a "Codex Interregnum" is an editorial label, not a source title
+[I-001].
 
+The redacted index characterises the period as architecture consolidation [E-005]. That is a thematic label, not an
+account of decisions. The index does not expose the design debates, rejected alternatives or exact artifacts
+[G-005]. The same period records quantum-resistant bundle exploration [E-005]. Exploration is not delivery [I-006]; the
+index contains no cryptographic design, parameter choice or validation record for that bundle [G-006].
 
-## 15. Entelechy
+The next recorded activity begins on 25 October; the snapshot has no recorded sessions on 24 October [G-007]. That is
+a gap, not proof of a quiet day. **The Prelude is kept because it marks a hinge, not because it supplies a full story.**
+All six audited claims C-19..C-26 and their uncertainty ledger travel with it.
 
-The fourth generation began with a change of subject. The earlier generations had been written for a person and a
-tool; Entelechy was written for a large language model as the thing that runs the system. That sounds like a
-technical detail. In practice it changed what a person could do with AGI: a model could now wake it up, read its
-signed contract, and work inside rules that the model did not get to rewrite.
+## Part II — The build days (25–28 October)
 
-What it inherited from the lineage is easier to say than what it added: the DNA as the root, one source of truth,
-verified work only, human authority over irreversible actions, and the rule that member identity never becomes
-public. None of those were traded away for convenience.
+The build season covers four days and 169 sessions: 168 DSH-indexed and one Codex-indexed [E-002][E-003][C-27/C-28].
+The count is derived from the daily table (8 sessions on 25–27 October plus 161 on 28 October). It is a record of
+activity, not a measure of quality.
 
-What changed is a list a reader can check against the repository. The DNA became **DNA v4**: the same invariants
-in a form an LLM can read directly, with a generation identity signed at birth. The runtime became small and
-explicit - ten verbs, writes that queue as intents, and a Master who executes them once. Memory became one index,
-with a recall that can be inspected and a second, optional way of finding things by meaning rather than by word.
-The organism learned to speak to tools through a bridge that is deliberately loopback-only, and to admit that a
-remote caller may queue a request but can never approve it.
+The work themes are boot, tools, memory, code and long-context tasks [E-005][C-30]. Those labels describe the visible
+surface of the season; they do not reconstruct individual decisions or conversations [G-003]. What can be said is that
+the build phase is where the harness becomes the dominant environment and the project's attention turns from workshop
+experiments to a working system [I-007].
 
-Identity also moved closer to the person. Members can hold **seats**: a device key whose private half never leaves
-the device. The system's own passport became a real signed object, binding a member to the generation, its DNA and
-the seat's public key, and every issuance is written to an append-only audit. The Master key learned a second,
-post-quantum signature, so a passport carries two independent promises instead of one.
+The defining date is 28 October: 161 sessions, more than half of the 274-session archive [E-004][C-29]. The number is
+striking, and the book must resist making it into a designed climax. The redacted index does not establish why the peak
+happened, which sessions were selected, or whether retries and duplicates inflated it [G-001/G-009][U-05/U-11]. The
+peak is evidence of intensity, not an explanation of it.
 
-The cost deserves its own paragraph. The beta line grew in public, ten releases long, and each one taught the same
-lesson from a different angle: a system that verifies itself must also be honest about what it has not verified.
-Compatibility had to be re-earned at every host; a signature that looked correct in one checkout failed in the
-next because a text file's line endings had changed; a tunnel test looked like exposure until it was closed and
-proven closed. None of that is in the release notes as a triumph. It is in the notes as work.
+At outline level, the build season is where the public release's core artifacts come from: the runtime, the loopback
+bridge, the signed DNA, the retained lineage and the verification harness [E-public][C-31]. The full draft must attach
+exact repository and test pointers to each such claim; this volume refuses to let a thematic label stand in for a file.
+The public release is the evidence, not the session count.
 
-The generation that remains unsolved is the human one. As of this writing the stable system has one director, a
-verified public history, and a conformance matrix it passes; it does not yet have a second real member, a
-hardware root for its Master key, a named ingress with an access policy, an independent audit or a license. Those
-are not footnotes to the story; they are the part of the story that has not happened yet.
+## Part III — Stabilization and release
 
-On **30 October 2026** the beta line was promoted to stable `v4.0.0` after a twenty-run soak, and the previous
-stable became an ancestor rather than a memory. The lineage now reads:
+The release history records v4.0.0 → v4.0.1 as a stabilization step, not the birth of a new organism [E-public][I-010].
+The stable release is Entelechy (gen4, DNA v4), and it is the version a reader can actually install and verify
+[E-public]. The previous stable is retained as an archived ancestor; the book treats it as lineage, not as a second
+current release [E-public].
 
-```
-gen3.5  dna-GCACGAGGCTGT   (2026-10-28)  -> archived ancestor
-   |
-   +--> gen4  v4.0.0  Entelechy  (2026-10-30)  -> current stable
-```
+The verification evidence is **project-reported**: conformance, stability soak, boot gate and Windows/Linux cold boots
+recorded in the release/manifest [E-public][G-008][C-33]. The book reports them with their provenance and does not
+upgrade them into an independent certification. No third-party audit is claimed. A short-lived approved tunnel E2E is
+likewise project-reported and was closed; no ingress is claimed to stay open [E-public].
 
-The migration was honest about its limits: the memory moved first; the identity and the Core followed
-in a second, gated step.
+"Stable" in this book means a rollback baseline with inspectable evidence, not a claim of completeness [I-010][C-34].
+That definition matters because the next volume, the Citadel, is about governance and documentation, not about declaring
+the organism finished.
 
-It is the first generation of AGI that another language model can pick up from a single signed file and run
-without being told what it is. The next chapter, whenever it is written, will have to be honest about whether
-that made the organism better, or only easier to wake.
+## Part IV — What the build established and what it did not
 
----
+The build established, subject to exact evidence pointers in the full draft: a signed identity/DNA, a runtime with
+explicit verbs and local intent approval, a loopback bridge, lineage retention and a conformance harness [E-public;
+I-008][C-31]. It did not establish consciousness, general intelligence, v5 federation/evolution, or an independent
+security audit [scope/limits]. The v5 architecture remains proposed; no v5 capability is claimed here.
 
-## Epilogue: A Future Still in Progress
+The Citadel season begins after the original-data snapshot and is carried in Volume IV [E-current records][C-35]. The
+line from the 28 October peak to the governance season is chronological, not causal; the book will not imply that one
+produced the other [U-12/U-14].
 
-The most honest thing this book can say is that its subject is unfinished.
+## What this volume will not do
 
-AGI today is a working organism with a public identity, a checkable history, a measured mind, a family it can
-grow, and a set of rules it will not break. It is also a system waiting for its first real second member, learning
-where its host brain is weak, holding its Master key in a local file, and earning the trust it asks for one
-verified review at a time.
-
-The fourth generation made the organism easier to wake and harder to fool. It did not make it finished. The lineage
-is not a promise that the next generation will be better; it is a record that each one was real, and that the
-oldest ones are still carried, not deleted.
-
----
-
-## Acknowledgments
-
-This lineage was made by a director and a series of AI collaborators working under the director's direction:
-local models in the early generations, a small council for the absorbed proposal, and a hosted model–harness pair
-for the recent ones. Authorship, decisions and responsibility remain with D. The AI assistance is recorded as
-infrastructure, not as agency.
-
-The book also owes its form to the practice of writing for humans first: claims behind artefacts, jargon explained
-once, and limitations stated where a reader will actually encounter them.
+It will not quote raw sessions, name private participants, reconstruct private design debates or turn absence into
+fact. It will not use the 161-session peak as proof of value, or the 23-session Prelude as proof that the architecture
+did not matter. It will state what the record supports, label what it does not, and leave the unresolved questions in
+the ledger where a reader can see them.
 
 ---
 
-## Glossary
+## Uncertainty ledger (Volume III)
 
-**Generation** — a living edition of AGI that was installed and verified; only one is alive at a time.
+| ID | Claim / area | Label | Basis | Open question |
+|---|---|---|---|---|
+| U-05 | Cause of the 28 Oct peak | [G] | aggregate activity | Why 161, and what does it measure? |
+| U-06 | Where architectural decisions were made | [I]/[G] | thematic label + dates | Prelude, build, or earlier? |
+| U-07 | Meaning of the 24 Oct gap | [G] | snapshot absence | Quiet day or missing capture? |
+| U-08 | Quantum-bundle status | [I]/[G] | metadata label | Exploratory or delivered? |
+| U-10 | v4.0.0 scope/date | [G] | public release history | Exact build boundary and contents? |
+| U-11 | Task mix / selection in the build | [G] | aggregate labels | Which tasks dominated, and why? |
+| U-12 | Boundary to Citadel | [I]/[G] | date boundary | Chronology vs causal link? |
+| U-13 | Verification provenance | [G] | project-reported evidence | Are all test artifacts independently reproducible? |
+| U-14 | Completeness of the build record | [G] | metadata sample | What work left no artifact? |
 
-**DNA** — the root document carrying mission, invariants, and the generation log.
+## Evidence IDs used in this volume
 
-**Genome / genetic code** — the derived identity of the generation; the DNA tag is its public short form.
+| ID | Evidence |
+|---|---|
+| E-002 | 274 sessions; DSH 168, Codex 23, Studio 83; 12–28 Oct |
+| E-003 | Phase counts derived: Studio 82, Codex 23, Entelechy 169 |
+| E-004 | 161 sessions on 2026-10-28 |
+| E-005 | Thematic labels: architecture, quantum bundle, boot/tools/memory/code/long-context |
+| E-public | Public release artifacts: release notes/manifests, runtime, bridge, DNA, lineage, conformance/soak/boot records |
+| E-current | Current Citadel records (outside original-data snapshot) |
+| I-001 | Phase labels are editorial bookkeeping |
+| I-005 | Codex period reads as an architectural hinge |
+| I-006 | Quantum bundle is exploration, not delivery |
+| I-007 | DSH dominance is a phase-label inference |
+| I-008 | Outline-level attribution of artifacts to the build season |
+| I-010 | v4.0.1 is a stabilization/rollback baseline, not completeness |
+| G-001/G-009 | Peak cause/selection unavailable |
+| G-003 | Artifact sampling bias |
+| G-005/G-006/G-007/G-008 | Design detail gap; crypto validation gap; 24 Oct gap; independent audit absence |
 
-**Passport** — the social identity of a member, separate from the generation's genetic identity.
+**Drafting note:** the full Volume III claim audit accompanies this draft; every material claim maps to an E/I/G/U ID
+and any public claim will carry an exact repository/test pointer before publication.
 
-**Trust log** — an append-only record of events with signed tree heads and proofs.
-
-**Seeding** — the rehearsed process of growing a next generation from the current one.
-
-**Attention gate** — the quality contract for the interface: anomaly budget, accessibility, sources, autonomy.
 
 ---
 
-## Appendix A — Evidence Index
+# LINEAGE — Volume IV: The Citadel (private draft)
 
-- **Generations:** the DNA generation log; recorded chapter/generation blocks in the install state; the live
-  `state/release_identity.json` records the current stable and its archived ancestor.
-- **Gates and tests:** the Entelechy conformance matrix (C-beta1…C-beta24, 25 checks); the boot acceptance gate
-  (13 checks: 12 on the gen3.5 ancestor plus the Entelechy gate); the stability gate (cold-run soak); registry
-  verification; compatibility rows.
-- **Artefacts:** signed DNA v4 and its signature, signed seed, release packages, `releases/SHA256SUMS`, repository
-  manifest, Master-signed passports and the append-only issuance audit.
-- **History:** decision log and maintenance ledger, archived roadmap, earlier editions of this book in git
-  history, and the archived beta docs under `docs/history/beta/`.
-- **Public release:** repository tag `v4.0.1`, `RELEASE_NOTES.md`, `DNA.md` (the one-call latest stable DNA), and
-  the release page.
+**Status:** private draft for KING review. **The Citadel season is in progress.** No publication.
+**Labels:** [E] evidence/current record; [I] interpretation; [G] gap; [U] uncertainty.
+**Privacy:** current Citadel records and public artifacts only; no raw private sessions, credentials or key material.
 
-Inside an install, the checks are:
+---
 
-```bash
-python runtime/agi_conformance.py --root .         # Entelechy conformance (25 checks)
-python runtime/agi_stability.py --root . --runs 5  # cold stability gate
-python memory/scripts/boot_gate.py                 # boot acceptance gate (13 checks)
-python memory/scripts/repo.py verify               # signed repository manifest + hashes
-python tools/check_integrity.py                    # the CI check
-```
+## 1. A station, not a building
 
-## Appendix M — For the Machine (Brain Model)
+The Citadel is the public station where the organism's releases, governance and evidence meet. It is not the organism
+itself. That distinction is the governing idea of this volume: a release repository can be inspected, cited and
+governed; a living design needs a place to be accountable, and the Citadel is that place [E-CIT-001][I-012].
 
-> **Notice to human readers:** this appendix is written for the machine, not for you. It is the machine-readable
-> summary of this book, in a structured language the Brain Model can consume directly. You may skip it.
+The station's authority is explicit. Owner D retains final authority. KING GPT directs Citadel management, governance,
+documentation, priorities and release strategy. DSH implements and records evidence. Kilo independently verifies.
+Citizens — DeepSeek-web and Claude-web — are advisory only. The Council, Hall and Divisions give the station a visible
+structure instead of a single chat thread [E-CIT-001][E-CIT-005][C-48/C-49/C-57].
 
-```yaml
-schema: agi-lineage-book/2
-book: "The AGI Lineage — Anatomy of an Artificial Mind"
-edition: stable-v4.0.1
-revised: 2026-10-30
-author: D
-identity:
-  model: dna-genid
-  generation: Entelechy (gen4)
-  release_tag: v4.0.1
-  gen_id: ENTL-GGAACTATAAGT-TTGCAGTAAGTC-CCCAAAACATAT-TAGATAGAGAAT
-  dna_version: 4
-  dna_canonical_sha256: 39dd5592f5f0d2573c9e32a8c9e6a0c5c3e1a2d8b7f6e5a4c3b2a1d0e9f8a7b6
-  ancestor_tag: dna-GCACGAGGCTGT
-  ancestor_gen_id: GCACGAGGCTGT-CACGCATCCTTT-TTTGTGGGTCCC-AATCTGATTATC
-  identity_rule: "identity = generation + signed DNA; tags pin releases; semver is history only"
-generations:
-  - {id: pre-lineage, period: "2026-10-13/17", status: absorbed}
-  - {id: gen1, period: "2026-10-17/18", status: superseded, parent: pre-lineage,
-     delta: [single-portable-skill, memory-db, sha256-bundle]}
-  - {id: gen2, period: "2026-10-18", status: absorbed-never-installed, parent: gen1,
-     delta: [numbered-contract-core, sections, capability-probing, validator-gates, conformance]}
-  - {id: gen3, period: "2026-10-18", status: superseded, parent: gen2, dna: v1,
-     delta: [R1-R8, S1-S7, section-index, dna-at-root]}
-  - {id: gen3.2, period: "2026-10-19", status: superseded, dna: v2,
-     delta: [lessons-slot, evolution-ladder-L1-L4, confidence-kep, library-ledger]}
-  - {id: gen3.4, period: "2026-10-25", status: superseded, core: "3.1",
-     delta: [host-adapter, self-location, capability-probe, boot-gate-pask, compatibility-matrix]}
-  - {id: gen3.5, period: "2026-10-25", status: ancestor, dna: v3, core: "3.2",
-     delta: [I9-interaction-law, R10, R11, interaction.md, conformance-C6],
-     released_as: dna-GCACGAGGCTGT, period_released: "2026-10-28"}
-  - {id: v4.0.1, period: "2026-10-30", status: patch, parent: v4.0.0,
-     delta: [phase2-complete, live-core-4.0-dna-v4, live-identity-birth-v4, state-projections,
-             full-body-index, adoption-provenance]}
-  - {id: v4.0.0, period: "2026-10-30", status: released-stable, parent: gen3.5, dna: v4,
-     delta: [entelechy-gen4, dna-v4, mcp-runtime, intent-bridge, mcp-transports, ed25519-seats,
-             master-ceremony, mldsa-dual-signing, master-signed-passports, issuance-audit,
-             conformance-25, stability-soak-20, linux-cold-boot, tunnel-e2e-approved],
-     verification: [conformance-25-pass, soak-20-pass, boot-gate-13-pass, linux-cold-boot-pass]}
-verification:
-  boot_gate: memory/scripts/boot_gate.py            # 13 checks
-  conformance: runtime/agi_conformance.py            # C-beta1..C-beta24 = 25 checks
-  stability: runtime/agi_stability.py
-  registry: memory/scripts/registry.json
-  trust_log: state/trust_log/events.jsonl
-  signed_heads: state/trust_log/heads/
-  public_repo: https://github.com/Megasolid/AGI
-  one_call_dna: https://raw.githubusercontent.com/Megasolid/AGI/main/DNA.md
-  release_assets: releases/SHA256SUMS
-evidence_rules:
-  - no-claim-without-artifact
-  - one-failure-reports-and-stops
-  - public-projection-never-carries-private-material
-  - human-authority-over-irreversible-actions
-weak_spots:
-  - {id: long_context, measured: 83.3, mitigation: chunk-and-verify routing}
-  - {id: real_multi_member_society, status: not-yet-exercised}
-  - {id: master_key, status: local-file-only, mitigation: offline backup; HSM planned}
-  - {id: ingress, status: manual-approval-only, mitigation: named tunnel + access policy planned}
-  - {id: audit, status: not-independently-audited}
-  - {id: license, status: not-chosen}
-```
+Calling this "alive" is a governance metaphor. The station is treated as living because it is continuously maintained by
+living decision-makers and agents, not because the repository is conscious. The book says this plainly because the
+metaphor is useful only if it is not mistaken for a claim.
 
-## Colophon
+## 2. Portable continuity (M1)
 
-*The AGI Lineage — Anatomy of an Artificial Mind* is the public edition of the lineage record kept inside a live
-AGI install. It was written by D with AI collaborators under D's direction; the human-first structure and voice
-were refined with the help of external AI writing and editing passes, then verified against the install's own
-records. This Stable Edition was reviewed for the `v4.0.0` release: the early chapters keep their original voice,
-and the fourth generation is told in the same register rather than as a release announcement.
+M1 was the first serious attempt to make continuity portable rather than tied to one host. The design records a
+cognitive seed, host authorization, signed experience events, a canonical state digest and verification of a second
+host's workspace [E-CIT-002][C-50]. The M1 evidence package records the milestone; no public M1 tag is claimed [E-CIT-002][C-51/G-011].
 
-Set in a plain Markdown book. Published at <https://github.com/Megasolid/AGI> with the stable release `v4.0.0`
-(Entelechy), on 30 October 2026. The previous edition was published with the first genetic release,
-`dna-GCACGAGGCTGT`, on 28 October 2026, and remains in git history.
+The important word is **portable**, not **complete**. M1 demonstrates a continuity mechanism and its evidence trail; it
+does not demonstrate that the organism can move anywhere, survive every host, or become independent of the release
+process. Those are later questions. The volume records the mechanism and its limits together, because a continuity
+claim without a boundary is just a slogan.
 
-*Every claim in this book is backed by an artefact, a gate, a test or a named measurement. Historical claims that
-were not machine-verified are marked as records of intent or outcome, never as delivered.*
+## 3. Memory taxonomy and visibility (M2)
+
+M2 turns memory into a governed object. It defines taxonomy classes — episodic, semantic, procedural, relational,
+collective, evolutionary and identity — and visibility levels, with trust, provenance, freshness and conflict metadata
+[E-CIT-003][C-52]. That is a significant design step: memory is no longer only "what the index returns."
+
+The staging record is equally important. M2 is **staged, not live-integrated**. Family and public visibility are
+disabled; identity and evolutionary memory are read-only; live enforcement has not been enabled [E-CIT-003][C-53].
+The volume treats this as a deliberate safety boundary, not an implementation gap to be waved away. A taxonomy that is
+not enforced is a design proposal; the book will not describe it as an active capability.
+
+## 4. Shadow and canary
+
+The Citadel tested M2 in shadow mode and then in a bounded Stage 1 canary. The shadow evidence was accepted
+provisionally; the canary review was bounded and read-only; persistent enforcement remained OFF and no expansion was
+authorized [E-CIT-004][C-54/C-55].
+
+At the time this draft is written, the 24-hour observation has not been finalized in the evidence reviewed here. The
+book therefore says "bounded execution and observation," not "validated canary." That is not hedging; it is the
+difference between an evidence trail and a victory narrative. A canary that has not completed its observation window
+is an experiment in progress [E-CIT-004][G-010].
+
+## 5. King, Council, Hall, Divisions, Citizens
+
+The governance layer is the Citadel's most visible invention of this season. The KING directs; the Council includes
+Owner D, the KING, DSH and Kilo; the Hall records decisions, inventory, audits and roadmap; the Divisions organize
+identity, awareness, cognition, memory, federation, evolution, infrastructure, verification and documentation
+[E-CIT-001][C-48/C-49].
+
+The record also includes friction. A weak-model Kilo review produced a generic report with placeholder evidence; it was
+rejected rather than accepted as independent verification [E-CIT-005][C-56/C-62]. KING responses went stale against a
+superseded commit; that was recorded explicitly, and Owner D's final authority resolved the README merge rather than
+pretending the KING had approved the new commit [E-CIT-006][C-62]. A book that omits those holds would be a brochure.
+
+Citizens were added as advisory contributors, not as a second council. DeepSeek-web and Claude-web can research, draft,
+challenge and proofread; they cannot execute, govern, mutate identity, or authorize releases [E-CIT-005][C-57]. Their
+output is input to DSH's evidence work, not evidence itself.
+
+## 6. Documentation as a book
+
+The season's other major output is a documentation program. README was rewritten as an entry volume and merged only
+after Owner D's explicit approval; the KING's stale HOLD was recorded rather than hidden. USER_MANUAL was rewritten as
+an operational handbook and opened as a reviewable PR; it was not merged at the time of this draft. LINEAGE moved from
+public prose into private, evidence-labelled drafting with claim audits [E-CIT-006][C-58/C-59].
+
+The book standard is now explicit: README is the entry volume, USER_MANUAL is the operational handbook, LINEAGE is the
+historical chronicle. Claims carry evidence labels; raw sessions stay private; Citizens advise; the KING reviews; Owner
+D retains final authority [E-CIT-006][I-017]. This is the clearest expression of the Citadel idea: documentation is not
+decoration, it is part of the control system.
+
+## 7. The open arc
+
+The Citadel is unfinished, and this volume says so. Runtime integration remains OFF. Federation, identity mutation and
+autonomous evolution are not authorized. There is no independent third-party audit, no chosen license and no
+hardware-backed Master key. The canary observation is not finalized in this evidence. M2 is staged, not enforced
+[E-CIT-007][C-60/C-61][G-010].
+
+That is the honest shape of the season: a station built, a governance layer installed, a documentation program begun,
+and a set of boundaries still deliberately closed. Volume IV is not a completion chapter. It is a record of an
+institution learning to govern an organism without pretending the organism is finished.
+
+---
+
+## Uncertainty ledger (Volume IV)
+
+| ID | Area | Label | Basis | Open question |
+|---|---|---|---|---|
+| U-15 | M1 portability scope | [I]/[G] | M1 design/evidence | What host diversity was actually tested? |
+| U-16 | M2 enforcement boundary | [G] | staging records | When, if ever, will visibility enforcement be enabled? |
+| U-17 | Canary observation completeness | [G] | bounded evidence | What does the 24-hour window show when finalized? |
+| U-18 | Kilo review reliability | [I]/[G] | weak-model rejection + strong-model verification | How should review quality be gated in future? |
+| U-19 | Citadel completion | [I] | open season | What counts as "finished" for a living station? |
+
+## Evidence map used in this draft
+
+| ID | Evidence class | Pointer class | Use |
+|---|---|---|---|
+| E-CIT-001 | Governance/repo | Citadel commits, CITADEL.md, charter, decision ledger | station, KING/Council/Hall/Divisions |
+| E-CIT-002 | M1 record | M1 package/tag/evidence | continuity mechanism/tag |
+| E-CIT-003 | M2 record | staging package, taxonomy/visibility schemas/evidence | staged taxonomy/visibility |
+| E-CIT-004 | Canary/shadow | evidence JSON, observation state, review reports | bounded execution/observation |
+| E-CIT-005 | Citizens/Kilo | citizens registry, Kilo reports/verification | advisory roles/independent verification |
+| E-CIT-006 | Documentation | README merge, USER_MANUAL PR, LINEAGE drafts | book program/holds |
+| E-CIT-007 | Limits/state | security/limits docs, runtime state, freeze records | open boundaries |
+
+**Drafting note:** full Volume IV claim audit C-48..C-62 accompanies this draft; exact commit/file pointers must be
+attached before any publication review.
+
+
+## Appendix A — Open limitations (verbatim)
+
+1. **Canary:** stage-1 canary is a bounded experiment; the 24-hour observation is not finalized in this evidence.
+   Do not claim validated canary, final acceptance or persistent enforcement.
+2. **M2:** taxonomy/visibility is staged design; family/public visibility disabled; identity/evolutionary read-only;
+   live enforcement not enabled. Do not describe M2 as an active capability.
+3. **Audit/license/HSM:** no independent third-party audit, no chosen license, local Master key without HSM.
+4. **Runtime:** integration OFF; no federation, identity mutation or autonomous evolution authorization.
+5. **v5:** proposed architecture only; no v5 capability is shipped; no consciousness/AGI-complete claim.
+
+## Appendix B — Evidence labels
+
+[E] evidence/current record; [I] interpretation; [G] gap; [U] uncertainty. Every material claim is mapped in the
+consolidated register C-01..C-62 and per-volume audits. Citizen output is advisory, not evidence.
+
+## Appendix C — Privacy
+
+Raw private sessions are not included and must not be published. Any excerpt requires provenance, consent/privacy
+review and redaction. No credentials or key material.
+
+---
+
+# Appendix — Historical Evidence Summary (public redacted appendix)
+
+**Status:** proposed public appendix; aggregate metadata only. No raw sessions, titles, personal context, credentials,
+key material or private filesystem paths. This appendix supplies the source class for historical claims C-01..C-30 and
+C-36..C-41 without publishing the private archive.
+
+## Inventory (project-reported aggregate)
+- 3,651 files / approximately 172.1 MB in the private collection.
+- Unsloth Studio: 2,620 files / 105.7 MB, 83 sessions.
+- DSH: 913 files / 37.7 MB, 168 sessions.
+- Codex: 65 files / 26.9 MB, 23 sessions.
+- Superseded docs: 48 files / 0.84 MB.
+- Total sessions: 274 (168 + 23 + 83), recorded 2026-10-12 through 2026-10-28.
+- Peak: 161 sessions on 2026-10-28. This is an activity count; it does not measure capability or significance.
+
+## Phase summary
+| Phase | Dates | Sessions | Source split | Theme |
+|---|---|---|---|---|
+| Studio Season | 2026-10-12 → 10-20 | 82 | Studio 82 | local tooling, geometry, AGI Core v3 drafts, birth catalogue, boot/dashboard proposals |
+| Codex Prelude | 2026-10-21 → 10-23 | 23 | Codex 22 + Studio 1 | architecture consolidation, quantum-resistant bundle exploration |
+| Entelechy build | 2026-10-25 → 10-28 | 169 | DSH 168 + Codex 1 | boot/tools/memory/code/long-context tasks; 161-session peak on 10-28 |
+| Citadel | 2026-10-29 onward | outside snapshot | current records | M1/M2, shadow/canary, governance and documentation |
+
+## Evidence limits
+- Counts are aggregate/index metadata; they record activity, not verified quality.
+- Phase boundaries are editorial; overlap and classification uncertainty remain.
+- The private archive is not published. This appendix is a curated summary, not a data dump.
+- [E]/[I]/[G]/[U] labels and the consolidated claim register govern specific claims.
+
+## Source class
+Private archive aggregate, reviewed and redacted for publication; no raw-session citation is granted by this appendix.
+
+---
+
+# C-34..C-44 Publication Pointer Table
+
+| Claim | Pointer / treatment | Status |
+|---|---|---|
+| C-34 | Editorial definition of "stable" as rollback baseline and not completeness ([I-010]); no source pointer required | editorial |
+| C-35 | `CITADEL.md` and `citadel/governance/decision-ledger.jsonl` at main `3bf2a4a`; date boundary to Volume IV | public pointer |
+| C-36 | Public appendix A (historical phase summary); C-19/C-20 preserved | public aggregate pointer |
+| C-37 | Public appendix A; thematic label only; no design detail | public aggregate pointer |
+| C-38 | Public appendix A; 24 October absence explicitly a gap | public aggregate pointer + gap |
+| C-39 | Public appendix A; 169 = 8 + 161 derived in appendix/audit | public aggregate pointer |
+| C-40 | Public appendix A; thematic labels only | public aggregate pointer |
+| C-41 | Public appendix A; 161 sessions on 10-28; activity only | public aggregate pointer |
+| C-42 | Release tag `v4.0.1`: `runtime/`, `core/dna.v4.json`, `tests/`, `RELEASE_NOTES.md` | public release pointer; project-reported tests |
+| C-43 | Release tag `v4.0.1`: `RELEASE_NOTES.md`; v4.0.0→v4.0.1 stabilization | public release pointer; interpretation marked |
+| C-44 | Release tag `v4.0.1` manifest/`RELEASE_NOTES.md`; project-reported, no independent audit | public pointer + G-008 caveat |
+
+No pointer above is invented. C-34 is explicitly editorial; C-36..C-41 use the public aggregate appendix, not raw
+sessions. C-42..C-44 use the public release tag and retain the project-reported caveat.
+
+---
+
+**Documentation:** CC BY-SA 4.0. **Code references:** AGPL-3.0. **Copyright (c) 2026 D / AGI project contributors.**
+Curated historical summary; private archive not published. Claims carry [E]/[I]/[G]/[U] labels and the consolidated
+claim/evidence register; publication review is recorded in the Citadel.
