@@ -6,3 +6,4 @@
 {"ts": "2026-10-31", "id": "CITADEL-0006", "decision": "README pilot PR #1 merged under Owner D explicit approval; KING stale HOLD cited superseded b339a4b; current 792d2b3 addressed all cited factual issues", "authority": "Owner D (final authority)"}
 {"ts": "2026-10-31", "id": "CITADEL-0007", "decision": "DeepSeek-web promoted to Citadel Citizen (research/documentation; advisory only)", "authority": "Owner D direction"}
 {"ts": "2026-10-31", "id": "CITADEL-0008", "decision": "Claude-web promoted to Citadel Citizen (architecture/coding/editorial; advisory only)", "authority": "Owner D direction"}
+{"ts": "2026-10-31", "id": "CITADEL-0009", "decision": "Owner D chooses AGPL-3.0 for code and CC BY-SA 4.0 for documentation; private historical archive excluded from publication until explicit consent", "authority": "Owner D"}
