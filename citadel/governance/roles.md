@@ -21,3 +21,6 @@
 
 **Season:** OPEN. Owner D has not declared its end. Parallel non-destructive design/review may continue; the canary
 remains running and unfinished.
+
+
+See `citadel/governance/stations.md`: DSH primary/Manager station; Kilo Official AGI Station + backup operations, with hard limits.

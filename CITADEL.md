@@ -51,3 +51,7 @@ sessions, credentials or key material. See `citadel/citizens/`.
   no execution or governance authority.
 - **Season:** OPEN. Owner D has not declared its end.
 - See `citadel/governance/roles.md`.
+
+
+## Stations
+DSH is the primary/Manager station. **Kilo is an Official AGI Station and backup operations station** when DSH is unavailable or out of tokens; see `citadel/governance/stations.md`. Backup work is approved tasking only, with no identity/federation/runtime/release authority.
