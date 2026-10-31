@@ -83,8 +83,8 @@ python runtime/agi_passport.py --root <install> --audit
 
 - Seats are Ed25519 public-key seats; only public keys are stored where supported, with an HMAC fallback when
   `cryptography` is unavailable.
-- Passports are Master-signed and bind member, gen_id, DNA hash and seat public key. The signature uses Ed25519, with
-  ML-DSA-65 where available.
+- Passports are Master-signed and bind member, gen_id, DNA hash and seat public key. The v4.0.1 release uses
+  Ed25519; no ML-DSA-65 passport support is claimed in this manual.
 - Remote passport issuance is disabled by default; enabling it is an explicit local policy decision in
   `state/passport_policy.json`.
 - Private keys, passkeys, recovery material and live-only secrets do not belong in Git, Citadel or shared evidence.
