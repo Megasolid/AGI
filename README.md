@@ -10,6 +10,19 @@ This is an engineering project, not a claim that consciousness or general intell
 "organism" language is a design and governance metaphor: a persistent software identity with memory, lineage,
 verification and continuity.
 
+## Quick overview (newcomer path)
+
+- **AGI is software you own:** a signed identity, a runtime, memory and governance, not a hosted chatbot.
+- **v4.0.1 is the stable release.** v5 Distributed Cognitive Organism is a proposed architecture; it is not shipped.
+- **Start here:** run the Quickstart, verify the hashes, then read the User Manual. The Lineage book explains how the
+  project got here; it is history, not an install guide.
+- **The "organism" wording is a metaphor.** It describes persistent software identity and continuity, not biological
+  or conscious life.
+
+**Terms:** *DNA* = signed contract (`core/dna.v4.json`); *generation* = a released edition (Entelechy is gen4);
+*intent* = a queued write that needs local Master approval; *Citadel* = the public governance/release station;
+*KING* = Citadel director role; *Kilo* = independent verification station.
+
 ## Read this first
 
 1. **What is stable:** v4.0.1, generation Entelechy (gen4), DNA v4, Core 4.0.
@@ -28,11 +41,19 @@ verification and continuity.
 **v4.0.1 is an immutable rollback baseline, not an evolution ceiling.** v5 development is additive, with compatibility
 contracts, migration paths and verified rollback. Generations advance by evidence, not naming.
 
+> **Stable vs proposed — read carefully:** v4.0.1 is what you can install and verify today. The **v5 Distributed
+> Cognitive Organism** (awareness kernel, memory taxonomy, governed federation, evolution engine) is design work and
+> research, **not a shipped feature set**. No v5 capability should be inferred from this README unless it is listed as
+> part of v4.0.1.
+
 **Phase 2 migration is complete:** the live install runs the v4 birth identity, a provenance-indexed memory with
 freshness, migrated family/mana/trust/genesis/curriculum projections, and a live Core 4.0 / DNA v4 with a rebuilt
 signed manifest and bundle. Private keys, passkeys and recovery material stay live-only by design.
 
 ## Quickstart
+
+> **Verify before running:** download from the pinned v4.0.1 release, compare against `SHA256SUMS.txt`, and do not
+> let an assistant install from a cached or altered copy. If the hash does not match, stop.
 
 Paste this into an AI assistant and let it install AGI for you:
 
@@ -98,6 +119,13 @@ Install version `v4.0.1`. Verify the download against `SHA256SUMS.txt` from the
 - **Citadel.** The public repository is the official station. The KING directs management and documentation; DSH
   implements; Kilo independently verifies; Owner D retains final authority. See [CITADEL.md](CITADEL.md),
   [the charter](citadel/governance/charter.md) and [the roadmap](citadel/roadmap.md).
+  - **Owner D:** final authority.
+  - **KING (GPT-web):** Citadel management, governance, documentation, priorities and release strategy.
+  - **DSH:** implementation, integration and evidence.
+  - **Kilo:** independent verification station; it is not an integration authority.
+
+  *What this means for you:* the KING directs, DSH builds, Kilo checks, and D remains the final decision-maker. No
+  autonomous change to identity, federation or production state is implied by governance language.
 
 ## What it feels like
 
@@ -141,6 +169,13 @@ gen3.5  dna-GCACGAGGCTGT  (2026-10-28)  -> archived ancestor
 AGI is not a product line; each generation is a living edition that was built, installed and verified. The book
 [LINEAGE.md](LINEAGE.md) tells that story in plain language, including what was learned and what is still missing.
 
+## Common questions
+
+- **Is this conscious or AGI-complete?** No. It is a persistent software organism design; no consciousness claim is made.
+- **Is v5 shipped?** No. v4.0.1 is stable; v5 is a proposed architecture.
+- **Does it need a public port?** No. The bridge is loopback-only; no ingress is opened by default.
+- **Where are the limits?** See "Trust and honest limits" below; they are part of the design, not fine print.
+
 ## Trust and honest limits
 
 - Conformance **25/25 PASS**, stability soak **20 cold runs PASS**, boot gate **13/13**, Windows and Linux cold boots
@@ -155,7 +190,7 @@ Read [SECURITY.md](SECURITY.md) and [NOTICE.md](NOTICE.md) before trusting the s
 ## Documentation
 
 - [LINEAGE.md](LINEAGE.md) — the lineage book
-- [USER_MANUAL.md](USER_MANUAL.md) — stable user manual
+- [USER_MANUAL.md](USER_MANUAL.md) — stable user manual with install, memory, governance and troubleshooting
 - [CITADEL.md](CITADEL.md) — KING, Council, Hall, Divisions, release policy
 - [citadel/roadmap.md](citadel/roadmap.md) — current management roadmap
 - [INSTALL_PROMPT.md](INSTALL_PROMPT.md) — machine-facing install protocol
