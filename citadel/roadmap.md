@@ -35,3 +35,5 @@ architecture/migration proposal to Kilo and the post-canary M2 decision.
 - M3-A: charter approved for planning only; detailed work breakdown under KING review.
 - M3-B..E: not authorized; each requires separate proposal, Kilo review, KING review and Owner approval.
 - Runtime integration OFF; no live APIs/credentials.
+
+- M3-A work breakdown approved for planning; completion evidence register maintained; M3-B..E not authorized.
