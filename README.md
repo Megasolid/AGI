@@ -38,9 +38,8 @@ verification and continuity.
 **Stable:** `v4.0.1` — AGI Entelechy (gen4, DNA v4, Core 4.0), released 30 October 2026. The previous stable,
 `dna-GCACGAGGCTGT` (gen3.5), is an archived ancestor, not a second stable.
 
-**v4.0.1 is an immutable rollback baseline, not an evolution ceiling.** The v5 architecture is proposed and not shipped;
-if approved, it must provide compatibility contracts, migration paths and rollback evidence. Generations advance by
-evidence, not naming.
+**v4.0.1 is an immutable rollback baseline, not an evolution ceiling.** The v5 architecture is proposed and not
+shipped; no v5 capability is claimed in this README. Generations advance by evidence, not naming.
 
 > **Stable vs proposed — read carefully:** v4.0.1 is what you can install and verify today. The **v5 Distributed
 > Cognitive Organism** (awareness kernel, memory taxonomy, governed federation, evolution engine) is design work and
