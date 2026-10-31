@@ -1,0 +1,20 @@
+{
+ "schema": "agi-v5/owner-authorization/1",
+ "ts": "2026-10-31T11:35:54+00:00",
+ "owner": "D",
+ "freeze_sha256": "df0098168b7c7b3f2e60f868bd4ec167140256e056e12d3e508639ab149d6803",
+ "statement": "I, D, authorize Stage 1 canary execution exactly within freeze SHA-256 df0098168b7c7b3f2e60f868bd4ec167140256e056e12d3e508639ab149d6803: DSH local only, recall only, private visibility only, family/public/shared disabled, one Master-signed DSH local grant after this approval, 24h/request limit, abort authority Owner D + Director GPT with 5-minute alert acknowledgement and 15-minute rollback decision, no external hosts/network, no automatic expansion. I authorize no federation, identity mutation, or autonomous evolution.",
+ "scope": {
+  "host": "DSH local only",
+  "path": "recall only",
+  "visibility": "private only",
+  "family_public_shared": "disabled",
+  "grant": "one Master-signed DSH local grant after approval",
+  "duration": "24h/request limit",
+  "abort": "Owner D + Director GPT",
+  "no_network": true,
+  "no_external_hosts": true,
+  "no_auto_expansion": true
+ },
+ "status": "OWNER_APPROVED"
+}

@@ -1,0 +1,35 @@
+{
+ "schema": "agi-memory-grant/0.1",
+ "grant_id": "grant-dsh-canary-20261031",
+ "host_id": "dsh",
+ "host_instance_id": "host-9f658270d85b",
+ "organism_id": "AGI-ENTL-GGAACTATAAGT-TTGCAGTAAGTC-CCCAAAACATAT-TAGATAGAGAAT",
+ "resource_class": "memory.private",
+ "permitted_operations": [
+  "recall"
+ ],
+ "allowed_visibility": [
+  "private"
+ ],
+ "allowed_classes": [
+  "episodic",
+  "semantic",
+  "procedural",
+  "relational",
+  "collective"
+ ],
+ "issued_at": 1793446557,
+ "expires_at": 1793532957,
+ "revoked": false,
+ "approval_ids": [
+  "owner-canary-20261031",
+  "director-stage1-canary-20261031"
+ ],
+ "scope": "Stage 1 canary: DSH local recall only, private visibility only",
+ "master_signature": {
+  "alg": "Ed25519",
+  "key_id": "ed25519-706718654a54bbfc",
+  "public_key_b64": "N5dogZwkUyKsk/hZ6yTZjAr18JMZnZSZM4nI1Y5mZpk=",
+  "sig_b64": "ro1vvyjCpNBAP7hYbv8A0mlXsXeSMVMCMjx2EfilUnegLy9u+4QaSk7H8NbA0o0yVvo89XJ8wOgoDg1Mjup/Dw=="
+ }
+}

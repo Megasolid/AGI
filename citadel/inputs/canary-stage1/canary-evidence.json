@@ -1,0 +1,152 @@
+{
+ "schema": "agi-v5/canary-run/1",
+ "ts": "2026-10-31T15:05:57+0330",
+ "stage": "stage1-recall-only",
+ "host": "dsh-local",
+ "host_instance_id": "host-9f658270d85b",
+ "flag_during_run": "AGI_M2_HOST_AUTH=canary",
+ "enforcement": false,
+ "mode": "controlled read-only canary projection; no live runtime process enforcement",
+ "freeze_sha256": "df0098168b7c7b3f2e60f868bd4ec167140256e056e12d3e508639ab149d6803",
+ "owner_auth": "state\\agi5\\pilot\\owner-canary-authorization-20261031.json",
+ "director_auth": "state\\agi5\\pilot\\director-stage1-freeze-decision.json",
+ "grant": "state\\agi5\\grants\\dsh-local-canary.json",
+ "queries": {
+  "queries": 20,
+  "hits": 190,
+  "would_allow": 190,
+  "would_deny": 0,
+  "reasons": {}
+ },
+ "log": [
+  {
+   "query": "AGI",
+   "hits": 10,
+   "ts": "2026-10-31T15:05:57+0330"
+  },
+  {
+   "query": "DNA",
+   "hits": 10,
+   "ts": "2026-10-31T15:05:57+0330"
+  },
+  {
+   "query": "memory",
+   "hits": 10,
+   "ts": "2026-10-31T15:05:57+0330"
+  },
+  {
+   "query": "release",
+   "hits": 10,
+   "ts": "2026-10-31T15:05:57+0330"
+  },
+  {
+   "query": "Entelechy",
+   "hits": 10,
+   "ts": "2026-10-31T15:05:57+0330"
+  },
+  {
+   "query": "Kilo",
+   "hits": 10,
+   "ts": "2026-10-31T15:05:57+0330"
+  },
+  {
+   "query": "Citadel",
+   "hits": 0,
+   "ts": "2026-10-31T15:05:57+0330"
+  },
+  {
+   "query": "governance",
+   "hits": 10,
+   "ts": "2026-10-31T15:05:57+0330"
+  },
+  {
+   "query": "passport",
+   "hits": 10,
+   "ts": "2026-10-31T15:05:57+0330"
+  },
+  {
+   "query": "trust",
+   "hits": 10,
+   "ts": "2026-10-31T15:05:57+0330"
+  },
+  {
+   "query": "family",
+   "hits": 10,
+   "ts": "2026-10-31T15:05:57+0330"
+  },
+  {
+   "query": "mana",
+   "hits": 10,
+   "ts": "2026-10-31T15:05:57+0330"
+  },
+  {
+   "query": "curriculum",
+   "hits": 10,
+   "ts": "2026-10-31T15:05:57+0330"
+  },
+  {
+   "query": "missions",
+   "hits": 10,
+   "ts": "2026-10-31T15:05:57+0330"
+  },
+  {
+   "query": "core",
+   "hits": 10,
+   "ts": "2026-10-31T15:05:57+0330"
+  },
+  {
+   "query": "manifest",
+   "hits": 10,
+   "ts": "2026-10-31T15:05:57+0330"
+  },
+  {
+   "query": "seed",
+   "hits": 10,
+   "ts": "2026-10-31T15:05:57+0330"
+  },
+  {
+   "query": "lineage",
+   "hits": 10,
+   "ts": "2026-10-31T15:05:57+0330"
+  },
+  {
+   "query": "identity",
+   "hits": 10,
+   "ts": "2026-10-31T15:05:57+0330"
+  },
+  {
+   "query": "security",
+   "hits": 10,
+   "ts": "2026-10-31T15:05:57+0330"
+  }
+ ],
+ "live_hashes_before": {
+  "state\\index\\agi.db": "a577ea638d95be01540ee82f032d031399b7829ca33af3419197f81638ba6b30",
+  "state\\entelechy\\runtime\\agi_runtime.py": "a8ce85e693bf81b32c3e83b94054a1943d9bcd99672f6902fb00038dba05ec85",
+  "state\\entelechy\\runtime\\agi_bridge.py": "9fc9fcdec1425fa9e145f3650e2a0afa080caa88b4608bbef07d3f273d54ecb6",
+  "state\\entelechy\\state\\agi.db": "f53d7b2c4cd991dd0746065b6af4c3b13f2462a0c2f3b6bd76562ef33cab7f17"
+ },
+ "live_hashes_after": {
+  "state\\index\\agi.db": "a577ea638d95be01540ee82f032d031399b7829ca33af3419197f81638ba6b30",
+  "state\\entelechy\\runtime\\agi_runtime.py": "a8ce85e693bf81b32c3e83b94054a1943d9bcd99672f6902fb00038dba05ec85",
+  "state\\entelechy\\runtime\\agi_bridge.py": "9fc9fcdec1425fa9e145f3650e2a0afa080caa88b4608bbef07d3f273d54ecb6",
+  "state\\entelechy\\state\\agi.db": "f53d7b2c4cd991dd0746065b6af4c3b13f2462a0c2f3b6bd76562ef33cab7f17"
+ },
+ "live_writes": false,
+ "boot": {
+  "rc": 0,
+  "tail": [
+   "boot gate: PASS in 2124 ms | manifest=True bundle=True selftest=True conformance_quick=True signature=True trust_log=True passport=True bundles=True activation=True public=True install=True identity=True entelechy=True"
+  ]
+ },
+ "m1": {
+  "rc": 0
+ },
+ "abort": false,
+ "limits": [
+  "bounded 20-query read-only canary projection",
+  "persistent runtime enforcement remains OFF",
+  "full 24h observation not completed"
+ ],
+ "next": "Owner/Director review of canary evidence; no expansion/enforcement without new authorization"
+}
