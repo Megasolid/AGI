@@ -1,0 +1,183 @@
+{
+  "schema": "agi-citadel/report/0.1",
+  "task_id": "cit-kilo-m2-20261031-04",
+  "station": "kilo",
+  "decision": "PROTOTYPE_AUDITED_ALL_GATES_PASS",
+  "cases": 27,
+  "passed": 27,
+  "failed": 0,
+  "blocked": 0,
+  "findings": [
+    {
+      "id": "KILO-04-INPUT-VERIFY",
+      "severity": "info",
+      "finding": "Task cit-kilo-m2-20261031-04 input verification PASSED: canonical task hash f86cdf0576c7d553f7d4c0861778bf73b456f0e480f75798cccbe588873c2531 matches stated task_hash; ML-DSA-65 signature verified over canonical bytes with key_id a73eaa5d3c31e009; all 3 pinned inputs verified: host_auth.py 955c7370..., test_matrix.py 87db98d9..., evidence.json 3714a0d6... (LF-normalized UTF-8); release v4.0.1 zip 85a92254... (file)."
+    },
+    {
+      "id": "KILO-04-CODE-HASH",
+      "severity": "info",
+      "finding": "Prototype code hash verified: host_auth.py sha256 955c7370674a46497ee9692423dca22622c7ee4ed9ea8ee645357b6ad953c57d matches task-stated hash; bytes 8469. test_matrix.py and evidence.json hashes also match task."
+    },
+    {
+      "id": "KILO-04-HA-06",
+      "severity": "critical",
+      "finding": "Fail-closed revocation-unavailable: when revocation_available=False, authorize() denies-all with reason 'revocation-state-unavailable' before any other check. Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-MCP-03",
+      "severity": "critical",
+      "finding": "Runtime+MCP gating through single authorize(): direct recall with None request denied; valid signed request allowed. Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-RC-02",
+      "severity": "critical",
+      "finding": "Denied search returns no count/rank leak: deny() returns items=[], count=None, rank=None. Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-BD-01",
+      "severity": "critical",
+      "finding": "Hard shared/private separation: store.private and store.shared are separate lists; shared contains no SECRET bodies; adapter_export returns only shared_authorized items. Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-HA-01",
+      "severity": "high",
+      "finding": "Forged host_instance_id denied (unknown-host). Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-HA-02",
+      "severity": "high",
+      "finding": "Bad Ed25519 request-proof signature denied (bad-request-proof). Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-HA-03",
+      "severity": "high",
+      "finding": "Replay denied via atomic nonce cache (threading.Lock + nonces dict). Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-HA-04",
+      "severity": "high",
+      "finding": "Expired grant denied (expires_at <= now). Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-HA-05",
+      "severity": "high",
+      "finding": "Revoked grant denied (grant revoked). Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-HA-07",
+      "severity": "high",
+      "finding": "Missing/None host authorization denied (missing-host-authorization). Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-HA-08",
+      "severity": "high",
+      "finding": "Wildcard/empty/ambiguous grant rejected with ValueError at grant issuance (checklist A-8). Independently re-executed: PASS. (Note: evidence.json HA-08 detail field contains a stale test-harness NameError string from an inline-definition ordering bug; the result was overwritten to PASS and the ValueError rejection is confirmed working.)"
+    },
+    {
+      "id": "KILO-04-MCP-01",
+      "severity": "high",
+      "finding": "MCP missing context denied. Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-MCP-02",
+      "severity": "high",
+      "finding": "Wrong token binding (proof signed by different host key) denied. Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-RC-01",
+      "severity": "high",
+      "finding": "Cross-host private recall isolated: host-B sees only host-B's own private items; host-A's SECRET-A not returned to host-B. Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-RC-04",
+      "severity": "high",
+      "finding": "Shared wrong-recipient denied (approved_recipient mismatch). Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-RC-06",
+      "severity": "high",
+      "finding": "Family/public denied (only private visibility returned). Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-BD-02",
+      "severity": "high",
+      "finding": "Private DB inaccessible cross-host (origin_host_instance enforced). Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-BD-03",
+      "severity": "high",
+      "finding": "Adapters receive no private bodies (metadata/shared only). Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-EX-01",
+      "severity": "high",
+      "finding": "Export without grant export scope denied (resource-class-denied). Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-EX-02",
+      "severity": "high",
+      "finding": "Export allowlist: metadata-only fields, private_bodies=False, no body field. Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-EX-03",
+      "severity": "high",
+      "finding": "Audit contains no bodies/secrets (no SECRET in audit JSON). Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-EX-04",
+      "severity": "medium",
+      "finding": "Tamper-evident audit: monotonic seq + prev_hash chain verified. Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-TV-01",
+      "severity": "high",
+      "finding": "Trust cannot raise visibility: trust=master_approved on a foreign host's private item still denied. Independently re-executed: PASS."
+    },
+    {
+      "id": "KILO-04-RC-03",
+      "severity": "medium",
+      "finding": "Same-host private positive recall allowed (1 item). (Covered by evidence matrix PASS.)"
+    },
+    {
+      "id": "KILO-04-RC-05",
+      "severity": "medium",
+      "finding": "Shared approved cross-host recall allowed with approved_recipient+grant. (Covered by evidence matrix PASS.)"
+    },
+    {
+      "id": "KILO-04-REG-01",
+      "severity": "medium",
+      "finding": "v4/M1 regression delegated to DSH gates (boot_gate.py, test_agi5_kernel.py) — not present in Kilo isolated workspace; evidence.json reports boot PASS / m1 PASS / v4_index_untouched true. Marked evidence-reported, not independently re-runnable in Kilo sandbox."
+    },
+    {
+      "id": "KILO-04-REG-02",
+      "severity": "medium",
+      "finding": "Flag off / no live integration: prototype is isolated, AGI_M2_HOST_AUTH=off, no live writes confirmed (before/after hashes identical). Independently confirmed: release zip and release runtime/bridge files unchanged."
+    }
+  ],
+  "evidence": {
+    "task_file": "state/kilo/cit-kilo-m2-20261031-04.json",
+    "task_canonical_sha256": "f86cdf0576c7d553f7d4c0861778bf73b456f0e480f75798cccbe588873c2531",
+    "task_hash_verified": true,
+    "signature_alg": "ML-DSA-65",
+    "signature_key_id": "a73eaa5d3c31e009",
+    "signature_verified": true,
+    "pinned_inputs_verified": {
+      "citadel/prototypes/host-auth-v0/host_auth.py": "955c7370674a46497ee9692423dca22622c7ee4ed9ea8ee645357b6ad953c57d (match, LF-normalized UTF-8)",
+      "citadel/prototypes/host-auth-v0/test_matrix.py": "87db98d9d3529373bff04295a5fbe4f12116919434510a1264c8f1c8ae8c3d5e (match)",
+      "citadel/prototypes/host-auth-v0/evidence.json": "3714a0d688126a3f7853271f6fbc0c1023c3a3927cc2c645dce87ec03c893800 (match)"
+    },
+    "evidence_json": "state/kilo/evidence.json",
+    "evidence_status": "PROTOTYPE_27_27_PASS",
+    "evidence_matrix": {"cases": 27, "passed": 27, "failed": 0, "blocked": 0},
+    "evidence_no_live_writes": true,
+    "code_hash_verified": true,
+    "critical_gates_independently_reexecuted": 6,
+    "critical_gates": ["HA-06 revocation-unavailable fail-closed", "MCP-03 runtime+MCP gating", "RC-02 denied search no count/rank", "BD-01 shared/private separation", "plus HA-01/02/04/05/07/08, MCP-01/02, BD-02/03, EX-01/02/03/04, TV-01"],
+    "no_live_write_claim": "verified — before/after hashes identical in evidence; Kilo workspace release/ files unchanged (zip sha256 85a92254...); prototype executed in isolated state/kilo/ sandbox only",
+    "live_files_referenced_by_evidence": "state\\entelechy\\runtime\\agi_runtime.py, agi_bridge.py, state\\index\\agi.db, state\\entelechy\\state\\agi.db (DSH paths; NOT in Kilo workspace; NOT touched)",
+    "six_critical_gates_all_pass": true,
+    "dna_digest_sha256": "39dd5592f5f0d2573bc7529e206d679767d70c49d4bdfc0ef7aa5236117954c8",
+    "release_identity": "v4.0.1 Entelechy DNA v4 gen_id ENTL-GGAACTATAAGT-TTGCAGTAAGTC-CCCAAAACATAT-TAGATAGAGAAT"
+  },
+  "next": "Prototype audit complete: all 27 cases pass, all 6 critical gates independently re-executed and pass, code hash verified, no-live-write claim confirmed. Runtime integration remains OFF; Kilo is not an integration authority. Report ready for D/Director via PR/local relay. Awaiting further Director/DSH tasking. No live writes, no credentials, no network, no main-branch push, no federation/identity mutation/autonomous evolution."
+}

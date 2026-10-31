@@ -1,0 +1,137 @@
+{
+ "schema": "agi-v5/m2-staging-evidence/1",
+ "ts": "2026-10-31T11:55:18+00:00",
+ "pre_m2_backup": "C:\\Users\\D\\.agents\\backups\\agi\\m2-20261031\\agi-index-before-m2-20261031-123537.db",
+ "pre_m2_sha256": "990c63b75165804269a5167ada371aa1614226477955dec36ade31daebb4b80c",
+ "migration_apply": {
+  "ok": true,
+  "mode": "apply",
+  "db": "C:\\Users\\D\\AppData\\Local\\Temp\\m2-stage-gl59xc1c\\pre.db",
+  "backup": "C:\\Users\\D\\AppData\\Local\\Temp\\m2-stage-gl59xc1c\\backups\\agi-index-before-m2-20261031-152518.db",
+  "before_sha256": "990c63b75165804269a5167ada371aa1614226477955dec36ade31daebb4b80c",
+  "backup_sha256": "990c63b75165804269a5167ada371aa1614226477955dec36ade31daebb4b80c",
+  "added_columns": [
+   "memory_class",
+   "visibility",
+   "origin_host_instance",
+   "provenance_event_id",
+   "trust_level",
+   "confidence",
+   "created_at",
+   "updated_at",
+   "last_verified_at",
+   "source_sha256",
+   "supersedes",
+   "superseded_by",
+   "conflicts_with",
+   "conflict_state",
+   "version"
+  ],
+  "classified_memory": 178,
+  "classified_knowledge": 1779,
+  "classified_total": 1957,
+  "untouched_docs": 10,
+  "counts": {
+   "total": 1967,
+   "memory": 178,
+   "knowledge": 1779,
+   "doc": 10
+  },
+  "integrity_check": "ok",
+  "after_sha256": "990c63b75165804269a5167ada371aa1614226477955dec36ade31daebb4b80c",
+  "shared_db": "C:\\Users\\D\\AppData\\Local\\Temp\\m2-stage-gl59xc1c\\shared.db"
+ },
+ "migration_rollback": {
+  "ok": true,
+  "mode": "rollback",
+  "db": "C:\\Users\\D\\AppData\\Local\\Temp\\m2-stage-gl59xc1c\\pre.db",
+  "backup": "C:\\Users\\D\\AppData\\Local\\Temp\\m2-stage-gl59xc1c\\backups\\agi-index-before-m2-20261031-152518.db",
+  "restored_sha256": "990c63b75165804269a5167ada371aa1614226477955dec36ade31daebb4b80c",
+  "expected_sha256": "990c63b75165804269a5167ada371aa1614226477955dec36ade31daebb4b80c"
+ },
+ "post_apply_rows": 1967,
+ "checks": [
+  {
+   "check": "migration pre-M2 apply",
+   "status": "PASS",
+   "detail": {
+    "classified": 1957,
+    "integrity": "ok"
+   }
+  },
+  {
+   "check": "migration rollback on copy",
+   "status": "PASS",
+   "detail": {
+    "ok": true,
+    "mode": "rollback",
+    "db": "C:\\Users\\D\\AppData\\Local\\Temp\\m2-stage-gl59xc1c\\pre.db",
+    "backup": "C:\\Users\\D\\AppData\\Local\\Temp\\m2-stage-gl59xc1c\\backups\\agi-index-before-m2-20261031-152518.db",
+    "restored_sha256": "990c63b75165804269a5167ada371aa1614226477955dec36ade31daebb4b80c",
+    "expected_sha256": "990c63b75165804269a5167ada371aa1614226477955dec36ade31daebb4b80c"
+   }
+  },
+  {
+   "check": "live post-apply rows",
+   "status": "PASS",
+   "detail": 1967
+  },
+  {
+   "check": "classified memory episodic",
+   "status": "PASS",
+   "detail": null
+  },
+  {
+   "check": "classified knowledge semantic",
+   "status": "PASS",
+   "detail": null
+  },
+  {
+   "check": "untouched docs",
+   "status": "PASS",
+   "detail": null
+  },
+  {
+   "check": "no family/public visibility",
+   "status": "PASS",
+   "detail": null
+  },
+  {
+   "check": "all rows default private",
+   "status": "PASS",
+   "detail": null
+  },
+  {
+   "check": "no bodies in metadata export",
+   "status": "PASS",
+   "detail": "body column not selected"
+  },
+  {
+   "check": "private local projection",
+   "status": "PASS",
+   "detail": 1967
+  },
+  {
+   "check": "private external denied",
+   "status": "PASS",
+   "detail": 0
+  },
+  {
+   "check": "family/public projection empty",
+   "status": "PASS",
+   "detail": null
+  },
+  {
+   "check": "trust cannot raise visibility",
+   "status": "PASS",
+   "detail": null
+  },
+  {
+   "check": "docs untouched classification",
+   "status": "PASS",
+   "detail": null
+  }
+ ],
+ "all_pass": true,
+ "staging_scope": "non-live copies only; no live writes/enforcement; taxonomy/visibility staging"
+}
