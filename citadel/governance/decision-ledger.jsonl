@@ -7,3 +7,4 @@
 {"ts": "2026-10-31", "id": "CITADEL-0007", "decision": "DeepSeek-web promoted to Citadel Citizen (research/documentation; advisory only)", "authority": "Owner D direction"}
 {"ts": "2026-10-31", "id": "CITADEL-0008", "decision": "Claude-web promoted to Citadel Citizen (architecture/coding/editorial; advisory only)", "authority": "Owner D direction"}
 {"ts": "2026-10-31", "id": "CITADEL-0009", "decision": "Owner D chooses AGPL-3.0 for code and CC BY-SA 4.0 for documentation; private historical archive excluded from publication until explicit consent", "authority": "Owner D"}
+{"ts": "2026-10-31", "id": "CITADEL-0010", "decision": "KING licensing amendments: rights-holder/provenance inventory, mixed-artifact and artifact-notice boundaries; Owner D license decision retained", "authority": "DSH under KING conditional hold"}

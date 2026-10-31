@@ -203,6 +203,7 @@ Read [SECURITY.md](SECURITY.md) and [NOTICE.md](NOTICE.md) before trusting the s
 - [DNA.md](DNA.md) — the latest stable DNA in one file (for humans and machines)
 - [llms.txt](llms.txt) — compact machine summary
 - [LICENSING.md](LICENSING.md) — code AGPL-3.0, documentation CC BY-SA 4.0
+- [RIGHTS-PROVENANCE.md](RIGHTS-PROVENANCE.md) — rights-holder, artifact license boundaries and third-party inventory
 - [docs/history](docs/history) — archived beta and earlier-phase material (not current)
 - [SECURITY.md](SECURITY.md), [NOTICE.md](NOTICE.md), [POLICY.md](POLICY.md)
 
