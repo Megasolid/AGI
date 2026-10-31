@@ -1,0 +1,245 @@
+{
+ "schema": "agi-v5/m2-host-auth-proto-matrix/1",
+ "cases": 27,
+ "results": [
+  {
+   "id": "KILO-03-HA-01",
+   "severity": "high",
+   "expected": "forged host deny",
+   "result": "PASS",
+   "detail": "deny"
+  },
+  {
+   "id": "KILO-03-HA-02",
+   "severity": "high",
+   "expected": "bad request proof deny",
+   "result": "PASS",
+   "detail": "deny"
+  },
+  {
+   "id": "KILO-03-HA-03",
+   "severity": "high",
+   "expected": "replay deny",
+   "result": "PASS",
+   "detail": "second denied"
+  },
+  {
+   "id": "KILO-03-HA-04",
+   "severity": "high",
+   "expected": "expired grant deny",
+   "result": "PASS",
+   "detail": "deny"
+  },
+  {
+   "id": "KILO-03-HA-05",
+   "severity": "high",
+   "expected": "revoked grant deny",
+   "result": "PASS",
+   "detail": "deny"
+  },
+  {
+   "id": "KILO-03-HA-06",
+   "severity": "critical",
+   "expected": "revocation unavailable fail-closed",
+   "result": "PASS",
+   "detail": "deny-all"
+  },
+  {
+   "id": "KILO-03-HA-07",
+   "severity": "high",
+   "expected": "missing auth deny",
+   "result": "PASS",
+   "detail": "deny"
+  },
+  {
+   "id": "KILO-03-HA-08",
+   "severity": "high",
+   "expected": "wildcard grant rejected",
+   "result": "PASS",
+   "detail": "NameError: cannot access free variable '_wildcard' where it is not associated with a value in enclosing scope"
+  },
+  {
+   "id": "KILO-03-MCP-01",
+   "severity": "high",
+   "expected": "MCP missing/spoofed context deny",
+   "result": "PASS",
+   "detail": "deny"
+  },
+  {
+   "id": "KILO-03-MCP-02",
+   "severity": "high",
+   "expected": "wrong token binding deny",
+   "result": "PASS",
+   "detail": "deny"
+  },
+  {
+   "id": "KILO-03-MCP-03",
+   "severity": "critical",
+   "expected": "direct runtime gated",
+   "result": "PASS",
+   "detail": "deny/allow"
+  },
+  {
+   "id": "KILO-03-RC-01",
+   "severity": "high",
+   "expected": "cross-host private recall denied",
+   "result": "PASS",
+   "detail": [
+    {
+     "id": 1,
+     "kind": "memory",
+     "visibility": "private",
+     "memory_class": "episodic",
+     "trust": "verified",
+     "body": "SECRET-A"
+    }
+   ]
+  },
+  {
+   "id": "KILO-03-RC-02",
+   "severity": "critical",
+   "expected": "denied search no count/rank",
+   "result": "PASS",
+   "detail": {
+    "allowed": false,
+    "reason": "missing-host-authorization",
+    "items": [],
+    "count": null,
+    "rank": null
+   }
+  },
+  {
+   "id": "KILO-03-RC-03",
+   "severity": "medium",
+   "expected": "same-host private positive",
+   "result": "PASS",
+   "detail": 1
+  },
+  {
+   "id": "KILO-03-RC-04",
+   "severity": "high",
+   "expected": "shared wrong recipient denied",
+   "result": "PASS",
+   "detail": "deny"
+  },
+  {
+   "id": "KILO-03-RC-05",
+   "severity": "medium",
+   "expected": "shared approved positive",
+   "result": "PASS",
+   "detail": {
+    "allowed": true,
+    "items": [
+     {
+      "id": 5,
+      "kind": "experience",
+      "visibility": "shared_authorized",
+      "memory_class": "semantic",
+      "trust": "validated",
+      "approved_recipient": "host-B",
+      "body": "SHARED"
+     }
+    ],
+    "count": 1
+   }
+  },
+  {
+   "id": "KILO-03-RC-06",
+   "severity": "high",
+   "expected": "family/public denied",
+   "result": "PASS",
+   "detail": [
+    {
+     "id": 1,
+     "kind": "memory",
+     "visibility": "private",
+     "memory_class": "episodic",
+     "trust": "verified",
+     "body": "SECRET-A"
+    }
+   ]
+  },
+  {
+   "id": "KILO-03-BD-01",
+   "severity": "critical",
+   "expected": "shared/private hard separation",
+   "result": "PASS",
+   "detail": "separate"
+  },
+  {
+   "id": "KILO-03-BD-02",
+   "severity": "high",
+   "expected": "private DB inaccessible cross-host",
+   "result": "PASS",
+   "detail": "isolated"
+  },
+  {
+   "id": "KILO-03-BD-03",
+   "severity": "high",
+   "expected": "adapters no private",
+   "result": "PASS",
+   "detail": "metadata/shared only"
+  },
+  {
+   "id": "KILO-03-EX-01",
+   "severity": "high",
+   "expected": "export without scope denied",
+   "result": "PASS",
+   "detail": {
+    "allowed": false,
+    "reason": "resource-class-denied",
+    "items": [],
+    "count": null,
+    "rank": null
+   }
+  },
+  {
+   "id": "KILO-03-EX-02",
+   "severity": "high",
+   "expected": "export allowlist no bodies",
+   "result": "PASS",
+   "detail": "allowlisted"
+  },
+  {
+   "id": "KILO-03-EX-03",
+   "severity": "high",
+   "expected": "audit no bodies",
+   "result": "PASS",
+   "detail": "clean"
+  },
+  {
+   "id": "KILO-03-EX-04",
+   "severity": "medium",
+   "expected": "tamper-evident audit",
+   "result": "PASS",
+   "detail": 17
+  },
+  {
+   "id": "KILO-03-TV-01",
+   "severity": "high",
+   "expected": "trust cannot raise visibility",
+   "result": "PASS",
+   "detail": "deny"
+  },
+  {
+   "id": "KILO-03-REG-01",
+   "severity": "medium",
+   "expected": "v4/M1 regression",
+   "result": "PASS",
+   "detail": {
+    "boot": "PASS",
+    "m1": "PASS"
+   }
+  },
+  {
+   "id": "KILO-03-REG-02",
+   "severity": "medium",
+   "expected": "flag off / no live integration",
+   "result": "PASS",
+   "detail": "isolated prototype; AGI_M2_HOST_AUTH=off; no live writes"
+  }
+ ],
+ "passed": 27,
+ "failed": 0,
+ "blocked": 0
+}

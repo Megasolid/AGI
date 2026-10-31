@@ -23,5 +23,5 @@ No federation, family/public sharing, identity mutation, autonomous evolution, s
 Signed task envelopes authorize scope, not code execution. Human approval is required before consequential actions.
 v4.0.1 release artifacts remain immutable.
 
-Current task: `citadel/tasks/cit-kilo-m2-20261031-03.json` — independent review of the revised cross-host
-authorization / private-recall isolation design and checklist; v2 remediation retest complete (9/9).
+Current task: `citadel/tasks/cit-kilo-m2-20261031-04.json` — independent audit/execution of the isolated
+host-auth/private-recall prototype (27 cases, six critical gates); design review v3 complete.
