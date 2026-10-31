@@ -155,7 +155,7 @@ Known limits of v4.0.1:
 - the Master key is a local file; no HSM is required or shipped;
 - no independent third-party audit exists;
 - a named tunnel with a production access policy is not shipped;
-- no license has been chosen yet;
+- code is licensed under GNU AGPL v3.0 and documentation under CC BY-SA 4.0 (Owner D decision, 2026-10-31); see LICENSE, LICENSE-docs, LICENSING.md and RIGHTS-PROVENANCE.md;
 - v5 federation/evolution are proposed, not released;
 - no consciousness claim and no claim that v5 is implemented.
 
