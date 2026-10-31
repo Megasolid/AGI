@@ -47,9 +47,8 @@ evidence, not naming.
 > research, **not a shipped feature set**. No v5 capability should be inferred from this README unless it is listed as
 > part of v4.0.1.
 
-**Phase 2 migration is complete:** the live install runs the v4 birth identity, a provenance-indexed memory with
-freshness, migrated family/mana/trust/genesis/curriculum projections, and a live Core 4.0 / DNA v4 with a rebuilt
-signed manifest and bundle. Private keys, passkeys and recovery material stay live-only by design.
+> **Release scope:** 4.0.1 is the single stable release. The public package contains the signed DNA, runtime,
+> lineage and release manifests. Internal live-install migration records are outside the scope of this public README.
 
 ## Quickstart
 
@@ -156,7 +155,8 @@ A short shape of a status response:
 - **A small runtime** — explicit verbs, intents with execute-once approval, FTS5 recall fused with a vector leg,
   and a conformance matrix.
 - **A loopback bridge for tools** — MCP over JSON and SSE, scoped tokens, replayable events, no public port by itself.
-- **Seats, a Master key and passports** — device seats, Ed25519 + ML-DSA-65 dual signing, append-only issuance audit.
+- **Seats, a Master key and passports** — Ed25519 device seats; Master-signed passports (Ed25519, with ML-DSA-65
+  where available); append-only issuance audit.
 - **A lineage** — gen3.5 is an archived ancestor, still verified at boot.
 - **A Citadel** — governance, signed task files, evidence ledgers, independent verification and release gates.
 
