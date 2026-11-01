@@ -1,16 +1,22 @@
 test_cross_branch_requires_consent (test_v41e_context.ContextTests.test_cross_branch_requires_consent) ... ok
 test_cross_branch_with_consent_passes (test_v41e_context.ContextTests.test_cross_branch_with_consent_passes) ... ok
+test_duplicate_context_id_rejected (test_v41e_context.ContextTests.test_duplicate_context_id_rejected) ... ok
 test_expired_fails (test_v41e_context.ContextTests.test_expired_fails) ... ok
 test_inline_body_rejected (test_v41e_context.ContextTests.test_inline_body_rejected) ... ok
 test_manifest_branch_denied (test_v41e_context.ContextTests.test_manifest_branch_denied) ... ok
+test_missing_revocation_interface_fails_closed (test_v41e_context.ContextTests.test_missing_revocation_interface_fails_closed) ... ok
 test_resolver_verifies_digest (test_v41e_context.ContextTests.test_resolver_verifies_digest) ... ok
 test_revocation_unavailable_fails (test_v41e_context.ContextTests.test_revocation_unavailable_fails) ... ok
 test_tamper_digest_fails (test_v41e_context.ContextTests.test_tamper_digest_fails) ... ok
+test_unknown_schema_rejected (test_v41e_context.ContextTests.test_unknown_schema_rejected) ... ok
+test_untrusted_pointer_content_remains_data (test_v41e_context.ContextTests.test_untrusted_pointer_content_remains_data) ... ok
 test_valid_roundtrip (test_v41e_context.ContextTests.test_valid_roundtrip) ... ok
 test_authority_field_rejected (test_v41e_handoff.HandoffTests.test_authority_field_rejected) ... ok
+test_declared_permission_is_not_a_grant (test_v41e_handoff.HandoffTests.test_declared_permission_is_not_a_grant) ... ok
 test_fresh_agent_reconstructs_from_context_refs (test_v41e_handoff.HandoffTests.test_fresh_agent_reconstructs_from_context_refs) ... ok
 test_handoff_expiry_fails (test_v41e_handoff.HandoffTests.test_handoff_expiry_fails) ... ok
 test_missing_acceptance_fails (test_v41e_handoff.HandoffTests.test_missing_acceptance_fails) ... ok
+test_missing_context_refs_rejected (test_v41e_handoff.HandoffTests.test_missing_context_refs_rejected) ... ok
 test_missing_non_goals_fails (test_v41e_handoff.HandoffTests.test_missing_non_goals_fails) ... ok
 test_receipt_roundtrip_and_match (test_v41e_handoff.HandoffTests.test_receipt_roundtrip_and_match) ... ok
 test_receipt_tamper_fails (test_v41e_handoff.HandoffTests.test_receipt_tamper_fails) ... ok
@@ -18,6 +24,6 @@ test_tamper_digest_fails (test_v41e_handoff.HandoffTests.test_tamper_digest_fail
 test_valid_roundtrip (test_v41e_handoff.HandoffTests.test_valid_roundtrip) ... ok
 
 ----------------------------------------------------------------------
-Ran 18 tests in 0.002s
+Ran 24 tests in 0.002s
 
 OK
