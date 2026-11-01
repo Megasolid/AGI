@@ -110,8 +110,11 @@ def validate_context_manifest(manifest: dict, *, now=None, allowed_branch: str |
         _require(manifest["branch_id"] == allowed_branch,
                  f"manifest branch {manifest['branch_id']!r} is not the allowed branch")
     current = _now(now)
+    seen_ids = set()
     for ref in manifest["refs"]:
         _validate_ref(ref, manifest["branch_id"], current, consent_check, revocation_check)
+        _require(ref["context_id"] not in seen_ids, f"duplicate context_id: {ref['context_id']}")
+        seen_ids.add(ref["context_id"])
 
 
 def _validate_ref(ref: dict, manifest_branch: str, current: datetime,

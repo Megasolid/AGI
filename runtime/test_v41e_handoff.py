@@ -93,6 +93,19 @@ class HandoffTests(unittest.TestCase):
         self.assertEqual(rebuilt["context"]["ctx-1"], b"body")
         self.assertNotIn("original transcript", str(rebuilt).lower())
 
+    def test_missing_context_refs_rejected(self):
+        h = handoff()
+        h["context_refs"] = []
+        h["handoff_digest"] = __import__("agi_handoff").handoff_digest(h)
+        with self.assertRaisesRegex(HandoffError, "context refs required"):
+            validate_handoff(h)
+
+    def test_declared_permission_is_not_a_grant(self):
+        h = handoff(permissions={"write": True})
+        validate_handoff(h, now=NOW)
+        self.assertNotIn("grant", h)
+        self.assertNotIn("authority", h)
+
 
 if __name__ == "__main__":
     unittest.main()
