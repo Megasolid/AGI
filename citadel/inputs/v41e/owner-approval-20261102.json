@@ -1,0 +1,15 @@
+{
+  "schema": "agi/owner-decision/1",
+  "ts": "2026-11-02T02:05:30+0330",
+  "from": "Owner D",
+  "decision": "approved. continue.",
+  "scope": [
+    "approve existing AGI signing key and detached agi-sig/1 signature format (Option A), wrapped by Issue #6 and KING decisions",
+    "authorize GitHub write use under the Megasolid account for P0 artifacts",
+    "continue P0 release-governance planning"
+  ],
+  "source": "Owner chat message, 2026-11-02T02:0x+0330",
+  "signed_by_owner": false,
+  "recorded_by": "dsh",
+  "note": "Chat approval captured as a durable record; it is not an Owner signature and no Owner signature is fabricated. DSH task/manifest signatures use the approved ML-DSA-65 device key. E1-E6 implementation remains gated by KING/P0 review."
+}

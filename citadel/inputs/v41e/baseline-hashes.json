@@ -1,0 +1,55 @@
+{
+  "schema": "agi/v41e/baseline-hashes/1",
+  "generated_at": "2026-11-02T01:35:00+0330",
+  "v401": {
+    "tag_object": "bd1f40fdf7ae6c16a1f5f426222cb5f35caac704",
+    "commit": "6a0fb796a624cf61fc8592aa3f45fc4dc6c10738",
+    "tree": "083f0ee27dc7368196f239175e212aa84cb039eb",
+    "runtime_zip": "releases/runtime/2026-10-30/agi-runtime-v4.0.1.zip",
+    "runtime_size": 75339,
+    "runtime_sha256": "85a922540097315802509634a0e03e6a7940f4cf378a485fc93d2f00e85ec781"
+  },
+  "current_base": {
+    "branch": "main",
+    "commit": "e61eb10fc5bf8a992f93ce15a8a352d5b08329bc",
+    "tree": "d085214ea489cfaae8cf1604c16e69f0b090c8c4",
+    "remote_main": "e61eb10fc5bf8a992f93ce15a8a352d5b08329bc",
+    "clean": true,
+    "protected_diff_v401_to_head": "empty"
+  },
+  "protected_repo_files": {
+    "DNA.md": "828ae0b6a76f8e2b109e8cc5876db7072e347f13ffa422ba0c84b64979870520",
+    "core/dna.v4.json": "d650ad6059b376c70faab3077af1a9e35409fa7b06549effe0f3e96e895a6810",
+    "core/dna.v4.sig": "888468dcaa43d04b0a7dbd0a559667425118a750ee4f0fb2f560fb291d1a8498",
+    "repo.json": "5046fa8aeec584f3ba4350437bd619aaf7e3337d2b76723c128c353bd0f04106",
+    "repo.json.sig": "58401f5475c9ac08bbbf61db8acfc7aebadae0520d48e6b6545af72e7d5563b6",
+    "POLICY.md": "0977b74b24b190ebc2bd2f7167ff3b5689653f9e75c34806c18746d189aaa9b5",
+    "citadel/task.schema.json": "e5b8692a7733e5ba7b51d686b418898a4bd44f483f6f7c270b98123d1fe0c352"
+  },
+  "s1_s6_freeze_packages": [
+    {"package": "universal-architecture-v0.2.1-20261101", "status": "FROZEN", "manifest_sha256": "53c445a74f258bdd995ba3b95816dc1c887f39e92ec340ded600b42720d0ca9d"},
+    {"package": "s2-portable-bootstrap-v0.2-20261101", "status": "FROZEN", "manifest_sha256": "92a42243521aede9b3a36a0b56286f31f515d353d3848ebea3e79faa42f03135"},
+    {"package": "s3-authorization-boundaries-20261101", "status": "FROZEN", "manifest_sha256": "834d3ce5941c105c3623fdc89af409ba5cfa4d0e03df7b90d024f9adb250bb91"},
+    {"package": "s3-addendum-01-20261101", "status": "FROZEN", "manifest_sha256": "9b6c7f65c39067615335884e671376f36ffb3c720795f9aa3acd7730354775c3"},
+    {"package": "s3fed-federation-continuity-20261101", "status": "FROZEN", "manifest_sha256": "b26b8d25b2982f34d27e81c0b83b1ac7b6e9ab0b508ef0df09d1a309ce62d367"},
+    {"package": "s3fed-addendum-01-20261101", "status": "FROZEN", "manifest_sha256": "495bd26063e8f6cbf2b248e5b3942687b6749de0ba3c5c2f3c3554b7486c9c87"},
+    {"package": "s3fed-addendum-02-20261101", "status": "FROZEN", "manifest_sha256": "b16e45ced3fd8bb7c6b0ba61e58f3d97c74c9d69015210fbee599f0b56e09edc"},
+    {"package": "s4-evaluation-ranking-mana-20261101", "status": "FROZEN", "manifest_sha256": "451ecd575bd0a0ef68b2dac66193fcbc3b688e2b5c7cf63a9bf43aa4518a00f6"},
+    {"package": "s4-addendum-01-20261101", "status": "FROZEN", "manifest_sha256": "b564a500d07d45d054f8a1e1f2fa5dbaded305a29d223d80283c1bbc60fc2147"},
+    {"package": "s4-addendum-02-20261101", "status": "FROZEN", "manifest_sha256": "a462bfa83156c737b7c9c95b12bef6d0b942b7183a222b7286cf0a9ddc8ffbf6"},
+    {"package": "s5-main-station-harness-20261101", "status": "FROZEN", "manifest_sha256": "4f8ba68d5510eda2eeb6f8a5dd941d0995515169114627e2eceedb46b5d1ea8c"},
+    {"package": "s5-addendum-01-20261101", "status": "FROZEN", "manifest_sha256": "9f7126fd0fce5e5eadfdc49694bed88dabd71d5bd4f4a5dc1ea4a03ff85eeee7"},
+    {"package": "s5-addendum-02-20261101", "status": "FROZEN", "manifest_sha256": "c91360039e17355bca657f6de719ee657d348b95770d0e5b13c0d4b67d13dd30"},
+    {"package": "s6-research-northstar-20261101", "status": "FROZEN", "manifest_sha256": "6a3d7265756a4e69ce83a0b2f765747c6cf1cb77fe7c4d4fa0578ef15308dece"},
+    {"package": "lb-load-balancing-20261101", "status": "FROZEN", "manifest_sha256": "79a4efac5881028bed23fb7d724062a263946ca46c44fe0b13a0037924e892b4"},
+    {"package": "canary-close-20261101", "status": "EVIDENCE_FROZEN_NOT_CLOSED", "manifest_sha256": "7f2df85c162ad2ff9abbc4137c4a4b7b018cf381ac7148b885dd6740f942d93b"}
+  ],
+  "freeze_verification": {
+    "packages_total": 16,
+    "packages_pass": 16,
+    "files_total": 29,
+    "files_pass": 29,
+    "checked_at": "2026-11-02T01:35:00+0330",
+    "method": "manifest sha256 vs freeze.json; each listed file sha256 + bytes"
+  }
+}
