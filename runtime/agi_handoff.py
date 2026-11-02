@@ -13,6 +13,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import secrets
 from datetime import datetime, timezone
 
 HANDOFF_SCHEMA = "agi.handoff/0.1"
@@ -68,7 +69,7 @@ def make_handoff(*, task_id: str, title: str, objective: str, owner: str,
                  acceptance_criteria, evidence_requirements,
                  dependencies=(), permissions=None, non_goals=(),
                  created_at: str | None = None, expires_at: str | None = None,
-                 version: int = 1) -> dict:
+                 version: int = 1, nonce: str | None = None) -> dict:
     _require(isinstance(task_id, str) and task_id, "task_id required")
     _require(isinstance(title, str) and title, "title required")
     _require(isinstance(objective, str) and objective, "objective required")
@@ -87,6 +88,7 @@ def make_handoff(*, task_id: str, title: str, objective: str, owner: str,
         "schema": HANDOFF_SCHEMA,
         "task_id": task_id,
         "version": int(version),
+        "nonce": nonce or secrets.token_hex(16),
         "title": title,
         "objective": objective,
         "owner": owner,
@@ -112,11 +114,12 @@ def handoff_digest(handoff: dict) -> str:
 
 def validate_handoff(handoff: dict, *, now=None) -> None:
     _require(isinstance(handoff, dict), "handoff must be an object")
-    for key in ("schema", "task_id", "version", "title", "objective", "owner", "branch_id",
+    for key in ("schema", "task_id", "version", "nonce", "title", "objective", "owner", "branch_id",
                 "created_at", "context_manifest", "context_refs", "acceptance_criteria",
                 "evidence_requirements", "dependencies", "permissions", "non_goals", "handoff_digest"):
         _require(key in handoff, f"handoff missing {key}")
     _require(handoff["schema"] == HANDOFF_SCHEMA, "unsupported handoff schema")
+    _require(isinstance(handoff["nonce"], str) and handoff["nonce"], "handoff nonce required")
     for key in FORBIDDEN_KEYS:
         _require(key not in handoff, f"handoff must not carry {key}")
     _require(handoff_digest(handoff) == handoff["handoff_digest"], "handoff digest mismatch")
