@@ -1,0 +1,29 @@
+﻿{
+ "schema": "agi/king-decision/1",
+ "ts": "2026-11-02T16:47:05+0330",
+ "source": "King (GPT) via AGI MCP chat channel, direct Owner-pasted response",
+ "raw_channels": ["owner message in session (authoritative)", "chatgpt web reply (narrative assessment, superseded by this structured decision)"],
+ "decision": {
+  "publication": "BLOCKED",
+  "review_v14": "APPROVED",
+  "review_commit": "2fbb99b",
+  "second_mldsa_implementation": "APPROVED_OFFLINE_ONLY",
+  "tagging": "OWNER_APPROVAL_REQUIRED",
+  "activation": "NOT_AUTHORIZED"
+ },
+ "corrections": [
+  "Kilo findings v12-v13 require metadata validation",
+  "Cryptographic implementation diversity remains unverified",
+  "E1 requires real S5 and revocation integration",
+  "Operational limitations must remain explicit"
+ ],
+ "next": [
+  "Execute schema-enforced v14 review",
+  "Install and validate second ML-DSA implementation",
+  "Reverify signatures independently",
+  "Repeat 130-test regression gate",
+  "Prepare Owner release decision"
+ ],
+ "note": "Structured decision supplied by Owner; not an ML-DSA signature by King. King is an LLM web session without signing keys.",
+ "no_publication": true
+}

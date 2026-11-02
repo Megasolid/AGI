@@ -1,0 +1,95 @@
+{
+ "all_valid": true,
+ "caveat": "dilithium-py is a non-constant-time pure-Python reference; acceptable for verification evidence, not for production signing",
+ "created_at": "2026-11-02T16:47:34+0330",
+ "implementation": "dilithium-py ML_DSA_65 (pure-Python FIPS 204), isolated venv state/agi5/venv-mldsa2",
+ "independence": "different ML-DSA implementation from the cryptography library's OpenSSL-backed ML-DSA-65",
+ "offline_only": true,
+ "results": [
+  {
+   "alg": "ML-DSA-65",
+   "error": "",
+   "key_id": "a73eaa5d3c31e009",
+   "path": "citadel/inputs/v41e/v41e-rc-manifest.json",
+   "pk_bytes": 1952,
+   "sha256": "sha256:c6f17fe358e8b063738039674c1ec63a9233277495ba54e73205f167149e77ff",
+   "sig_bytes": 3309,
+   "sig_sha256": "sha256:53d978e905c84e9ebc2d5e28fe2e34e65995a7ba4d1293232c1ae095e733eeb1",
+   "tamper_rejected": true,
+   "valid": true
+  },
+  {
+   "alg": "ML-DSA-65",
+   "error": "",
+   "key_id": "a73eaa5d3c31e009",
+   "path": "citadel/inputs/v41e/P7-FINAL-DOSSIER-20261102.md",
+   "pk_bytes": 1952,
+   "sha256": "sha256:2042526efacab064d3291b44b8e6b7beeb53464d1d11a9f481f050e0d12f4c1f",
+   "sig_bytes": 3309,
+   "sig_sha256": "sha256:c09a2f49c083a31fadd76e2cd0ae7c770e02d8fdf0600ed558c92d5f95388892",
+   "tamper_rejected": true,
+   "valid": true
+  },
+  {
+   "alg": "ML-DSA-65",
+   "error": "",
+   "key_id": "a73eaa5d3c31e009",
+   "path": "citadel/inputs/v41e/P7-CORRECTION-20261102.md",
+   "pk_bytes": 1952,
+   "sha256": "sha256:baf92326aa3a0ff90b0eae32a21759f2e1d6249635d89d86713f273e9ad9b3b4",
+   "sig_bytes": 3309,
+   "sig_sha256": "sha256:6bc39986325149e6bc0552fbea688543b38996e9a2ccc21baac4ebe179196907",
+   "tamper_rejected": true,
+   "valid": true
+  },
+  {
+   "alg": "ML-DSA-65",
+   "error": "",
+   "key_id": "a73eaa5d3c31e009",
+   "path": "citadel/inputs/v41e/P7-KILO-V12-NOTE-20261102.md",
+   "pk_bytes": 1952,
+   "sha256": "sha256:73d0b1122a73e7738f5678a9769c1218705c02131ae41f3b72a19d6db60ca177",
+   "sig_bytes": 3309,
+   "sig_sha256": "sha256:fd5381847a643776fa1d0585a648aa721d9fd712ab8cbb7e5f6686cf91a17b1f",
+   "tamper_rejected": true,
+   "valid": true
+  },
+  {
+   "alg": "ML-DSA-65",
+   "error": "",
+   "key_id": "a73eaa5d3c31e009",
+   "path": "citadel/inputs/v41e/P7-INDEPENDENT-MLDSA-VERIFICATION.json",
+   "pk_bytes": 1952,
+   "sha256": "sha256:9037c693b1709cce44455ca0b0e41facdda24f7aaeddbb6be50c3e7421a05a04",
+   "sig_bytes": 3309,
+   "sig_sha256": "sha256:5741465b1fb3ffc40777cc23eb3f8734bcac5dd6450b8de192f5a5e9f132ee01",
+   "tamper_rejected": true,
+   "valid": true
+  },
+  {
+   "alg": "ML-DSA-65",
+   "error": "",
+   "key_id": "a73eaa5d3c31e009",
+   "path": "citadel/inputs/v41e/HANDOFF-KING-20261102T1645.md",
+   "pk_bytes": 1952,
+   "sha256": "sha256:36ced0c5ffe9b71d9cb8b94cd00509f6936bbeeeb5fe2194253d8e6aadcf4274",
+   "sig_bytes": 3309,
+   "sig_sha256": "sha256:2ff7fdde2439e7f828096ca5d8f5f5d866f83c66e70260db5dc4296bd77eb71a",
+   "tamper_rejected": true,
+   "valid": true
+  },
+  {
+   "alg": "ML-DSA-65",
+   "error": "",
+   "key_id": "a73eaa5d3c31e009",
+   "path": "citadel/inputs/v41e/KING-DECISION-20261102T1647.json",
+   "pk_bytes": 1952,
+   "sha256": "sha256:e985465a918d8432c9f54849f3a9859eba23b4924d37b669b37d06cc33878ca4",
+   "sig_bytes": 3309,
+   "sig_sha256": "sha256:ac5b61299dceef2a2ceac90f3b6bb8c89a9218af6990d33f0ea122704893d541",
+   "tamper_rejected": true,
+   "valid": true
+  }
+ ],
+ "schema": "agi/p7/second-implementation-mldsa-verification/1"
+}
