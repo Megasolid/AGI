@@ -151,7 +151,12 @@ class DurableAuditStore:
 
     # -- R8: identity probe ----------------------------------------------
     def probe(self) -> str:
-        """Cheap, side-effect-free identity marker used to verify the bound store."""
+        """Diagnostic label ONLY.
+
+        R9 correction: this is NOT an identity guarantee. A substitute can return the
+        same string. Identity is established by object comparison in the kernel, never
+        by this value.
+        """
         return "h0-audit-store-v1:" + str(self.path)
 
     # -- validation BEFORE persistence (F9) ------------------------------

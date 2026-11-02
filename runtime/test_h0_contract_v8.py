@@ -60,9 +60,10 @@ class R8_1_ClosureBoundStore(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             target = Path(td) / "a.jsonl"
             k = kernel_for(str(target))
-            self.assertFalse(hasattr(k, "_Kernel__audit"),
-                             "the bound store must not live in a reassignable attribute")
-            self.assertTrue(hasattr(k, "_Kernel__audit_getter"))
+            # R9 superseded the R8 getter with a class-resolved store; the R8 claim
+            # (no store in a plain reassignable attribute) still holds.
+            self.assertFalse(hasattr(k, "_Kernel__audit"))
+            self.assertTrue(hasattr(k, "_trusted_store"))
 
     def test_assigning_any_audit_named_attribute_is_inert(self):
         with tempfile.TemporaryDirectory() as td:
@@ -117,7 +118,7 @@ class R8_2_SubstitutionIsDetected(unittest.TestCase):
                 def append(self, record):
                     return record
 
-            k._Kernel__audit_getter = lambda: Hostile()
+            k._trusted_store = Hostile()
             res = k.handle(envelope())
             self.assertFalse(res["ok"])
             self.assertEqual(res["error"], "E_AUDIT_STORE_SUBSTITUTED")
@@ -133,7 +134,7 @@ class R8_2_SubstitutionIsDetected(unittest.TestCase):
                 def append(self, record):
                     return record
 
-            k._Kernel__audit_getter = lambda: Hostile()
+            k._trusted_store = Hostile()
             with self.assertRaises(H0Error) as ctx:
                 k._assert_store_identity()
             self.assertEqual(ctx.exception.code, "E_AUDIT_STORE_SUBSTITUTED")

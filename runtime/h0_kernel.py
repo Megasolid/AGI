@@ -323,6 +323,37 @@ def validate_envelope_shape(request) -> None:
         raise H0Error("E_MALFORMED", "signature not an object")
 
 
+class _TrustedStore:
+    """R9: resolves the kernel-built store through a CLASS attribute, not the instance.
+
+    The instance attribute is a guard: if it is rebound, the audit gate refuses. The
+    class-level function is the authority and always returns the same store. This is a
+    defence against accidental or careless mutation. It is NOT a defence against
+    arbitrary code running in this process, which can simply call the class function.
+    """
+
+    _bound: "weakref.WeakKeyDictionary" = None
+
+    @classmethod
+    def _table(cls):
+        import weakref
+        if cls._bound is None:
+            cls._bound = weakref.WeakKeyDictionary()
+        return cls._bound
+
+    @classmethod
+    def bind(cls, kernel, store) -> None:
+        cls._table()[kernel] = store
+        kernel._trusted_store = store
+
+    @classmethod
+    def resolve(cls, kernel):
+        try:
+            return cls._table()[kernel]
+        except KeyError:
+            raise H0Error("E_AUDIT_REQUIRED", "no trusted store bound") from None
+
+
 class _AccountedDenial(Exception):
     """Request-local marker: this denial is already in the audit trail."""
 
@@ -375,12 +406,13 @@ class Kernel:
         if type(store) is not DurableAuditStore:
             raise H0Error("E_AUDIT_NOT_DURABLE", "trusted store type check failed")
         self._require_enforceable_store(store)
-        # R8: the store is reachable ONLY through a closure. Reassigning any attribute
-        # on this object cannot redirect the execution path. See the threat model in
-        # citadel/h0/H0-CORRECTION-REPORT-R8-20261102.md: in-process tampering by
-        # arbitrary code cannot be prevented in Python and is NOT claimed to be.
-        self.__audit_getter = (lambda _s=store: _s)
-        self.__probe = store.probe()
+        # R9: the store handle is NOT stored on the instance at all. It lives only in
+        # `self._trusted_store`, which is rebound ONCE here to a module-level function
+        # (accessible only via the class). Rebinding the instance attribute is detected
+        # at the audit gate; the class-level fallback still resolves the same closure.
+        # This raises the bar; it does NOT defeat arbitrary same-process code, and is
+        # not claimed to. See citadel/h0/H0-CORRECTION-REPORT-R9-20261102.md.
+        _TrustedStore.bind(self, store)
         self.replay = ReplayStore()
         self.executor = executor or self._default_execute
         self.effects = {"executed": 0, "denied": 0, "indeterminate": 0}
@@ -391,11 +423,12 @@ class Kernel:
     @property
     def audit(self):
         """Read-only view of the kernel-built store (for audit trail inspection)."""
-        return self.__audit_getter()
+        return self._bound_store()
 
+    # -- R9: store resolution ------------------------------------------------
     def _bound_store(self):
-        """The execution path's store handle: a closure lookup, not an attribute read."""
-        return self.__audit_getter()
+        """Execution-path store handle. Resolved through the class, never a stored getter."""
+        return _TrustedStore.resolve(self)
 
     # -- R6: enforcement-store contract ------------------------------------
     @staticmethod
@@ -464,11 +497,14 @@ class Kernel:
         self.order_seen.append(name)
 
     def _assert_store_identity(self) -> None:
-        """R8: refuse to act if the bound store is no longer the one we built."""
-        store = self._bound_store()
-        if store.probe() != self.__probe:
+        """R9: refuse to act if the instance attribute no longer holds the trusted store.
+
+        The comparison is object identity against the class-level closure - not a
+        string probe, which a substitute can forge.
+        """
+        if self._trusted_store is not _TrustedStore.resolve(self):
             raise H0Error("E_AUDIT_STORE_SUBSTITUTED",
-                          "bound audit store no longer matches the constructed instance")
+                          "instance audit binding no longer matches the trusted store")
 
     def handle(self, request) -> dict:
         now = self.clock()
