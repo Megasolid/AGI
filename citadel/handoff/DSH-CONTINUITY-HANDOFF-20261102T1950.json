@@ -1,0 +1,126 @@
+{
+ "active_task_queue": [
+  {
+   "id": "M1-fix-1",
+   "status": "delivered",
+   "task": "portable protected-baseline verification"
+  },
+  {
+   "id": "M1-fix-2",
+   "status": "pending",
+   "task": "pristine-clone station B"
+  },
+  {
+   "id": "M1",
+   "status": "not accepted",
+   "task": "repeat clean-room resume to acceptance"
+  },
+  {
+   "id": "H0",
+   "status": "blocked on M1 acceptance",
+   "task": "minimum MCP security contract"
+  }
+ ],
+ "blockers": [
+  "M1 not accepted: clean-room station B cannot yet reproduce protected-baseline proof",
+  "E1 real S5 gateway and live revocation service not implemented",
+  "No model-adapter substitution harness"
+ ],
+ "bootstrap_instructions_for_successor_station": {
+  "do_not": [
+   "do not tag, publish, activate, or merge protected branches",
+   "do not claim S5/revocation integration",
+   "do not treat any model output as authorization",
+   "do not accept a replacement baseline manifest from the station under evaluation"
+  ],
+  "verify_chain": [
+   "verify this handoff signature against key_id a73eaa5d3c31e009 with TWO implementations",
+   "read protected_baseline.manifest.sha256 and confirm it matches the file in the station",
+   "hash every protected file listed and compare exactly; fail closed on missing or mismatch",
+   "run python -m unittest discover -s runtime -p test_v41e_*.py (expect 145 in a repo copy)"
+  ]
+ },
+ "consumes_owner_attention": false,
+ "correction_id": "M0-CORR-02",
+ "correction_reason": "M0-CORR-01 pinned the v1 manifest, whose hashes for DNA.md, POLICY.md and repo.json.sig were Windows CRLF renderings while others were raw blobs, making it unverifiable on a clean LF checkout. M0-CORR-02 pins the blob-anchored v2 manifest with explicit hash_form per entry.",
+ "created_at": "2026-11-02T19:22:35+0330",
+ "created_by": "DSH Manager",
+ "governance": {
+  "king_channel": "AGI MCP chrome-devtools bridge, page_id 16",
+  "owner_required_actions": [
+   "protected merges",
+   "tagging",
+   "publication",
+   "activation",
+   "identity/authority changes"
+  ]
+ },
+ "handoff_class": "M0_state_only_continuity_corrected",
+ "handoff_id": "dsh-m0-continuity-20261102T1950",
+ "limitations_do_not_overstate": [
+  "no production transport, live endpoints, credentials, federation or execution",
+  "JSON Schema validation is a supported subset",
+  "message auth in tests is mock HMAC; real ML-DSA message auth not wired",
+  "endpoint isolation is in-process; replay/effect ledgers are local files",
+  "no cross-host replay or partition recovery",
+  "capability sandbox execution and network catalogue sync not implemented",
+  "P7 smoke is a mock integration check, not an AGI capability claim",
+  "no E-level evidence review has been performed"
+ ],
+ "protected_baseline": {
+  "anchoring": "This handoff is ML-DSA-65 signed; the manifest hash above is inside the signed payload, so a verifier pins the manifest against a trusted key_id, never against a manifest supplied by the station under evaluation.",
+  "armored_signing_command": "python runtime/agi_baseline_check.py --repo <station> --handoff <this.json> --trusted-key-id a73eaa5d3c31e009 --report out.json",
+  "manifest": {
+   "bytes": 3972,
+   "path": "citadel/inputs/v41e/baseline-hashes-2.json",
+   "present": true,
+   "sha256": "sha256:f14b55ed4ae90a2f33c6340e27e00f63ba5cbec0274b714a310ca9bfcaa96a40"
+  },
+  "protected_files": {
+   "DNA.md": "6d1c9c0a1c355ecc5fa4edcffcf2708b288bd19a26342773ffb46e30dc6bc7dd",
+   "POLICY.md": "5ccdf68ee9d9cc14d8fb80f891555360b48b809a08a5be4cba1fb3b2209580e0",
+   "citadel/task.schema.json": "5e0fd37377113e43eadf960da03e7ac1e048e06103c5c0967c512f64cf713e5d",
+   "core/dna.v4.json": "d650ad6059b376c70faab3077af1a9e35409fa7b06549effe0f3e96e895a6810",
+   "core/dna.v4.sig": "888468dcaa43d04b0a7dbd0a559667425118a750ee4f0fb2f560fb291d1a8498",
+   "repo.json": "5046fa8aeec584f3ba4350437bd619aaf7e3337d2b76723c128c353bd0f04106",
+   "repo.json.sig": "eddb6a9e10372526dbd1ed24d989d0d84fd5807992f942062cde2b9c7da365d0"
+  }
+ },
+ "release_status": {
+  "activated": false,
+  "activation": "NOT_AUTHORIZED",
+  "candidate": "v4.1-E-rc1",
+  "publication": "BLOCKED",
+  "state": "UNPUBLISHED",
+  "tagged": false,
+  "tagging": "OWNER_APPROVAL_REQUIRED"
+ },
+ "repository": {
+  "active_branch": "main",
+  "head": null,
+  "head_resolution": "resolved at seal time by git in the sealing station; NULL here on purpose so no unverified value is asserted. Consumer must read the live tree.",
+  "protected_diff_v401_to_head": "empty (asserted by issuing station; consumer must re-derive)",
+  "remote": "https://github.com/Megasolid/AGI.git",
+  "rollback_commit": "6a0fb796a624cf61fc8592aa3f45fc4dc6c10738",
+  "rollback_tag": "v4.0.1"
+ },
+ "review_state": {
+  "gate_model": "deterministic signed DSH verification report is the gate; Kilo advisory only",
+  "kilo_v14": "FAIL by validator; never cited as a gate"
+ },
+ "schema": "agi/continuity-handoff/1",
+ "supersedes": "dsh-m0-continuity-20261102T1920",
+ "token_runway": {
+  "basis": "not measurable by DSH; provider metering unavailable",
+  "policy": "no estimate supplied per King directive 2026-11-02T17:47",
+  "value": null
+ },
+ "verification_state": {
+  "key_id": "a73eaa5d3c31e009",
+  "paths": [
+   "crypto.py (cryptography library)",
+   "dilithium-py (independent implementation)"
+  ],
+  "signature_algorithm": "ML-DSA-65"
+ }
+}

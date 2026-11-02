@@ -1,0 +1,172 @@
+{
+ "checks": [
+  {
+   "detail": "agi/continuity-handoff/1",
+   "id": "handoff_schema",
+   "passed": true
+  },
+  {
+   "detail": {
+    "first_ok": true,
+    "second_ok": true
+   },
+   "id": "handoff_signature_dual",
+   "passed": true
+  },
+  {
+   "detail": {
+    "blockers": [
+     "M1 not accepted: clean-room station B cannot yet reproduce protected-baseline proof",
+     "E1 real S5 gateway and live revocation service not implemented",
+     "No model-adapter substitution harness"
+    ],
+    "constraints": [
+     "no production transport, live endpoints, credentials, federation or execution",
+     "JSON Schema validation is a supported subset",
+     "message auth in tests is mock HMAC; real ML-DSA message auth not wired",
+     "endpoint isolation is in-process; replay/effect ledgers are local files",
+     "no cross-host replay or partition recovery",
+     "capability sandbox execution and network catalogue sync not implemented",
+     "P7 smoke is a mock integration check, not an AGI capability claim",
+     "no E-level evidence review has been performed"
+    ],
+    "evidence_index_count": 1,
+    "head_pin": null,
+    "owner_required_actions": [
+     "protected merges",
+     "tagging",
+     "publication",
+     "activation",
+     "identity/authority changes"
+    ],
+    "release_status": "UNPUBLISHED",
+    "rollback_commit": "6a0fb796a624cf61fc8592aa3f45fc4dc6c10738",
+    "rollback_tag": "v4.0.1",
+    "task_queue": [
+     "M1-fix-1",
+     "M1-fix-2",
+     "M1",
+     "H0"
+    ],
+    "token_runway_present": false
+   },
+   "id": "reconstruction_complete",
+   "passed": true
+  },
+  {
+   "detail": {
+    "checked": 1,
+    "failed": []
+   },
+   "id": "evidence_index_matches",
+   "passed": true
+  },
+  {
+   "detail": "",
+   "id": "protected_baseline_unchanged",
+   "passed": true
+  },
+  {
+   "detail": 0,
+   "id": "v401_ancestor",
+   "passed": true
+  },
+  {
+   "detail": "handoff carries head=null by design; head is derived from the live tree, not asserted. Not a failure, recorded as not-applicable.",
+   "id": "head_pin_exists",
+   "passed": true
+  },
+  {
+   "detail": {
+    "exit": 0,
+    "ran": 145,
+    "sha256": "sha256:de21f902393bd23d44311fed938f4fdba8739ff363cba9ff0f003e7c6eec2b9f"
+   },
+   "id": "suite_reproduced",
+   "passed": true
+  },
+  {
+   "detail": {
+    "after": 1,
+    "before": 1
+   },
+   "id": "restart_no_duplicate_effect",
+   "passed": true
+  }
+ ],
+ "discrepancies": [],
+ "environment": {
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.13.15"
+ },
+ "evidence_index_check": [
+  {
+   "actual": "sha256:f14b55ed4ae90a2f33c6340e27e00f63ba5cbec0274b714a310ca9bfcaa96a40",
+   "expected": "sha256:f14b55ed4ae90a2f33c6340e27e00f63ba5cbec0274b714a310ca9bfcaa96a40",
+   "ok": true,
+   "path": "citadel/inputs/v41e/baseline-hashes-2.json"
+  }
+ ],
+ "handoff": "C:\\Users\\D\\AppData\\Local\\Temp\\stationB2-20261102\\citadel\\handoff\\DSH-CONTINUITY-HANDOFF-20261102T1950.json",
+ "handoff_sha256": "sha256:2bf215e974e48c8e5ba72ad8ae78e9eb09108723fb1d599f44a44f425793f280",
+ "handoff_signature": {
+  "first": {
+   "alg": "ML-DSA-65",
+   "key_id": "a73eaa5d3c31e009",
+   "module_dir": "C:\\Users\\D\\.agents\\skills\\agi\\memory\\scripts",
+   "ok": true,
+   "path": "crypto.py",
+   "reason": "verified"
+  },
+  "second": {
+   "ok": true,
+   "path": "dilithium_py",
+   "tamper_rejected": true
+  }
+ },
+ "passed": true,
+ "policy": "discrepancies are recorded, never silently repaired",
+ "reconstructed": {
+  "blockers": [
+   "M1 not accepted: clean-room station B cannot yet reproduce protected-baseline proof",
+   "E1 real S5 gateway and live revocation service not implemented",
+   "No model-adapter substitution harness"
+  ],
+  "constraints": [
+   "no production transport, live endpoints, credentials, federation or execution",
+   "JSON Schema validation is a supported subset",
+   "message auth in tests is mock HMAC; real ML-DSA message auth not wired",
+   "endpoint isolation is in-process; replay/effect ledgers are local files",
+   "no cross-host replay or partition recovery",
+   "capability sandbox execution and network catalogue sync not implemented",
+   "P7 smoke is a mock integration check, not an AGI capability claim",
+   "no E-level evidence review has been performed"
+  ],
+  "evidence_index_count": 1,
+  "head_pin": null,
+  "owner_required_actions": [
+   "protected merges",
+   "tagging",
+   "publication",
+   "activation",
+   "identity/authority changes"
+  ],
+  "release_status": "UNPUBLISHED",
+  "rollback_commit": "6a0fb796a624cf61fc8592aa3f45fc4dc6c10738",
+  "rollback_tag": "v4.0.1",
+  "task_queue": [
+   "M1-fix-1",
+   "M1-fix-2",
+   "M1",
+   "H0"
+  ],
+  "token_runway_present": false
+ },
+ "repo": "C:\\Users\\D\\AppData\\Local\\Temp\\stationB2-20261102",
+ "schema": "agi/station-resume-report/1",
+ "suite": {
+  "exit": 0,
+  "ran": 145,
+  "sha256": "sha256:de21f902393bd23d44311fed938f4fdba8739ff363cba9ff0f003e7c6eec2b9f"
+ }
+}

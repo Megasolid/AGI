@@ -23,10 +23,23 @@ class IntegrationTests(unittest.TestCase):
     @unittest.skipUnless((REPO / "DNA.md").exists() and (REPO / "citadel/inputs/v41e/baseline-hashes.json").exists(),
                          "release baseline files not present in this checkout")
     def test_protected_baseline_unchanged(self):
-        baseline = json.loads((REPO / "citadel/inputs/v41e/baseline-hashes.json").read_text(encoding="utf-8"))
-        for rel, expected in baseline["protected_repo_files"].items():
-            actual = hashlib.sha256((REPO / rel).read_bytes()).hexdigest()
-            self.assertEqual(actual, expected, rel)
+        """Compare COMMITTED BLOB bytes, never the worktree.
+
+        The worktree applies .gitattributes (eol=lf) and line endings vary per OS,
+        so hashing the checkout is not portable. The blob-anchored manifest v2 is
+        the authoritative anchor.
+        """
+        manifest = json.loads(
+            (REPO / "citadel/inputs/v41e/baseline-hashes-2.json").read_text(encoding="utf-8"))
+        entries = manifest.get("protected_files") or manifest.get("protected_repo_files")
+        for rel, val in entries.items():
+            expected = val.get("sha256") if isinstance(val, dict) else val
+            sha = subprocess.run(["git", "-C", str(REPO), "rev-parse", f"HEAD:{rel}"],
+                                 capture_output=True, text=True)
+            self.assertEqual(sha.returncode, 0, f"{rel} not in HEAD")
+            blob = subprocess.run(["git", "-C", str(REPO), "cat-file", "-p", sha.stdout.strip()],
+                                  capture_output=True)
+            self.assertEqual(hashlib.sha256(blob.stdout).hexdigest(), expected, rel)
 
     @unittest.skipUnless((REPO / ".git").exists() and shutil.which("git") is not None,
                          "git checkout not available in this environment")

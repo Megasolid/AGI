@@ -1,0 +1,101 @@
+{
+ "anchors": {
+  "git_version": "git version 2.43.0.windows.1",
+  "head_commit_at_generation": "e86c5d856efb46e0b0d5e7e9100af81a27588642",
+  "v401_commit": "bd1f40fdf7ae6c16a1f5f426222cb5f35caac704",
+  "v401_tag": "v4.0.1",
+  "v401_tree": "083f0ee27dc7368196f239175e212aa84cb039eb"
+ },
+ "generated_at": "2026-11-02T19:22:28+0330",
+ "method": {
+  "commands": [
+   "git rev-parse HEAD:<path>  -> blob sha",
+   "git cat-file -p <blob sha> -> bytes",
+   "sha256(bytes)"
+  ],
+  "hash": "sha256",
+  "os_independent": true,
+  "portable": true,
+  "source": "git cat-file -p <ref>:<path>  (committed blob bytes, never the working tree)"
+ },
+ "notes": [
+  "No protected file was modified: every entry with present_at_v401 true has identical_to_v401 true.",
+  "DNA.md, POLICY.md, repo.json.sig contain LF in the committed blob; the v1 manifest recorded their CRLF rendering.",
+  "citadel/task.schema.json is absent at v4.0.1 and was added later; it is protected going forward but is not part of the v4.0.1 rollback surface."
+ ],
+ "protected_files": {
+  "DNA.md": {
+   "bytes": 5792,
+   "contains_crlf": false,
+   "hash_form": "raw_blob",
+   "identical_to_v401": true,
+   "present_at_head": true,
+   "present_at_v401": true,
+   "sha256": "6d1c9c0a1c355ecc5fa4edcffcf2708b288bd19a26342773ffb46e30dc6bc7dd",
+   "v401_sha256": "6d1c9c0a1c355ecc5fa4edcffcf2708b288bd19a26342773ffb46e30dc6bc7dd"
+  },
+  "POLICY.md": {
+   "bytes": 2497,
+   "contains_crlf": false,
+   "hash_form": "raw_blob",
+   "identical_to_v401": true,
+   "present_at_head": true,
+   "present_at_v401": true,
+   "sha256": "5ccdf68ee9d9cc14d8fb80f891555360b48b809a08a5be4cba1fb3b2209580e0",
+   "v401_sha256": "5ccdf68ee9d9cc14d8fb80f891555360b48b809a08a5be4cba1fb3b2209580e0"
+  },
+  "citadel/task.schema.json": {
+   "bytes": 824,
+   "contains_crlf": false,
+   "hash_form": "raw_blob",
+   "identical_to_v401": null,
+   "present_at_head": true,
+   "present_at_v401": false,
+   "sha256": "5e0fd37377113e43eadf960da03e7ac1e048e06103c5c0967c512f64cf713e5d",
+   "v401_sha256": null
+  },
+  "core/dna.v4.json": {
+   "bytes": 3943,
+   "contains_crlf": false,
+   "hash_form": "raw_blob",
+   "identical_to_v401": true,
+   "present_at_head": true,
+   "present_at_v401": true,
+   "sha256": "d650ad6059b376c70faab3077af1a9e35409fa7b06549effe0f3e96e895a6810",
+   "v401_sha256": "d650ad6059b376c70faab3077af1a9e35409fa7b06549effe0f3e96e895a6810"
+  },
+  "core/dna.v4.sig": {
+   "bytes": 7268,
+   "contains_crlf": false,
+   "hash_form": "raw_blob",
+   "identical_to_v401": true,
+   "present_at_head": true,
+   "present_at_v401": true,
+   "sha256": "888468dcaa43d04b0a7dbd0a559667425118a750ee4f0fb2f560fb291d1a8498",
+   "v401_sha256": "888468dcaa43d04b0a7dbd0a559667425118a750ee4f0fb2f560fb291d1a8498"
+  },
+  "repo.json": {
+   "bytes": 4048,
+   "contains_crlf": false,
+   "hash_form": "raw_blob",
+   "identical_to_v401": true,
+   "present_at_head": true,
+   "present_at_v401": true,
+   "sha256": "5046fa8aeec584f3ba4350437bd619aaf7e3337d2b76723c128c353bd0f04106",
+   "v401_sha256": "5046fa8aeec584f3ba4350437bd619aaf7e3337d2b76723c128c353bd0f04106"
+  },
+  "repo.json.sig": {
+   "bytes": 7268,
+   "contains_crlf": false,
+   "hash_form": "raw_blob",
+   "identical_to_v401": true,
+   "present_at_head": true,
+   "present_at_v401": true,
+   "sha256": "eddb6a9e10372526dbd1ed24d989d0d84fd5807992f942062cde2b9c7da365d0",
+   "v401_sha256": "eddb6a9e10372526dbd1ed24d989d0d84fd5807992f942062cde2b9c7da365d0"
+  }
+ },
+ "schema": "agi/v41e/baseline-hashes/2",
+ "supersedes": "citadel/inputs/v41e/baseline-hashes.json",
+ "supersedes_reason": "v1 recorded Windows-worktree CRLF renderings for DNA.md, POLICY.md and repo.json.sig while recording raw blobs for the others, with no normalisation field. That made it unverifiable on a clean LF checkout (M1 station B failed on exactly this). v2 hashes COMMITTED BLOB BYTES and states hash_form per entry."
+}
