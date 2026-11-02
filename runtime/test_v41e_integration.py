@@ -20,15 +20,17 @@ class IntegrationTests(unittest.TestCase):
                      "E5_capability", "E6_evidence"):
             self.assertTrue(result["steps"][step], step)
 
+    @unittest.skipUnless((REPO / "DNA.md").exists() and (REPO / "citadel/inputs/v41e/baseline-hashes.json").exists(),
+                         "release baseline files not present in this checkout")
     def test_protected_baseline_unchanged(self):
         baseline = json.loads((REPO / "citadel/inputs/v41e/baseline-hashes.json").read_text(encoding="utf-8"))
         for rel, expected in baseline["protected_repo_files"].items():
             actual = hashlib.sha256((REPO / rel).read_bytes()).hexdigest()
             self.assertEqual(actual, expected, rel)
 
+    @unittest.skipUnless((REPO / ".git").exists() and shutil.which("git") is not None,
+                         "git checkout not available in this environment")
     def test_v401_is_ancestor(self):
-        if shutil.which("git") is None:
-            self.skipTest("git unavailable")
         proc = subprocess.run(["git", "-C", str(REPO), "merge-base", "--is-ancestor", "v4.0.1", "HEAD"])
         self.assertEqual(proc.returncode, 0)
 

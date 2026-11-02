@@ -5,7 +5,7 @@
 **Status:** **release candidate assembled for independent verification; NOT published, NOT tagged, NOT activated.**  
 **Base:** `main` `d0cbb2acb0b3d9e15f910fb397e37c94f68651b8` (after P7 integration smoke).  
 **Rollback:** v4.0.1 `6a0fb796…` / runtime `85a92254…`.  
-**Tests:** **130/130 OK** (P1-P7); evidence sha256 `07ed05293735cf71f96cba5271c82097dccd5fa59f5c8209b057cf6a9d252d4b`.
+**Tests:** **130/130 OK** (P1-P7 in the repository checkout); evidence sha256 `e5c5b2b7e4e86b45d46ed363d7445a204d27cf1ed469987e57a6928e770e8c7b`. In an isolated copy without `.git`/release baseline files, the two environment checks skip; all runtime tests still pass.
 
 ## 1. Candidate contents
 
@@ -30,7 +30,7 @@ All modules are additive stdlib-only files under `runtime/`; no frozen S1–S6 o
 | P4 roles/replay/keys | Kilo `v41e-v-06` PASS, 90 tests |
 | P5 operator | Kilo `v41e-v-07` PASS, 110 tests |
 | P6 capability/evidence | Kilo `v41e-v-08` PASS, 126 tests |
-| P7 integrated RC | **pending Kilo v41e-v-09**; 130 tests locally |
+| P7 integrated RC | **v41e-v-09 returned PASS at 126/126**; addendum records the 4 integration tests and environment skips; **v10 pending for the complete 130-test candidate** |
 
 Kilo findings hashes: v03 `356120b2…`, v04 `b2c3da4d…`, v05 `06876321…`, v06 `5a352dfe…`, v07 `389859ad…`, v08 `c6460110…`. All reviews caveat: ML-DSA-65 structurally checked, not cryptographically verified by Kilo.
 
