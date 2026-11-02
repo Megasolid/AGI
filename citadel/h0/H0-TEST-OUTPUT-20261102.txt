@@ -1,0 +1,50 @@
+﻿# H0 contract negative-test evidence
+# generated 
+2026-11-02T19:26:49+03:30
+
+## H0 negative suite (runtime/test_h0_contract.py)
+test_audit_records_both_decisions_and_no_payload (__main__.AuditTests.test_audit_records_both_decisions_and_no_payload) ... ok
+test_expired_credential (__main__.AuthenticationTests.test_expired_credential) ... ok
+test_missing_signature (__main__.AuthenticationTests.test_missing_signature) ... ok
+test_revoked_credential (__main__.AuthenticationTests.test_revoked_credential) ... ok
+test_tampered_payload (__main__.AuthenticationTests.test_tampered_payload) ... ok
+test_unknown_client (__main__.AuthenticationTests.test_unknown_client) ... ok
+test_wrong_key_id (__main__.AuthenticationTests.test_wrong_key_id) ... ok
+test_audit_failure_downgrades_allow_to_deny (__main__.FailClosedTests.test_audit_failure_downgrades_allow_to_deny) ... ok
+test_internal_error_denies (__main__.FailClosedTests.test_internal_error_denies) ... ok
+test_policy_unavailable_denies (__main__.FailClosedTests.test_policy_unavailable_denies) ... ok
+test_approval_method_cannot_approve (__main__.ForbiddenSurfaceTests.test_approval_method_cannot_approve) ... ok
+test_every_forbidden_method_refused_at_registration (__main__.ForbiddenSurfaceTests.test_every_forbidden_method_refused_at_registration) ... ok
+test_forbidden_method_in_request_denied (__main__.ForbiddenSurfaceTests.test_forbidden_method_in_request_denied) ... ok
+test_only_registered_methods_register (__main__.ForbiddenSurfaceTests.test_only_registered_methods_register) ... ok
+test_array_too_long (__main__.LimitTests.test_array_too_long) ... ok
+test_payload_too_deep (__main__.LimitTests.test_payload_too_deep) ... ok
+test_payload_too_large (__main__.LimitTests.test_payload_too_large) ... ok
+test_payload_too_wide (__main__.LimitTests.test_payload_too_wide) ... ok
+test_value_too_long (__main__.LimitTests.test_value_too_long) ... ok
+test_burst_limit (__main__.RateTests.test_burst_limit) ... ok
+test_read_rate_limit_denied_without_execution (__main__.RateTests.test_read_rate_limit_denied_without_execution)
+All limits are sliding windows over real elapsed time. Test each binding ... ok
+test_nonce_replay_denied (__main__.ReplayTests.test_nonce_replay_denied) ... ok
+test_request_id_replay_denied_and_effect_not_repeated (__main__.ReplayTests.test_request_id_replay_denied_and_effect_not_repeated) ... ok
+test_bad_correlation_id (__main__.SchemaTests.test_bad_correlation_id) ... ok
+test_expired_request (__main__.SchemaTests.test_expired_request) ... ok
+test_unknown_field_denied (__main__.SchemaTests.test_unknown_field_denied) ... ok
+test_unknown_method (__main__.SchemaTests.test_unknown_method) ... ok
+test_wrong_schema_version (__main__.SchemaTests.test_wrong_schema_version) ... ok
+test_correct_scope_allowed (__main__.ScopeTests.test_correct_scope_allowed) ... ok
+test_read_scope_cannot_write (__main__.ScopeTests.test_read_scope_cannot_write) ... ok
+test_wrong_scope_denied (__main__.ScopeTests.test_wrong_scope_denied) ... ok
+
+----------------------------------------------------------------------
+Ran 31 tests in 0.035s
+
+OK
+
+## Regression: v41e suite (runtime/test_v41e_*.py)
+.................................................................................................................................................
+----------------------------------------------------------------------
+Ran 145 tests in 0.773s
+
+OK
+
