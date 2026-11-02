@@ -1,0 +1,52 @@
+﻿# H0 revision-3 test evidence
+# generated 
+2026-11-02T19:45:11+03:30
+
+## revision 3 suite (F6 durable audit, F7 two-phase lifecycle, F8 atomic admission) exit=0
+test_append_is_durable_and_chained (__main__.F6_DurableAuditStore.test_append_is_durable_and_chained) ... ok
+test_restart_recovery_reloads_and_verifies (__main__.F6_DurableAuditStore.test_restart_recovery_reloads_and_verifies) ... ok
+test_tampering_detected_on_reload (__main__.F6_DurableAuditStore.test_tampering_detected_on_reload) ... ok
+test_truncation_detected_as_chain_break (__main__.F6_DurableAuditStore.test_truncation_detected_as_chain_break) ... ok
+test_unavailable_store_raises (__main__.F6_DurableAuditStore.test_unavailable_store_raises) ... ok
+test_audit_failure_at_intent_phase_prevents_execution (__main__.F7_TwoPhaseLifecycle.test_audit_failure_at_intent_phase_prevents_execution)
+A store that constructs fine but fails on append must stop execution. ... ok
+test_duplicate_outcome_rejected (__main__.F7_TwoPhaseLifecycle.test_duplicate_outcome_rejected) ... ok
+test_executor_failure_writes_failed_outcome (__main__.F7_TwoPhaseLifecycle.test_executor_failure_writes_failed_outcome) ... ok
+test_one_intent_and_one_outcome_per_request (__main__.F7_TwoPhaseLifecycle.test_one_intent_and_one_outcome_per_request) ... ok
+test_orphan_outcome_rejected_at_reload (__main__.F7_TwoPhaseLifecycle.test_orphan_outcome_rejected_at_reload) ... ok
+test_success_writes_intent_then_outcome (__main__.F7_TwoPhaseLifecycle.test_success_writes_intent_then_outcome) ... ok
+test_unusable_store_path_fails_closed_on_append (__main__.F7_TwoPhaseLifecycle.test_unusable_store_path_fails_closed_on_append)
+Construction is lazy by design; the guarantee is that APPEND fails closed. ... ok
+test_concurrent_admission_cannot_exceed_burst (__main__.F8_AtomicRateAdmission.test_concurrent_admission_cannot_exceed_burst) ... ok
+test_concurrent_admission_respects_minute_cap_between_clients (__main__.F8_AtomicRateAdmission.test_concurrent_admission_respects_minute_cap_between_clients) ... ok
+test_denied_requests_do_not_consume_admission (__main__.F8_AtomicRateAdmission.test_denied_requests_do_not_consume_admission) ... ok
+test_separate_check_and_record_are_refused (__main__.F8_AtomicRateAdmission.test_separate_check_and_record_are_refused) ... ok
+test_denial_recorded_once (__main__.IntegrationWithKernel.test_denial_recorded_once) ... ok
+test_full_happy_path_uses_durable_store (__main__.IntegrationWithKernel.test_full_happy_path_uses_durable_store) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.125s
+
+OK
+
+## revision 2 suite (F1-F5, re-run)
+............................
+----------------------------------------------------------------------
+Ran 28 tests in 0.009s
+
+OK
+
+## revision 1 suite (re-run)
+...............................
+----------------------------------------------------------------------
+Ran 31 tests in 0.008s
+
+OK
+
+## v41e regression
+.................................................................................................................................................
+----------------------------------------------------------------------
+Ran 145 tests in 0.743s
+
+OK
+

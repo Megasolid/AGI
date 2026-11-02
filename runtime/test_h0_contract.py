@@ -11,6 +11,7 @@ from h0_kernel import (
     canonical, enforce_limits, validate_envelope_shape,
 )
 
+
 SECRET = b"h0-test-secret"
 KEY_ID = "test-key-h0"
 NOW = datetime(2026, 11, 2, 16, 0, tzinfo=timezone.utc)
@@ -221,8 +222,7 @@ class RateTests(unittest.TestCase):
         # so the outcome is a steady 50-per-5s ceiling (~10/s), never a latch.
         for _ in range(130):
             try:
-                rl.check("station-a", "agi_status", "h0.read")
-                rl.record("station-a", "agi_status", "h0.read")
+                rl.admit("station-a", "agi_status", "h0.read")
                 allowed += 1
             except H0Error as exc:
                 self.assertIn(exc.code, {"E_RATE_BURST", "E_RATE_LIMIT"})
@@ -242,8 +242,7 @@ class RateTests(unittest.TestCase):
         for _ in range(130):
             fake_now[0] += 0.4
             try:
-                rl2.check("station-a", "agi_status", "h0.read")
-                rl2.record("station-a", "agi_status", "h0.read")
+                rl2.admit("station-a", "agi_status", "h0.read")
                 allowed2 += 1
             except H0Error as exc:
                 self.assertIn(exc.code, {"E_RATE_LIMIT", "E_RATE_BURST"})
@@ -258,8 +257,7 @@ class RateTests(unittest.TestCase):
         ok = 0
         for _ in range(25):
             try:
-                rl.check("c", "agi_status", "h0.read")
-                rl.record("c", "agi_status", "h0.read")
+                rl.admit("c", "agi_status", "h0.read")
                 ok += 1
             except H0Error as exc:
                 self.assertEqual(exc.code, "E_RATE_BURST")
@@ -305,7 +303,7 @@ class FailClosedTests(unittest.TestCase):
             raise RuntimeError("unexpected")
         k = fresh_kernel(executor=boom)
         res = k.handle(envelope())
-        self.assertEqual(res["error"], "E_INTERNAL")
+        self.assertEqual(res["error"], "E_EXECUTOR_FAILED")
         self.assertEqual(k.effects["executed"], 0)
 
 

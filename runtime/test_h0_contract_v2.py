@@ -115,7 +115,8 @@ class F1_AuditPrecondition(unittest.TestCase):
 
         k = fresh_kernel(audit=Recorder(), executor=executor)
         self.assertTrue(k.handle(envelope())["ok"])
-        self.assertEqual(order, ["audit:allow", "execute"])
+        # v3 two-phase lifecycle: intent(allow) -> execute -> outcome(allow)
+        self.assertEqual(order, ["audit:allow", "execute", "audit:allow"])
 
 
 class F2_GateOrdering(unittest.TestCase):

@@ -204,33 +204,49 @@ def validate_payload(method: str, payload) -> None:
 
 
 class RateLimiter:
+    """F8: check and record are ONE atomic admission operation.
+
+    Revision 2 exposed check() and record() separately, so concurrent requests
+    could all pass check() before any of them recorded. admit() holds the lock
+    across both, so the limit cannot be raced.
+    """
+
     def __init__(self, clock=None):
         self._clock = clock or time.monotonic
         self._windows = {}
         self._lock = threading.Lock()
 
-    def _hits(self, key, window_s):
+    def _hits_locked(self, key, window_s):
         now = self._clock()
         hits = [t for t in self._windows.get(key, []) if now - t < window_s]
         self._windows[key] = hits
         return hits
 
-    def check(self, client_id: str, method: str, scope: str) -> None:
-        window = 60
-        limit = (RATE["read_per_min"] if scope == "h0.read"
-                 else RATE["request_per_min"] if scope == "h0.request"
-                 else RATE["write_per_min"])
-        if len(self._hits((client_id, scope), window)) >= limit:
-            raise H0Error("E_RATE_LIMIT", f"{scope} {limit}/{window}s")
-        if len(self._hits(("method", method), window)) >= RATE["method_per_min"]:
-            raise H0Error("E_RATE_LIMIT", f"method {method}")
-        if len(self._hits(("burst", client_id), RATE["burst_window_s"])) >= RATE["burst_count"]:
-            raise H0Error("E_RATE_BURST", f"{RATE['burst_count']} in {RATE['burst_window_s']}s")
+    def _limits_for(self, scope):
+        return (RATE["read_per_min"] if scope == "h0.read"
+                else RATE["request_per_min"] if scope == "h0.request"
+                else RATE["write_per_min"])
 
-    def record(self, client_id: str, method: str, scope: str) -> None:
-        now = self._clock()
-        for key in ((client_id, scope), ("method", method), ("burst", client_id)):
-            self._windows.setdefault(key, []).append(now)
+    def admit(self, client_id: str, method: str, scope: str) -> None:
+        """Atomically test every limit and, if all pass, record the hit."""
+        with self._lock:
+            limit = self._limits_for(scope)
+            if len(self._hits_locked((client_id, scope), 60)) >= limit:
+                raise H0Error("E_RATE_LIMIT", f"{scope} {limit}/60s")
+            if len(self._hits_locked(("method", method), 60)) >= RATE["method_per_min"]:
+                raise H0Error("E_RATE_LIMIT", f"method {method}")
+            if len(self._hits_locked(("burst", client_id), RATE["burst_window_s"])) >= RATE["burst_count"]:
+                raise H0Error("E_RATE_BURST", f"{RATE['burst_count']} in {RATE['burst_window_s']}s")
+            now = self._clock()
+            for key in ((client_id, scope), ("method", method), ("burst", client_id)):
+                self._windows.setdefault(key, []).append(now)
+
+    # compatibility helpers (each is individually atomic)
+    def check(self, client_id, method, scope):
+        raise H0Error("E_RATE_LIMIT", "use admit()")
+
+    def record(self, client_id, method, scope):
+        raise H0Error("E_RATE_LIMIT", "use admit()")
 
 
 class AuditLog:
@@ -381,7 +397,7 @@ class Kernel:
             validate_timestamps(request, now)
 
             self._gate("rate")
-            self.rate.check(request["client_id"], request["method"], request["scope"])
+            self.rate.admit(request["client_id"], request["method"], request["scope"])
 
             self._gate("scope")
             if request["scope"] != METHOD_SCOPES[request["method"]]:
@@ -391,27 +407,53 @@ class Kernel:
             if not self.policy_ok():
                 raise H0Error("E_POLICY_UNAVAILABLE", "policy engine unavailable")
 
-            # F1: audit is a PRECONDITION. Written before any effect.
+            # F1 + F7: two-phase audit. Phase 1 (intent) is durable BEFORE the effect.
+            # Any store failure (including AuditStoreError) must deny, never escape.
             self._gate("audit")
-            record = {
-                "correlation_id": request.get("correlation_id"),
+            cid = request["correlation_id"]
+            intent = {
+                "phase": "intent",
+                "correlation_id": cid,
                 "client_id": request.get("client_id"),
                 "method": request.get("method"),
                 "scope": request.get("scope"),
                 "request_digest": digest({k: v for k, v in request.items() if k != "signature"}),
                 "decision": "allow",
-                "reason_code": None,
                 "outcome": "pending",
                 "timestamp": now.astimezone(timezone.utc).isoformat(),
             }
-            self.audit.append(record)
+            try:
+                self.audit.append(intent)
+            except H0Error:
+                raise
+            except Exception as exc:  # noqa: BLE001 - store failures fail closed
+                raise H0Error("E_AUDIT_UNAVAILABLE", f"{type(exc).__name__}: {exc}") from exc
 
             self._gate("execute")
-            result = self.executor(request)
+            try:
+                result = self.executor(request)
+            except Exception as exc:  # noqa: BLE001
+                # Phase 2 records the failure; the intent is never left dangling.
+                try:
+                    self.audit.append({"phase": "outcome", "correlation_id": cid,
+                                       "decision": "allow", "outcome": "failed",
+                                       "reason_code": "E_EXECUTOR_FAILED",
+                                       "detail": type(exc).__name__,
+                                       "timestamp": self.clock().astimezone(timezone.utc).isoformat()})
+                except Exception:  # noqa: BLE001 - already failing; audit gap recorded below
+                    pass
+                raise H0Error("E_EXECUTOR_FAILED", type(exc).__name__)
+            try:
+                self.audit.append({"phase": "outcome", "correlation_id": cid,
+                                   "decision": "allow", "outcome": "executed",
+                                   "timestamp": self.clock().astimezone(timezone.utc).isoformat()})
+            except Exception as exc:  # noqa: BLE001
+                # The effect happened but cannot be recorded: report it as a failure so
+                # the caller knows the audit trail has a gap. Never claim success.
+                raise H0Error("E_AUDIT_UNAVAILABLE", "outcome record failed: " + type(exc).__name__) from exc
             executed = True
             self.effects["executed"] += 1
-            self.rate.record(request["client_id"], request["method"], request["scope"])
-            return {"ok": True, "result": result, "audit": record}
+            return {"ok": True, "result": result, "audit": intent}
 
         except H0Error as exc:
             code = exc.code
@@ -427,6 +469,7 @@ class Kernel:
             if rid and nonce:
                 self.replay.release(rid, nonce)
         denial = {
+            "phase": "deny",
             "correlation_id": request.get("correlation_id") if isinstance(request, dict) else None,
             "client_id": request.get("client_id") if isinstance(request, dict) else None,
             "method": request.get("method") if isinstance(request, dict) else None,
@@ -440,7 +483,7 @@ class Kernel:
         }
         try:
             self.audit.append(denial)
-        except H0Error:
+        except Exception:  # noqa: BLE001 - store failure must not mask the denial
             denial["note"] = "audit unavailable for denied request"
         return {"ok": False, "error": code, "audit": denial}
 
