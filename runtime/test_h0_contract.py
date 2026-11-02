@@ -26,6 +26,16 @@ def verify(payload_bytes, env):
     return hmac.compare_digest(base64.b64encode(want).decode(), env.get("signature_b64", ""))
 
 
+def valid_payload(method):
+    return {
+        "agi_task_get": {"task_id": "t-1"},
+        "agi_evidence_get": {"evidence_id": "e-1"},
+        "agi_checkpoint_create": {"checkpoint": "cp-1"},
+        "agi_receipt_submit": {"handoff_digest": "sha256:" + "a" * 64, "outcome": "success"},
+        "agi_approval_request": {"operation": "tag_release"},
+    }.get(method, {})
+
+
 def envelope(method="agi_status", scope=None, payload=None, **over):
     from h0_kernel import METHOD_SCOPES
     req = {
@@ -38,7 +48,7 @@ def envelope(method="agi_status", scope=None, payload=None, **over):
         "issued_at": NOW.isoformat(),
         "expires_at": (NOW + timedelta(minutes=5)).isoformat(),
         "nonce": base64.urlsafe_b64encode(uuid.uuid4().bytes).decode().rstrip("="),
-        "payload": payload if payload is not None else {},
+        "payload": payload if payload is not None else valid_payload(method),
         "signature": {},
     }
     req.update(over)
@@ -157,11 +167,9 @@ class SchemaTests(unittest.TestCase):
         self.assertEqual(res["error"], "E_MALFORMED")
 
     def test_expired_request(self):
-        past = (NOW - timedelta(minutes=1)).isoformat()
-        body_req = envelope()
-        body_req["expires_at"] = past
-        body = {k: v for k, v in body_req.items() if k != "signature"}
-        body_req["signature"] = sign(canonical(body))
+        """v2 validates issued_at < expires_at, so an expired request must move BOTH."""
+        body_req = envelope(issued_at=(NOW - timedelta(minutes=10)).isoformat(),
+                            expires_at=(NOW - timedelta(minutes=5)).isoformat())
         res = fresh_kernel().handle(body_req)
         self.assertEqual(res["error"], "E_EXPIRED")
 
@@ -281,18 +289,21 @@ class FailClosedTests(unittest.TestCase):
         self.assertEqual(res["error"], "E_POLICY_UNAVAILABLE")
         self.assertEqual(k.effects["executed"], 0)
 
-    def test_audit_failure_downgrades_allow_to_deny(self):
+    def test_audit_failure_prevents_execution(self):
+        """v2 semantics: audit is a precondition. Nothing executes, so there is no
+        'downgrade' to record - the claim 'downgraded' was only true of the v1 bug."""
         k = fresh_kernel(audit=AuditLog(fail=True))
         res = k.handle(envelope())
         self.assertFalse(res["ok"])
         self.assertEqual(res["error"], "E_AUDIT_UNAVAILABLE")
-        self.assertIn("downgraded", res["audit"]["note"])
+        self.assertEqual(k.effects["executed"], 0)
+        self.assertEqual(res["audit"]["decision"], "deny")
 
     def test_internal_error_denies(self):
-        k = fresh_kernel()
+        """v2: the executor is injected, and an executor crash must deny."""
         def boom(_req):
             raise RuntimeError("unexpected")
-        k._execute = boom
+        k = fresh_kernel(executor=boom)
         res = k.handle(envelope())
         self.assertEqual(res["error"], "E_INTERNAL")
         self.assertEqual(k.effects["executed"], 0)
