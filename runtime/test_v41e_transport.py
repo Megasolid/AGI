@@ -132,7 +132,8 @@ class ChannelTests(unittest.TestCase):
 
     def test_timeout(self):
         c = channel()
-        self.assertEqual(c.tick(now="2026-11-02T09:00:00+00:00"), "ABORTED")
+        later = (c.session.last_activity + __import__("datetime").timedelta(seconds=3600)).isoformat()
+        self.assertEqual(c.tick(now=later), "ABORTED")
 
 
 class VerifierDisagreementTests(unittest.TestCase):

@@ -1,5 +1,6 @@
 import hashlib
 import unittest
+from datetime import timedelta
 
 from agi_sem import (
     SemError, SemSession, canonical_json, check_constraints, constraint_digest,
@@ -161,7 +162,10 @@ class SemTests(unittest.TestCase):
 
     def test_timeout_aborts(self):
         s = SemSession("s1", idle_timeout_s=10)
-        self.assertEqual(s.tick(now="2026-11-02T09:00:00+00:00"), "ABORTED")
+        # The session starts at real wall-clock time; advance relative to it so the
+        # test is deterministic whenever it runs (not only on 2026-11-02).
+        later = (s.last_activity + timedelta(seconds=60)).isoformat()
+        self.assertEqual(s.tick(now=later), "ABORTED")
 
     def test_terminal_session_rejects_more(self):
         s = SemSession("s1")
