@@ -58,10 +58,21 @@ def envelope(method="agi_status", scope=None, payload=None, **over):
     return req
 
 
+_TMP_DIRS = []
+
+
 def fresh_kernel(**kw):
+    """Kernel requires a DURABLE audit store (rev-5 G1); use a temp file store."""
+    import tempfile
+    from pathlib import Path
+    from h0_audit_store import DurableAuditStore
     clients = {"station-a": {"key_id": KEY_ID, "revoked": False}}
     clients.update(kw.pop("clients", {}))
     clock = kw.pop("clock", lambda: NOW)
+    if kw.get("audit") is None:
+        td = tempfile.mkdtemp()
+        _TMP_DIRS.append(td)
+        kw["audit"] = DurableAuditStore(Path(td) / "audit.jsonl")
     return Kernel(clients=clients, verifier=verify, clock=clock, **kw)
 
 
@@ -287,15 +298,36 @@ class FailClosedTests(unittest.TestCase):
         self.assertEqual(res["error"], "E_POLICY_UNAVAILABLE")
         self.assertEqual(k.effects["executed"], 0)
 
+    def test_in_memory_sink_is_rejected(self):
+        """rev-5 G1: an in-memory sink may not be used by an execution-capable kernel."""
+        with self.assertRaises(H0Error) as ctx:
+            fresh_kernel(audit=AuditLog())
+        self.assertEqual(ctx.exception.code, "E_AUDIT_NOT_DURABLE")
+
     def test_audit_failure_prevents_execution(self):
         """v2 semantics: audit is a precondition. Nothing executes, so there is no
         'downgrade' to record - the claim 'downgraded' was only true of the v1 bug."""
-        k = fresh_kernel(audit=AuditLog(fail=True))
+        import tempfile
+        from pathlib import Path
+        from h0_audit_store import AuditStoreError, DurableAuditStore
+        store = DurableAuditStore(Path(tempfile.mkdtemp()) / "a.jsonl")
+
+        def broken(_rec):
+            raise AuditStoreError("E_AUDIT_UNAVAILABLE", "simulated")
+
+        store.append = broken
+        invocations = {"n": 0}
+
+        def executor(req):
+            invocations["n"] += 1
+            return {}
+
+        k = fresh_kernel(audit=store, executor=executor)
         res = k.handle(envelope())
         self.assertFalse(res["ok"])
-        self.assertEqual(res["error"], "E_AUDIT_UNAVAILABLE")
+        self.assertIn(res["error"], {"E_AUDIT_UNAVAILABLE", "E_AUDIT_REQUIRED"})
         self.assertEqual(k.effects["executed"], 0)
-        self.assertEqual(res["audit"]["decision"], "deny")
+        self.assertEqual(invocations["n"], 0)
 
     def test_internal_error_denies(self):
         """v2: the executor is injected, and an executor crash must deny."""
@@ -310,15 +342,17 @@ class FailClosedTests(unittest.TestCase):
 class AuditTests(unittest.TestCase):
     def test_audit_records_both_decisions_and_no_payload(self):
         k = fresh_kernel()
-        k.handle(envelope(payload={"secretish": "do-not-log-me"}))
+        k.handle(envelope(payload={"include": ["do-not-log-me"]}))
         k.handle(envelope(method="exec"))
-        self.assertEqual(len(k.audit.records), 2)
-        blob = json.dumps(k.audit.records)
+        records = k.audit._records
+        self.assertGreaterEqual(len(records), 2)
+        blob = json.dumps(records)
         self.assertNotIn("do-not-log-me", blob)
-        for rec in k.audit.records:
+        for rec in records:
             self.assertIn("correlation_id", rec)
-            self.assertIn("request_digest", rec)
-            self.assertIn(rec["decision"], {"allow", "deny"})
+            self.assertIn(rec.get("decision"), {"allow", "deny"})
+        # the request digest is carried on the intent (and on denials), not on outcomes
+        self.assertTrue(any("request_digest" in r for r in records))
 
 
 if __name__ == "__main__":

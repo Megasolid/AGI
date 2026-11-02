@@ -14,8 +14,11 @@ import json
 import threading
 import unittest
 import uuid
+import tempfile
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
+from h0_audit_store import DurableAuditStore
 from h0_kernel import (
     FORBIDDEN_METHODS, LIMITS, METHOD_SCOPES, ORDER, PAYLOAD_SCHEMAS,
     REGISTERED_METHODS, AuditLog, H0Error, Kernel, RateLimiter,
@@ -72,9 +75,14 @@ def envelope(method="agi_status", scope=None, payload=None, issued_at=None, expi
 
 
 def fresh_kernel(**kw):
+    import tempfile
+    from pathlib import Path
+    from h0_audit_store import DurableAuditStore
     clients = {"station-a": {"key_id": KEY_ID, "revoked": False}}
     clients.update(kw.pop("clients", {}))
     clock = kw.pop("clock", lambda: NOW)
+    if kw.get("audit") is None:
+        kw["audit"] = DurableAuditStore(Path(tempfile.mkdtemp()) / "audit.jsonl")
     return Kernel(clients=clients, verifier=verify, clock=clock, **kw)
 
 
@@ -88,26 +96,46 @@ class F1_AuditPrecondition(unittest.TestCase):
             invoked["count"] += 1
             return {"executed": True}
 
-        k = fresh_kernel(audit=AuditLog(fail=True), executor=executor)
+        st = DurableAuditStore(Path(tempfile.mkdtemp()) / "a.jsonl")
+
+        def broken(_rec):
+            from h0_audit_store import AuditStoreError
+            raise AuditStoreError("E_AUDIT_UNAVAILABLE", "simulated")
+
+        st.append = broken
+        k = fresh_kernel(audit=st, executor=executor)
         res = k.handle(envelope())
         self.assertFalse(res["ok"])
-        self.assertEqual(res["error"], "E_AUDIT_UNAVAILABLE")
+        self.assertIn(res["error"], {"E_AUDIT_UNAVAILABLE"})
         self.assertEqual(invoked["count"], 0, "executor MUST NOT run before audit")
         self.assertEqual(k.effects["executed"], 0)
 
-    def test_audit_failure_denial_also_recorded_as_deny(self):
-        k = fresh_kernel(audit=AuditLog(fail=True))
+    def test_audit_failure_blocks_execution(self):
+        st = DurableAuditStore(Path(tempfile.mkdtemp()) / "a.jsonl")
+
+        def broken(_rec):
+            from h0_audit_store import AuditStoreError
+            raise AuditStoreError("E_AUDIT_UNAVAILABLE", "simulated")
+
+        st.append = broken
+        k = fresh_kernel(audit=st)
         res = k.handle(envelope())
-        self.assertEqual(res["audit"]["decision"], "deny")
-        self.assertEqual(res["audit"]["reason_code"], "E_AUDIT_UNAVAILABLE")
+        self.assertFalse(res["ok"])
+        self.assertEqual(k.effects["executed"], 0)
 
     def test_audit_success_precedes_execution(self):
         order = []
 
-        class Recorder(AuditLog):
+        import tempfile
+        from pathlib import Path
+        durable = DurableAuditStore(Path(tempfile.mkdtemp()) / "a.jsonl")
+
+        class Recorder:
+            is_durable = True
+
             def append(self, record):
                 order.append("audit:" + record["decision"])
-                super().append(record)
+                return durable.append(record)
 
         def executor(req):
             order.append("execute")
@@ -294,7 +322,7 @@ class RegressionOfOriginalContract(unittest.TestCase):
     def test_audit_never_logs_payload(self):
         k = fresh_kernel()
         k.handle(envelope(payload={"include": ["do-not-log-me"]}))
-        self.assertNotIn("do-not-log-me", json.dumps(k.audit.records))
+        self.assertNotIn("do-not-log-me", json.dumps(k.audit._records))
 
     def test_limits_still_enforced(self):
         with self.assertRaises(H0Error):

@@ -92,10 +92,18 @@ class _SingleWriterLock:
 class DurableAuditStore:
     """Hash-chained, fsync'd, single-writer JSONL audit store."""
 
-    def __init__(self, path, *, fsync: bool = True, enforce_single_writer: bool = True):
+    is_durable = True
+
+    def __init__(self, path, *, fsync: bool = True, _allow_unsafe_observer: bool = False):
+        """Single-writer enforcement is ALWAYS on for a writable store.
+
+        A read-only observer may be constructed with _allow_unsafe_observer=True,
+        which disables the lock and the pre-append chain check; such a store must
+        not be used for enforcement. The flag is private and named to say so.
+        """
         self.path = Path(path)
         self.fsync = fsync
-        self.enforce_single_writer = enforce_single_writer
+        self.enforce_single_writer = not _allow_unsafe_observer
         self.lock = _SingleWriterLock(self.path.with_suffix(self.path.suffix + ".lock"))
         self._records: list[dict] = []
         self._intents: dict[str, dict] = {}
@@ -149,6 +157,8 @@ class DurableAuditStore:
                 if rec.get("prev_digest") != prev:
                     raise AuditStoreError("E_AUDIT_TAMPERED", f"chain break line {lineno}")
                 prev = rec["digest"]
+                # G3: a digest-consistent but semantically invalid log must not load
+                self._validate(rec)
                 self._index(rec)
         self._tail_digest = prev
 
@@ -162,21 +172,33 @@ class DurableAuditStore:
             self._outcomes[cid] = rec
 
     # -- durability check (F10) ------------------------------------------
-    def _disk_tail(self) -> str | None:
-        """Re-read the last record on disk and return its digest (None for empty)."""
+    def _disk_chain(self) -> tuple[str | None, int]:
+        """G4: re-read and fully re-verify the on-disk chain before appending.
+
+        Revision 4 compared only the final digest, so an altered earlier record with
+        an unchanged tail went undetected. Every record's digest and linkage is now
+        checked, and the record count is returned so a truncation is also caught.
+        """
         if not self.path.exists():
-            return None
-        last = None
+            return None, 0
+        prev = None
+        count = 0
         with self.path.open(encoding="utf-8") as fh:
-            for line in fh:
-                if line.strip():
-                    last = line
-        if last is None:
-            return None
-        try:
-            return json.loads(last).get("digest")
-        except Exception as exc:  # noqa: BLE001
-            raise AuditStoreError("E_AUDIT_CORRUPT", "tail unreadable") from exc
+            for lineno, line in enumerate(fh, 1):
+                if not line.strip():
+                    continue
+                try:
+                    rec = json.loads(line)
+                except Exception as exc:  # noqa: BLE001
+                    raise AuditStoreError("E_AUDIT_CORRUPT", f"line {lineno}") from exc
+                body = {k: v for k, v in rec.items() if k != "digest"}
+                if _digest(body) != rec.get("digest"):
+                    raise AuditStoreError("E_AUDIT_TAMPERED", f"digest mismatch line {lineno}")
+                if rec.get("prev_digest") != prev:
+                    raise AuditStoreError("E_AUDIT_TAMPERED", f"chain break line {lineno}")
+                prev = rec["digest"]
+                count += 1
+        return prev, count
 
     # -- append ----------------------------------------------------------
     def append(self, record: dict) -> dict:
@@ -189,11 +211,11 @@ class DurableAuditStore:
             if self.enforce_single_writer:
                 self.lock.acquire()
             try:
-                # F10: confirm nobody else moved the chain since we last wrote
-                disk_tail = self._disk_tail()
-                if disk_tail != self._tail_digest:
+                # F10 + G4: fully re-verify the on-disk chain before appending
+                disk_tail, disk_count = self._disk_chain()
+                if disk_tail != self._tail_digest or disk_count != self._tail_seq:
                     raise AuditStoreError("E_AUDIT_FOREIGN_WRITE",
-                                          "chain head changed outside this writer")
+                                          "chain head or length changed outside this writer")
 
                 rec["seq"] = self._tail_seq + 1
                 rec["prev_digest"] = self._tail_digest

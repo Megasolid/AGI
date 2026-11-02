@@ -132,7 +132,7 @@ class F10_WriterConcurrency(unittest.TestCase):
             s = DurableAuditStore(p)
             s.append({"phase": "intent", "correlation_id": "c1"})
             # another process appends behind our back
-            other = DurableAuditStore(p, enforce_single_writer=False)
+            other = DurableAuditStore(p, _allow_unsafe_observer=True)
             other.append({"phase": "intent", "correlation_id": "c2"})
             with self.assertRaises(AuditStoreError) as ctx:
                 s.append({"phase": "intent", "correlation_id": "c3"})
@@ -143,7 +143,7 @@ class F10_WriterConcurrency(unittest.TestCase):
             p = Path(td) / "a.jsonl"
             s = DurableAuditStore(p)
             s.append({"phase": "intent", "correlation_id": "c1"})
-            other = DurableAuditStore(p, enforce_single_writer=False)
+            other = DurableAuditStore(p, _allow_unsafe_observer=True)
             other.append({"phase": "intent", "correlation_id": "c2"})
             try:
                 s.append({"phase": "intent", "correlation_id": "c3"})

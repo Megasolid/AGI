@@ -250,7 +250,13 @@ class RateLimiter:
 
 
 class AuditLog:
-    """Append-only audit sink. `fail` simulates an unavailable store."""
+    """In-memory audit sink. NOT durable, and therefore NOT accepted by Kernel.
+
+    Retained only so isolated unit tests can assert call ordering. It deliberately
+    declares is_durable = False, which Kernel rejects with E_AUDIT_NOT_DURABLE.
+    """
+
+    is_durable = False
 
     def __init__(self, fail: bool = False):
         self.records = []
@@ -316,6 +322,15 @@ def validate_envelope_shape(request) -> None:
         raise H0Error("E_MALFORMED", "signature not an object")
 
 
+class _AccountedDenial(Exception):
+    """Request-local marker: this denial is already in the audit trail."""
+
+    def __init__(self, code: str, detail: str = ""):
+        super().__init__(code)
+        self.code = code
+        self.detail = detail
+
+
 class _Indeterminate(Exception):
     """Internal marker: effect may have occurred but cannot be recorded."""
 
@@ -336,7 +351,15 @@ class Kernel:
         self.policy_ok = policy_ok
         self.clock = clock or (lambda: datetime.now(timezone.utc))
         self.rate = RateLimiter()
-        self.audit = audit or AuditLog()
+        # G1: durable audit is MANDATORY. No implicit in-memory fallback is allowed in
+        # an execution-capable kernel; an in-memory sink must be passed explicitly and
+        # only for isolated tests (it is marked non-durable below).
+        if audit is None:
+            raise H0Error("E_AUDIT_REQUIRED", "an explicit audit store is required")
+        if not getattr(audit, "is_durable", False):
+            raise H0Error("E_AUDIT_NOT_DURABLE",
+                          f"audit store {type(audit).__name__} does not declare durable persistence")
+        self.audit = audit
         self.replay = ReplayStore()
         self.executor = executor or self._default_execute
         self.effects = {"executed": 0, "denied": 0, "indeterminate": 0}
@@ -457,8 +480,9 @@ class Kernel:
                             "indeterminate": True,
                             "detail": f"executor failed AND outcome unrecordable: {type(rec_exc).__name__}",
                             "audit": intent}
-                self._accounted = True
-                raise H0Error("E_EXECUTOR_FAILED", type(exc).__name__)
+                # G2: request-local result, carried on the exception, never on self
+                raise _AccountedDenial(code="E_EXECUTOR_FAILED",
+                                       detail=type(exc).__name__)
             # Effect HAS HAPPENED. From here on, nothing may suggest otherwise.
             executed = True
             self.effects["executed"] += 1
@@ -481,6 +505,11 @@ class Kernel:
             self.effects["indeterminate"] += 1
             return exc.payload
 
+        except _AccountedDenial as exc:
+            # already recorded as an outcome record; no second denial may be appended
+            self.effects["denied"] += 1
+            return {"ok": False, "error": exc.code, "audit": None}
+
         except H0Error as exc:
             code = exc.code
             result = None
@@ -490,10 +519,6 @@ class Kernel:
             self._internal = f"{type(exc).__name__}: {exc}"
 
         self.effects["denied"] += 1
-        if getattr(self, "_accounted", False):
-            # the denial is already recorded as an outcome record; do not append a second
-            self._accounted = False
-            return {"ok": False, "error": code, "audit": None}
         if reserved and not executed and isinstance(request, dict):
             rid, nonce = request.get("request_id"), request.get("nonce")
             if rid and nonce:
