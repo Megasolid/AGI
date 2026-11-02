@@ -1,0 +1,195 @@
+{
+ "checks": [
+  {
+   "detail": "agi/continuity-handoff/1",
+   "id": "handoff_schema",
+   "passed": true
+  },
+  {
+   "detail": {
+    "first_ok": true,
+    "second_ok": true
+   },
+   "id": "handoff_signature_dual",
+   "passed": true
+  },
+  {
+   "detail": {
+    "blockers": [
+     "Clean deterministic signed verification report for head d4b8310 not yet produced",
+     "E1 real S5 gateway and live revocation service not implemented",
+     "No model-adapter substitution harness",
+     "No second-station bootstrap / clean-room resume harness"
+    ],
+    "constraints": [
+     "no production transport, live endpoints, credentials, federation or execution",
+     "JSON Schema validation is a supported subset",
+     "message auth in tests is mock HMAC; real ML-DSA message auth not wired",
+     "endpoint isolation is in-process; replay/effect ledgers are local files",
+     "no cross-host replay or partition recovery",
+     "capability sandbox execution and network catalogue sync not implemented",
+     "P7 smoke is a mock integration check, not an AGI capability claim",
+     "no E-level evidence review has been performed"
+    ],
+    "evidence_index_count": 7,
+    "head_pin": "d4b83108c87881dcd5465d53afe2367554fdf8ab",
+    "owner_required_actions": [
+     "protected merges",
+     "tagging",
+     "publication",
+     "activation",
+     "identity/authority changes"
+    ],
+    "release_status": "UNPUBLISHED",
+    "rollback_commit": "6a0fb796a624cf61fc8592aa3f45fc4dc6c10738",
+    "rollback_tag": "v4.0.1",
+    "task_queue": [
+     "M0",
+     "GATE-1",
+     "M1",
+     "H0",
+     "P1a",
+     "P1b"
+    ],
+    "token_runway_present": false
+   },
+   "id": "reconstruction_complete",
+   "passed": true
+  },
+  {
+   "detail": {
+    "checked": 7,
+    "failed": []
+   },
+   "id": "evidence_index_matches",
+   "passed": true
+  },
+  {
+   "detail": "no git",
+   "id": "protected_baseline_unchanged",
+   "passed": false
+  },
+  {
+   "detail": {
+    "after": 1,
+    "before": 1
+   },
+   "id": "restart_no_duplicate_effect",
+   "passed": true
+  }
+ ],
+ "discrepancies": [
+  {
+   "code": "no_git",
+   "detail": "repo has no .git; ancestry checks skipped"
+  }
+ ],
+ "environment": {
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.13.15"
+ },
+ "evidence_index_check": [
+  {
+   "actual": "sha256:c6f17fe358e8b063738039674c1ec63a9233277495ba54e73205f167149e77ff",
+   "expected": "sha256:c6f17fe358e8b063738039674c1ec63a9233277495ba54e73205f167149e77ff",
+   "ok": true,
+   "path": "citadel/inputs/v41e/v41e-rc-manifest.json"
+  },
+  {
+   "actual": "sha256:013160a896fd582368372b7a28ed6e29435535fbf62695277c77aef31b913be6",
+   "expected": "sha256:013160a896fd582368372b7a28ed6e29435535fbf62695277c77aef31b913be6",
+   "ok": true,
+   "path": "citadel/inputs/v41e/P7-SECOND-IMPL-MLDSA-VERIFICATION.json"
+  },
+  {
+   "actual": "sha256:d9f53fccb3367fa138b9f47752faa6d1342efca0f20f26f6520460af14d42257",
+   "expected": "sha256:d9f53fccb3367fa138b9f47752faa6d1342efca0f20f26f6520460af14d42257",
+   "ok": true,
+   "path": "citadel/inputs/v41e/P7-TEST-OUTPUT-140-20261102.txt"
+  },
+  {
+   "actual": "sha256:fdf05ce148c416e6e86a3a781942f9c6bada07ea652917addbb311ad19008567",
+   "expected": "sha256:fdf05ce148c416e6e86a3a781942f9c6bada07ea652917addbb311ad19008567",
+   "ok": true,
+   "path": "citadel/evolution-notes/EVOLUTION-BRANCH-REVIEW-20261102.md"
+  },
+  {
+   "actual": "sha256:36ced0c5ffe9b71d9cb8b94cd00509f6936bbeeeb5fe2194253d8e6aadcf4274",
+   "expected": "sha256:36ced0c5ffe9b71d9cb8b94cd00509f6936bbeeeb5fe2194253d8e6aadcf4274",
+   "ok": true,
+   "path": "citadel/inputs/v41e/HANDOFF-KING-20261102T1645.md"
+  },
+  {
+   "actual": "sha256:e985465a918d8432c9f54849f3a9859eba23b4924d37b669b37d06cc33878ca4",
+   "expected": "sha256:e985465a918d8432c9f54849f3a9859eba23b4924d37b669b37d06cc33878ca4",
+   "ok": true,
+   "path": "citadel/inputs/v41e/KING-DECISION-20261102T1647.json"
+  },
+  {
+   "actual": "sha256:9dbe90cffb973a0baa316f5166ab9a2a778bd17fffc46a1574501f4963c02a0e",
+   "expected": "sha256:9dbe90cffb973a0baa316f5166ab9a2a778bd17fffc46a1574501f4963c02a0e",
+   "ok": true,
+   "path": "citadel/inputs/v41e/P7-V14-STATUS-20261102.md"
+  }
+ ],
+ "handoff": "C:\\Users\\D\\AppData\\Local\\Temp\\stationB-20261102\\citadel\\handoff\\DSH-CONTINUITY-HANDOFF-20261102T1750.json",
+ "handoff_sha256": "sha256:b667a24c7138af50e633531226e8f7928765e16dc30629c07b0b4ecd1ccb39d2",
+ "handoff_signature": {
+  "first": {
+   "alg": "ML-DSA-65",
+   "key_id": "a73eaa5d3c31e009",
+   "module_dir": "C:\\Users\\D\\.agents\\skills\\agi\\memory\\scripts",
+   "ok": true,
+   "path": "crypto.py",
+   "reason": "verified"
+  },
+  "second": {
+   "ok": true,
+   "path": "dilithium_py",
+   "tamper_rejected": true
+  }
+ },
+ "passed": false,
+ "policy": "discrepancies are recorded, never silently repaired",
+ "reconstructed": {
+  "blockers": [
+   "Clean deterministic signed verification report for head d4b8310 not yet produced",
+   "E1 real S5 gateway and live revocation service not implemented",
+   "No model-adapter substitution harness",
+   "No second-station bootstrap / clean-room resume harness"
+  ],
+  "constraints": [
+   "no production transport, live endpoints, credentials, federation or execution",
+   "JSON Schema validation is a supported subset",
+   "message auth in tests is mock HMAC; real ML-DSA message auth not wired",
+   "endpoint isolation is in-process; replay/effect ledgers are local files",
+   "no cross-host replay or partition recovery",
+   "capability sandbox execution and network catalogue sync not implemented",
+   "P7 smoke is a mock integration check, not an AGI capability claim",
+   "no E-level evidence review has been performed"
+  ],
+  "evidence_index_count": 7,
+  "head_pin": "d4b83108c87881dcd5465d53afe2367554fdf8ab",
+  "owner_required_actions": [
+   "protected merges",
+   "tagging",
+   "publication",
+   "activation",
+   "identity/authority changes"
+  ],
+  "release_status": "UNPUBLISHED",
+  "rollback_commit": "6a0fb796a624cf61fc8592aa3f45fc4dc6c10738",
+  "rollback_tag": "v4.0.1",
+  "task_queue": [
+   "M0",
+   "GATE-1",
+   "M1",
+   "H0",
+   "P1a",
+   "P1b"
+  ],
+  "token_runway_present": false
+ },
+ "repo": "C:\\Users\\D\\AppData\\Local\\Temp\\stationB-20261102",
+ "schema": "agi/station-resume-report/1"
+}
