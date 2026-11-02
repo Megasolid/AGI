@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "agi.sem-0.2.schema.json",
+  "title": "AGI semantic message envelope 0.2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "session_id", "message_id", "sequence", "in_reply_to", "type",
+    "from_ref", "to_ref", "ts", "expires_at", "context_refs", "constraints",
+    "body", "uncertainty", "evidence_refs"
+  ],
+  "properties": {
+    "schema": {"const": "agi.sem/0.2"},
+    "session_id": {"type": "string", "minLength": 1},
+    "message_id": {"type": "string", "minLength": 1},
+    "sequence": {"type": "integer", "minimum": 1},
+    "in_reply_to": {"type": ["string", "null"]},
+    "type": {"enum": [
+      "HELLO", "HELLO_ACK", "CAPABILITIES", "INTENT", "CONTEXT_REF", "ACK",
+      "SEMANTIC_RECEIPT", "CHALLENGE", "CLARIFY", "CORRECTION", "COMMIT",
+      "RESULT", "VERIFY", "VERIFIED", "REJECT", "ABORT", "SYNC", "CLOSE"
+    ]},
+    "from_ref": {"type": "string", "minLength": 1},
+    "to_ref": {"type": "string", "minLength": 1},
+    "ts": {"type": "string", "minLength": 1},
+    "expires_at": {"type": "string", "minLength": 1},
+    "context_refs": {"type": "array", "items": {"type": "object"}},
+    "constraints": {"type": "array", "items": {"type": "object"}},
+    "body": {"type": "object"},
+    "uncertainty": {
+      "type": "object",
+      "required": ["state"],
+      "properties": {"state": {"enum": ["known", "uncertain", "unknown"]}, "reason": {"type": ["string", "null"]}},
+      "additionalProperties": true
+    },
+    "evidence_refs": {"type": "array", "items": {"type": "string"}},
+    "auth": {
+      "type": "object",
+      "required": ["schema", "alg", "key_id", "payload_sha256", "signature_b64"],
+      "properties": {
+        "schema": {"const": "agi.sem.auth/0.1"},
+        "alg": {"type": "string", "minLength": 1},
+        "key_id": {"type": "string", "minLength": 1},
+        "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "signature_b64": {"type": "string", "minLength": 1},
+        "signed_at": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  }
+}
