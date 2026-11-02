@@ -1,0 +1,129 @@
+{
+ "base": {
+  "repo": "C:\\Users\\D\\.agents\\skills\\agi\\state\\repo\\AGI"
+ },
+ "checks": [
+  {
+   "detail": {
+    "actual": "00e0c0af19922accc06ef2522ffa56c7716e8f91",
+    "pinned": "00e0c0af19922accc06ef2522ffa56c7716e8f91"
+   },
+   "id": "head_matches_pin",
+   "passed": true
+  },
+  {
+   "detail": {
+    "porcelain": []
+   },
+   "id": "working_tree_clean",
+   "passed": true
+  },
+  {
+   "detail": {
+    "diff_stat": []
+   },
+   "id": "protected_baseline_unchanged",
+   "passed": true
+  },
+  {
+   "detail": {
+    "exit": 0
+   },
+   "id": "v401_ancestor",
+   "passed": true
+  },
+  {
+   "detail": {
+    "tags_count": 12
+   },
+   "id": "published_tags_present",
+   "passed": true
+  },
+  {
+   "detail": {
+    "exit": 0,
+    "ran": 145,
+    "tail": [
+     " ],",
+     " \"warnings\": []",
+     "}"
+    ]
+   },
+   "id": "test_suite",
+   "passed": true
+  },
+  {
+   "detail": [
+    {
+     "alg": "ML-DSA-65",
+     "key_id": "a73eaa5d3c31e009",
+     "ok": true,
+     "path": "citadel/inputs/v41e/v41e-rc-manifest.json",
+     "reason": "verified"
+    },
+    {
+     "alg": "ML-DSA-65",
+     "key_id": "a73eaa5d3c31e009",
+     "ok": true,
+     "path": "citadel/handoff/DSH-CONTINUITY-HANDOFF-20261102T1750.json",
+     "reason": "verified"
+    }
+   ],
+   "id": "signatures_first_path",
+   "passed": true
+  }
+ ],
+ "environment": {
+  "git": "git version 2.43.0.windows.1",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.13.15"
+ },
+ "gate_model": "DSH deterministic report is the gate; Kilo is advisory corroboration only",
+ "head": "00e0c0af19922accc06ef2522ffa56c7716e8f91",
+ "info": {
+  "head_actual": "00e0c0af19922accc06ef2522ffa56c7716e8f91",
+  "kilo_findings_advisory": [],
+  "protected_diff": [],
+  "signature_first_path": [
+   {
+    "alg": "ML-DSA-65",
+    "key_id": "a73eaa5d3c31e009",
+    "ok": true,
+    "path": "citadel/inputs/v41e/v41e-rc-manifest.json",
+    "reason": "verified"
+   },
+   {
+    "alg": "ML-DSA-65",
+    "key_id": "a73eaa5d3c31e009",
+    "ok": true,
+    "path": "citadel/handoff/DSH-CONTINUITY-HANDOFF-20261102T1750.json",
+    "reason": "verified"
+   }
+  ],
+  "tags": [
+   "v4.0.0",
+   "v4.0.0-beta.1",
+   "v4.0.0-beta.10",
+   "v4.0.0-beta.2",
+   "v4.0.0-beta.3",
+   "v4.0.0-beta.4",
+   "v4.0.0-beta.5",
+   "v4.0.0-beta.6",
+   "v4.0.0-beta.7",
+   "v4.0.0-beta.8",
+   "v4.0.0-beta.9",
+   "v4.0.1"
+  ],
+  "tests_ok": true,
+  "tests_ran": 145,
+  "working_tree_clean": true
+ },
+ "no_actions": [
+  "no tag",
+  "no publication",
+  "no activation",
+  "no protected-baseline change"
+ ],
+ "passed": true,
+ "schema": "agi/gate-report/1"
+}
