@@ -90,20 +90,24 @@ class _SingleWriterLock:
 
 
 class DurableAuditStore:
-    """Hash-chained, fsync'd, single-writer JSONL audit store."""
+    """Hash-chained, fsync'd, single-writer JSONL audit store.
 
-    is_durable = True
+    R6: durability is DERIVED from configuration, never declared. `durability()`
+    reports exactly what this instance does; there is no class-level constant that
+    could claim durability for an instance that does not have it.
+    """
 
     def __init__(self, path, *, fsync: bool = True, _allow_unsafe_observer: bool = False):
         """Single-writer enforcement is ALWAYS on for a writable store.
 
-        A read-only observer may be constructed with _allow_unsafe_observer=True,
-        which disables the lock and the pre-append chain check; such a store must
-        not be used for enforcement. The flag is private and named to say so.
+        `_allow_unsafe_observer=True` disables the lock, the pre-append chain check
+        AND fsync. Such an instance reports itself non-enforceable, and the Kernel
+        refuses it categorically (R6).
         """
         self.path = Path(path)
-        self.fsync = fsync
+        self.fsync = bool(fsync) and not _allow_unsafe_observer
         self.enforce_single_writer = not _allow_unsafe_observer
+        self._observer_mode = bool(_allow_unsafe_observer)
         self.lock = _SingleWriterLock(self.path.with_suffix(self.path.suffix + ".lock"))
         self._records: list[dict] = []
         self._intents: dict[str, dict] = {}
@@ -112,6 +116,19 @@ class DurableAuditStore:
         self._tail_digest: str | None = None
         self._tail_seq = 0
         self._recover()
+
+    # -- R6: verifiable enforcement-store contract ------------------------
+    def durability(self) -> dict:
+        """Report what this instance actually guarantees. Derived, not asserted."""
+        return {
+            "store_type": "DurableAuditStore",
+            "enforceable": (self.fsync and self.enforce_single_writer and not self._observer_mode),
+            "fsync": bool(self.fsync),
+            "single_writer": bool(self.enforce_single_writer),
+            "observer_mode": bool(self._observer_mode),
+            "append_only": True,
+            "chained": True,
+        }
 
     # -- validation BEFORE persistence (F9) ------------------------------
     def _validate(self, rec: dict) -> None:

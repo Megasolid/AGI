@@ -131,7 +131,10 @@ class F1_AuditPrecondition(unittest.TestCase):
         durable = DurableAuditStore(Path(tempfile.mkdtemp()) / "a.jsonl")
 
         class Recorder:
-            is_durable = True
+            """Delegates the R6 durability contract to a real durable store."""
+
+            def durability(self):
+                return durable.durability()
 
             def append(self, record):
                 order.append("audit:" + record["decision"])

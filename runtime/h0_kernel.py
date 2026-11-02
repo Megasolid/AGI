@@ -356,15 +356,44 @@ class Kernel:
         # only for isolated tests (it is marked non-durable below).
         if audit is None:
             raise H0Error("E_AUDIT_REQUIRED", "an explicit audit store is required")
-        if not getattr(audit, "is_durable", False):
-            raise H0Error("E_AUDIT_NOT_DURABLE",
-                          f"audit store {type(audit).__name__} does not declare durable persistence")
         self.audit = audit
+        self._require_enforceable_store(audit)
         self.replay = ReplayStore()
         self.executor = executor or self._default_execute
         self.effects = {"executed": 0, "denied": 0, "indeterminate": 0}
         self.invocations = 0
         self.order_seen = []
+
+    # -- R6: enforcement-store contract ------------------------------------
+    @staticmethod
+    def _require_enforceable_store(store) -> None:
+        """A store may only enter the enforcement path if it PROVES it is enforceable.
+
+        R5 accepted a bare `is_durable = True` declaration. That is an honour system:
+        an observer-mode store and an fsync-disabled store both declared durability,
+        and any injected object could do the same. The check below requires a
+        callable `durability()` reporting concrete, verified properties, and rejects
+        the store categorically if any of them is absent or false.
+        """
+        contract = getattr(store, "durability", None)
+        if not callable(contract):
+            raise H0Error("E_AUDIT_NOT_DURABLE",
+                          f"{type(store).__name__} exposes no durability() contract; "
+                          "a bare declaration is not acceptable")
+        try:
+            d = contract()
+        except Exception as exc:  # noqa: BLE001
+            raise H0Error("E_AUDIT_NOT_DURABLE",
+                          f"durability() raised {type(exc).__name__}") from exc
+        if not isinstance(d, dict):
+            raise H0Error("E_AUDIT_NOT_DURABLE", "durability() must return a mapping")
+        required_true = ("enforceable", "fsync", "single_writer", "append_only", "chained")
+        missing = [k for k in required_true if d.get(k) is not True]
+        if missing:
+            raise H0Error("E_AUDIT_NOT_DURABLE",
+                          f"store not enforceable (failed: {','.join(missing)})")
+        if d.get("observer_mode") is not False:
+            raise H0Error("E_AUDIT_NOT_DURABLE", "observer-mode stores are categorically refused")
 
     # -- default executor -------------------------------------------------
     def _default_execute(self, request):
