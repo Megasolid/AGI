@@ -1,0 +1,78 @@
+{
+ "schema": "agi-citadel/task/0.2",
+ "task_id": "v41e-v-14",
+ "supersedes": "v41e-v-13",
+ "station": "kilo",
+ "issued_by": "dsh (P7 v14 schema-enforced review; King decision 2026-11-02T1647 approved)",
+ "issued_at": "2026-11-02T16:48:50+0330",
+ "base_commit": "72d151b944cd21cf84022d343efa2e865c0c7340",
+ "objective": "Independent review of the current AGI v4.1-E release-candidate head with MACHINE-CHECKABLE findings metadata. Your findings file MUST pass runtime/agi_findings_validate.py; a failing file is an automatic FAIL regardless of your narrative.",
+ "scope": [
+  "verify task hash + embedded signature + bundle hash",
+  "verify all INPUTS-MANIFEST entries",
+  "run python -m unittest discover -s runtime -p test_v41e_*.py in an isolated copy (expect 140 tests; in an isolated copy without .git/baseline expect 138 pass + 2 skips)",
+  "verify RC manifest c6f17fe3..., final dossier, King decision record, second-implementation ML-DSA verification (7 signatures, all_valid true)",
+  "verify protected DNA/S1-S6 and v4.0.1 ancestry; confirm no tag/publication/live execution",
+  "write findings to /tmp root and validate them with agi_findings_validate.py before reporting"
+ ],
+ "constraints": [
+  "read-only repository access",
+  "no live AGI writes",
+  "no execution of DSH state",
+  "no network beyond public repo fetch",
+  "no secrets or credentials",
+  "no private memory",
+  "PR-only report path",
+  "isolated copy for tests",
+  "findings must pass the validator"
+ ],
+ "inputs": [
+  {
+   "path": "citadel/inputs/v41e/v41e-p7e-inputs.zip",
+   "sha256": "sha256:48ba1c634f71607ee10e1c4880dcc0a5590766dff83d1c704f07a2ea33a6f41b",
+   "hash_method": "sha256(file)"
+  }
+ ],
+ "expected_report": {
+  "schema": "agi-citadel/report/0.1",
+  "fields": [
+   "schema",
+   "task_id",
+   "station",
+   "decision",
+   "checks",
+   "findings",
+   "evidence"
+  ],
+  "mandatory_evidence": [
+   "task_hash",
+   "bundle_sha256",
+   "bundle_bytes",
+   "manifest_count",
+   "signature"
+  ],
+  "validator": "runtime/agi_findings_validate.py"
+ },
+ "evidence_pins": {
+  "task_hash": "<computed>",
+  "bundle_sha256": "sha256:48ba1c634f71607ee10e1c4880dcc0a5590766dff83d1c704f07a2ea33a6f41b",
+  "bundle_bytes": 42582,
+  "manifest_count": 13
+ },
+ "validation_command": "python runtime/agi_findings_validate.py <your-findings.json> --task-hash <task_hash> --bundle-sha256 sha256:48ba1c634f71607ee10e1c4880dcc0a5590766dff83d1c704f07a2ea33a6f41b --bundle-bytes 42582 --manifest-count 13 --task-id v41e-v-14",
+ "authorization_scope": "Read-only independent review/test/report only; no live writes, no DSH state execution, no credentials, no network beyond public repo fetch.",
+ "human_approval_required": true,
+ "control_plane": "Git task file source of truth; PR-only report path",
+ "hash_method": "sha256(canonical_json(task excluding task_hash and signature)); canonical = sort_keys, separators=(',',':')",
+ "signature_method": "ML-DSA-65 over utf8(canonical_json(task excluding task_hash and signature))",
+ "task_hash": "sha256:dee0560591b406b05e6bb84a1f5b44c1ccae7f7c37ec8429846923eb05fdb6c9",
+ "signature": {
+  "schema": "agi-sig/1",
+  "alg": "ML-DSA-65",
+  "key_id": "a73eaa5d3c31e009",
+  "public_key_b64": "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",
+  "payload_sha256": "dee0560591b406b05e6bb84a1f5b44c1ccae7f7c37ec8429846923eb05fdb6c9",
+  "signature_b64": "f4qqdgpYs531VNqEyXsKIZSTapB4d0Tger7c+TAiNc2DXQC/YXoot1HUwa0V6s3YZByHALLi6cGs5mYOMiBzj+D2QjJmi1JrM+INNJLGEspvIIjZy8+G/mjKnUJZg9B8to2OW5CYU5/YadJOpi+s7xx9iYvWHhYLH0VXdFB5J78bq9vk8m1JSUPs73f6c6gCuAlwhWVhTJat5wXuB4DhD0jueT7PegVFUVoR4rynfZtNaGODgPSejqLLTyA8YyChwcL29Y9aFHRFcbTvJFKieTO9PuWOqz4I709XxAMf6mEHI4VTfmUaUUGIxCO7gDWjsE42lT1xPro4XesefCXHVS4J3SM2DJ1PFr4pfIKKPdIG5SjSWkkL8CAG71X65vArr0kk1ziZ+0WFpim8qiJL7iexX9556AstGaJPwOP1cY98PPk3OoMLAUfo9Qi20vi8d1frbetI/VmnCZxY2G+poIOPqDCVIQU0g5S6yLSdqwcF3hVpd3+OBmajlIXiq8bYJ+ys3rXbni73d5DEPfOpnnsJga+nj8Ph7x8HjGmAsFxcdHLFi5BBgWG5Go9+kRvSi4HOSrlKVxtDAzn3AmYpLZJPq0Qq8tWWk0VHp7nA9eN7fMC4/9Zft6mexmprgC111V6h0ewddBCkTOqPlPYIW9rt3pZ503pVwbW6Ekh4hO47J6JA0VvUc3mVoBqE1ZVqGsCcFHnlJpYKPliIDZbckLfi9hJ++Y0eCqxv11VX9iIQTHhZjD3ErWeZOxSDK6MdUY0F0t19UGgGplhXl5Lyrn/5FZfr46iKOzcuuYxepUVkjaGPDgNVerdXs+F6Fscq1Q91LnIMYpw3VKDhYCQnmZ5EXQ8v7W2bpLwOOPIdpCR2Dirbo4qTCNCZ61nanWDFtOVLhL+c9BSkmE5KH0sTyEDhqd6rlNK4VK9y2r4tGvkR8Q5K83NuQr962NvGqHv8w1eGWruCkR6DuEfl1/U9JYFO7e2kvg75GE9tKV0YuBfrE+v/jD6EuFW072560OI0cm4v7q5YBrxuI7RE6MBELI4RXXksTf2nZN0754pgEg0MSO7AVf6DVvIvZvifoS0q0gYV4KRPn9JYkEtQRZi59JJS7DEGPIQa928EDcTYASFZr/zjZ/ltvdds+jgp2maycm0jI8Xm6sGw1Xq6MUhnHzaDHNX9UMdvGi9xtfA5Hp0X7yJFA34X4kLlzmIMAIhsXXPNEm0SNboZAnLKwP0hFff6Y7MgE54s3lSXoYwf4NRQ+5QhkL8U0sVdqcTg3jP9wpcP4d/2yCrakCkgcmUgI+6CY6XTmCr97Y6CRf3y5qZLSG2Y9RVhCweXoA/96gbWG4nnK2uAPrgkhcc5K7/3nv1jlgl/HEh4JEQaaiZAmXsNUF+a3Z/kiu5IFkKUgblGkyj6D5+JTwf/9nVS9qNpn4O2FLjSrhylo6hoRABTImg2nUJeacsv9PqUHGgj+VverjqSUSSmbTUkfUTqweECRB0UYohG83r6TVRIpB4CQeVr3Cv1pdI0A8VWpfZsmp//qOLfyPk4KR4wMB/H7assrYkrjbAtC2i+FlGJnXgA+0cks5DkPb/WHCEcB1Dv+D1PBQvXrnqPWsCxpFsxOANzcHXZ7m5dAp76cdskAx+Vqgn4KI54HV+gMYIMhqxid2EcY/LH+UpaFz/7Kqt2gp0xM0yHUgSJFZyfhmvDeTROqgeJEyXc2rNk8V8FsWQbjuGN4ry2cA11pnE06KVeM6Y3GmHi733dw/Q25Bb+fCR29j2IxqK5QgnnfFQErRmoFQHc96phOamXNl1x6FndehXbCjuzXpvnu6qHYqLQEqppOECdrSK41XqtbFHDU6m8JUh+JJji0Qi7EIUavQxwvLhYwxS6Nj3tnm/XOufjffFEqqB0y5vkLaQ2e3uBQk5oMk3EJY8dbXVQodxEw1cgFlxa8MY2NojsO5I8R0X7FHDjTnxKutcdWeo4hO3B02DV98A96q4LxGCjU4Ogesv9QAdt3rfReHjBJQxTQWECqdeFXDUrrrWSadsLgk7RStBN/isfsznMn8+yodogWnt4NMSOnCL53dn6cAtq3zZ9ndpA33PCQdtSZilvFLIeZNQyOgHLtQv6jGBZJMmUN5prsClnmpeHcMte1u2gONnWsu93JXOUWNN01dqC/Q+3kBNaHpl+mM/m2YNtdxB3f9tYKJ1mk0in1cOJPedCf2l0ND9iMDnHNvve13X1DdoL2psdcZPx7WZ+awycw59yAHxw+PrNoqI370PnXCn9kr5jI9K1i7foFYD1ARwiSLGhOcj4pVEzV8g2pFmr+xqEL71bcTVA2FxyOiCYC3sPQBDzx1FA8UDb5DJ4I4Whi04ZLPlRTcGMgbVhOdrJ53yN1h6GYLXFTuygk4FJf3NufYCNcXiS8G88Q+k0P48IECnP6pFFEz+zr46G22ydY//+XYh6qHSr4swWXsOMPv/TI+nTPjBvKZKZNpfzagpyuLsaVXL0nrQz+ibKZGv25GBlVvlRJa+Q8l1cNTciRoPnWC7ZbGlb2FG/Ag1J6RKg9VN6b9qJY6NqARIdsngXkVqGW/xIZSFW9QAxQ2FNZI0+IhT12l5OneTMK48CO8QhPZER4OsIv+w2qZ/AgD0z4Qt4DaKmC/rJr4BVFDR4aooOkY8mC5YnOa8nq0QofElrTgBYBBX9+eiT6W4oAI1W76aBuTZCCbpsdnTK46ZGKpqYvkrtu3lGAw/40imdRSONdEoK2RpIkVUiZQUE+cmqM2+NQAAZpXq+S1oQA4rCNthngjtJ1cDE25vavuKy/QN6QgxNCxuKlsVPSlqMO7iMaakfvejCNPMRPltVImv/TsLsAPsAx3i9+RQsS979S0YutMlk+stXQRfLcEBSK7TdgXHSYkLaCyXX6rf0sBz0eQCY/+5u+C5bCww9Gf/6J3hav9WHDU9OSeUwxKiw2o9OfZi4RCV0jZROVL0kL0b8B1ZR0O6CLZhrKjJehfYYfoq7XCeW6Xk7e1BQXDrh3vy6ExmNkV2q42KoliBit3eSVOPhPaSQO+srWe0ihdxky6q2LBbBB6o+kPDcl2jR+do/z7SyP4UQc2L8RRca1fTW82Kjf2Rhsl50Vn1efAyQuAroIOFZ72k/rEa/wb43Tw4euIvndcNxIF4Qo0rVceGqJvSkql7WdF/alpL/pWlx+fPyv+z0cDMp/iEIbBnoxhxOFJ1M1jBOHmHS5rfRf47CEbF4Uu0ep1RfC5tCIc+j/SpzdiFvvWT7wMssiDRMOmB5UTqLyeftBOsMkGnZySxAhI4wgIHLIG1FGef8/52Hqz5m16K4LIX6+FbrBU6erHr6NjwkNUI+pvJc3VssJBzYG0EAjgmvlOF++p9TdlVOZcTwlTe4aHUjnYtRP6+b/tXXoadmztHBw/+eWae1RHGFToBNAOA6fLllhiSifOEVf7z10+R9tDW1z/kKKEAum8H+7F/avVpPcAqPG8jl/y6ndyyxKB/y/ZezHSp2UhnB2fbdj0qHSrbt1AchRHH6ulrGba0HdYFRzuivvLfmnjWz44M5QeJD3txiMKD+rmcesDFKZcS2IGMv7kGqSpSLAqzqLpXFY9r92e1aLY4hoVgPDHpbOF8sqy4Bz4z7r7hC0xau8hwF9zs+4IE7w4Qu4BtfrCfZPaPw2AND5rHgBuQNaGOf1XN4QPJEsGJgB9qOHaDoCG542cgAascn45cINjA4WsRzh6BKWumBEEj0YEqqx0Y2ZXCqUCMKh8Ki/ordoa5vZTn2FnalXCRHRjhSBjl05l9nrMxvRnEpDwpbJTdfpQBeZzoetIAIw3LGGvt/EE87E/Fcc/kllXnDEX73xKnE6dpuGcm7OAEew7S5X/BQe4hnZCKtXFwduiwh7vdvNB+1E7/0VJAofUNsll6tUMHLRfgWT4p4nA/2Io9Lm9YWTkCkncI109l4xf+EiJVIREhKrwa490nGkOPSwvdMJgrufY+CfUPdQi/zuxqRLKsOcrnzOEl9Ha3xPywoLng6OOaB4bvKKXMr2dC6K1ZZNVp12kPhgkOnTP5WBR9bemolN5jhp8au7FVVvLxu/9uZMYwc2lgXAwxn8li2pBgId5smQHjcvKMqkmDNe0mmmNwqUFT0WE4TEphTI8lkrp5L4ysyMSvhL3Dh70XAXH5AYDUmSOdJpt1cFnHe7C2Ldhv76fMzHx34yVtMtSoJe7LFnIV7gz8uouir6sUG0agKlgNnfZPksesSsA/Osd0BMq2tumQfEYlRl74hZB3QMOOiKGlA5iLp4ksKaDD9Ovtw5+UxCiuw0X9h1rD21ouXlYxTrx/YQJnw+N13lSUsLzlmf5oFO0fCzUdQWXZ9jusPL2F+nPQECTFbkKap2BRbaIeastcAAAAAAAAAAAAAAAAAAAAABgsSGCAn",
+  "signed_at": "2026-11-02T16:48:50+0330"
+ }
+}
