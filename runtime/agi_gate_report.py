@@ -52,6 +52,30 @@ def git(repo: Path, *args: str) -> dict:
     return run(["git", "-C", str(repo), *args])
 
 
+def _crypto_module():
+    """Locate the AGI crypto module by walking ancestors (repo may be relocated)."""
+    here = Path(__file__).resolve()
+    for parent in here.parents:
+        candidate = parent / "memory" / "scripts" / "crypto.py"
+        if candidate.exists():
+            if str(candidate.parent) not in sys.path:
+                sys.path.insert(0, str(candidate.parent))
+            import crypto  # noqa: WPS433
+            return crypto
+    raise FileNotFoundError("memory/scripts/crypto.py not found in ancestor directories")
+
+
+def verify_signature(p: Path, key_id: str) -> dict:
+    """Verify in-process with the asset's own crypto module (exact path, no shelling out)."""
+    try:
+        crypto = _crypto_module()
+        result = crypto.verify_file(p, expected_key_id=key_id)
+        return {"ok": bool(result.get("ok")), "reason": result.get("reason"),
+                "alg": result.get("alg"), "key_id": result.get("key_id")}
+    except Exception as exc:
+        return {"ok": False, "reason": f"{type(exc).__name__}: {exc}"}
+
+
 def build_report(repo: Path, head: str) -> dict:
     checks: list[dict] = []
     info: dict = {}
@@ -105,9 +129,9 @@ def build_report(repo: Path, head: str) -> dict:
         if not p.exists():
             sig_results.append({"path": rel, "ok": False, "reason": "missing"})
             continue
-        v = run([sys.executable, str(repo.parent.parent / "memory" / "scripts" / "crypto.py"),
-                 "verify", str(p), "--key-id", KEY_ID])
-        sig_results.append({"path": rel, "ok": v["exit"] == 0, "tail": v["stdout_tail"][-4:]})
+        res = verify_signature(p, KEY_ID)
+        res["path"] = rel
+        sig_results.append(res)
     info["signature_first_path"] = sig_results
     checks.append(check("signatures_first_path", all(s["ok"] for s in sig_results), sig_results))
 
