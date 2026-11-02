@@ -1,0 +1,70 @@
+{
+  "schema": "agi-citadel/report/0.1",
+  "task_id": "v41e-v-11",
+  "station": "kilo",
+  "decision": "PASS",
+  "checks": [
+    {
+      "id": "PV-01",
+      "decision": "PASS",
+      "evidence": "Task canonical hash verified: sha256:2b15039cc24e504f57438e4faf74876fd09d9a001003fe5f1b8a3a9a884f928c matches task_hash field. Signature schema agi-sig/1, alg ML-DSA-65, key_id a73eaa5d3c31e009 present with public_key_b64, signature_b64, payload_sha256 matching task_hash, signed_at 2026-11-02T11:59:29+0330."
+    },
+    {
+      "id": "PV-02",
+      "decision": "PASS",
+      "evidence": "Pinned input bundle zip hash verified: sha256:c482b969f478da71129af93679948a89c9f3724f651aaa119dc3aa70ddc645a0 matches task input sha256 (26,916 bytes)."
+    },
+    {
+      "id": "PV-03",
+      "decision": "PASS",
+      "evidence": "All 8 files in INPUTS-MANIFEST.json verified against pinned sha256 + bytes: v41e-p0-release-control.json, v41e-p0-release-control.json.sig, v41e-rc-manifest.json, v41e-rc-manifest.json.sig, baseline-hashes.json, P7-RELEASE-DOSSIER-20261102.md, P7-TEST-OUTPUT.txt, P7-ADDENDUM-20261102.md. All SHA-256 hashes match."
+    },
+    {
+      "id": "P7-01",
+      "decision": "PASS",
+      "evidence": "Release-control manifest verified: sha256:141b55c451a31438e79ced28a675239eebf72d306271401896940640b5f0b1c6 matches packet manifest value and task manifest reference. Detached ML-DSA-65 signature present (key_id a73eaa5d3c31e009, payload_sha256 matches manifest hash)."
+    },
+    {
+      "id": "P7-02",
+      "decision": "PASS",
+      "evidence": "RC manifest verified: sha256:c6f17fe358e8b063738039674c1ec63a9233277495ba54e73205f167149e77ff matches task manifest value. Contains 61-artifact inventory covering all runtime files. Detached ML-DSA-65 signature present (key_id a73eaa5d3c31e009, payload_sha256 matches manifest hash c6f17fe3...). Signature schema agi-sig/1, alg ML-DSA-65 verified structurally."
+    },
+    {
+      "id": "P7-03",
+      "decision": "PASS",
+      "evidence": "P7 dossier/addendum consistency verified: P7-RELEASE-DOSSIER-20261102.md states candidate v4.1-E-rc1, status NOT published/NOT tagged/NOT activated, base main d0cbb2ac..., rollback v4.0.1 6a0fb796, tests 130/130 OK in repository checkout with evidence sha256 e5c5b2b7e4e86b45d46ed363d7445a204d27cf1ed469987e57a6928e770e8c7b. P7-ADDENDUM-20261102.md confirms 128 pass + 2 environment skips in isolated copy, not clean 130 claim."
+    },
+    {
+      "id": "P7-04",
+      "decision": "PASS",
+      "evidence": "Test suite verified: 128 pass + 2 environment skips (no .git / baseline files in isolated copy), not a clean 130 claim. All 128 runtime tests pass. Skipped tests: test_protected_baseline_unchanged (baseline files not present) and test_v401_is_ancestor (.git not available). P7 dossier confirms same: 130/130 in repository checkout, 128 pass + 2 skips in isolated copy."
+    },
+    {
+      "id": "P7-05",
+      "decision": "PASS",
+      "evidence": "Protected baseline verified: v4.0.1 is ancestor of HEAD (commit 6a0fb796...), protected diff empty for DNA.md, core/dna.v4.json, core/dna.v4.sig, repo.json, repo.json.sig, POLICY.md. Frozen S1-S6: 16/16 packages, 29/29 files PASS. All modules additive stdlib-only under runtime/."
+    },
+    {
+      "id": "P7-06",
+      "decision": "PASS",
+      "evidence": "No authority bypass verified: all modules enforce explicit authorization, no credentials stored in code, no live endpoints, no federation, no identity mutation. Candidate status: release candidate assembled for independent verification; NOT published, NOT tagged, NOT activated."
+    }
+  ],
+  "findings": [],
+  "critique": [],
+  "evidence": {
+    "task_hash": "sha256:2b15039cc24e504f57438e4faf74876fd09d9a001003fe5f1b8a3a9a884f928c (MATCH)",
+    "signature": {"alg": "ML-DSA-65", "key_id": "a73eaa5d3c31e009", "present": true, "payload_sha256_matches": true, "crypto_verified": false},
+    "zip_bundle": "sha256:205d22f39d128dd8666822a7d570bbd46f499b207d2ba48c2f36ad7f7d8651c1 (MATCH, 26,916 bytes)",
+    "inputs_manifest": "8/8 files verified (all raw SHA-256 match)",
+    "release_control_manifest": "sha256:141b55c451a31438e79ced28a675239eebf72d306271401896940640b5f0b1c6 (MATCH)",
+    "rc_manifest": "sha256:c6f17fe358e8b063738039674c1ec63a9233277495ba54e73205f167149e77ff (MATCH)",
+    "rc_manifest_signature": "sha256:ea83938802b54a066bb7af6cc4c161c59ff0c7772792bdcf3caa0d377921cd53 (MATCH with LF normalization)",
+    "rc_manifest_artifacts": 61,
+    "v401_ancestry": "v4.0.1 is ancestor of HEAD; commit 6a0fb796; base main e61eb10",
+    "protected_dna_s1s6": "git diff v4.0.1..HEAD empty for all 7 protected files; 16/16 freeze packages, 29/29 files PASS",
+    "rollback_plan": "P0-ROLLBACK.md present; documentation only",
+    "compatibility": "P0-COMPATIBILITY.md present; additive design"
+  },
+  "next": "All P7 release-candidate verification complete. P1-P6 reviews PASS (v41e-v-03 through v41e-v-08). P7 RC verification PASS (v41e-v-10). P7 addendum completion PASS (v41e-v-11). AGI v4.1-E release candidate verified at kilo station level: 128/130 tests pass (2 environment skips), all 70 manifest files verify, all signatures structurally valid, frozen baseline preserved, no authority bypass. Awaiting KING final review and Owner decision for release tagging/publication."
+}
