@@ -59,6 +59,7 @@ def envelope(method="agi_status", scope=None, payload=None, **over):
 
 
 _TMP_DIRS = []
+_TRACK = []
 
 
 def fresh_kernel(**kw):
@@ -69,11 +70,16 @@ def fresh_kernel(**kw):
     clients = {"station-a": {"key_id": KEY_ID, "revoked": False}}
     clients.update(kw.pop("clients", {}))
     clock = kw.pop("clock", lambda: NOW)
-    if kw.get("audit") is None:
+    # R7: the kernel BUILDS its own trusted store from a path; stores are never injected
+    store = kw.pop("audit", None)
+    if kw.get("audit_path") is None:
         td = tempfile.mkdtemp()
         _TMP_DIRS.append(td)
-        kw["audit"] = DurableAuditStore(Path(td) / "audit.jsonl")
-    return Kernel(clients=clients, verifier=verify, clock=clock, **kw)
+        kw["audit_path"] = str(Path(td) / "audit.jsonl")
+    k = Kernel(clients=clients, verifier=verify, clock=clock, **kw)
+    if store is not None:
+        _TRACK.append((k, store))
+    return k
 
 
 class ForbiddenSurfaceTests(unittest.TestCase):
@@ -298,31 +304,35 @@ class FailClosedTests(unittest.TestCase):
         self.assertEqual(res["error"], "E_POLICY_UNAVAILABLE")
         self.assertEqual(k.effects["executed"], 0)
 
-    def test_in_memory_sink_is_rejected(self):
-        """rev-5 G1: an in-memory sink may not be used by an execution-capable kernel."""
-        with self.assertRaises(H0Error) as ctx:
-            fresh_kernel(audit=AuditLog())
-        self.assertEqual(ctx.exception.code, "E_AUDIT_NOT_DURABLE")
+    def test_injected_store_parameter_no_longer_exists(self):
+        """R7: the kernel builds its own trusted store; no store can be injected."""
+        import inspect
+        params = inspect.signature(Kernel.__init__).parameters
+        self.assertNotIn("audit", params)
+        self.assertIn("audit_path", params)
 
     def test_audit_failure_prevents_execution(self):
         """v2 semantics: audit is a precondition. Nothing executes, so there is no
         'downgrade' to record - the claim 'downgraded' was only true of the v1 bug."""
-        import tempfile
-        from pathlib import Path
-        from h0_audit_store import AuditStoreError, DurableAuditStore
-        store = DurableAuditStore(Path(tempfile.mkdtemp()) / "a.jsonl")
-
-        def broken(_rec):
-            raise AuditStoreError("E_AUDIT_UNAVAILABLE", "simulated")
-
-        store.append = broken
+        from h0_audit_store import AuditStoreError
         invocations = {"n": 0}
 
         def executor(req):
             invocations["n"] += 1
             return {}
 
-        k = fresh_kernel(audit=store, executor=executor)
+        k = fresh_kernel(executor=executor)
+
+        def broken(_rec):
+            raise AuditStoreError("E_AUDIT_UNAVAILABLE", "simulated")
+
+        # break the kernel-built store in place (the only way to simulate an outage now)
+        object.__setattr__(k, "_Kernel__audit", type("Broken", (), {
+            "append": staticmethod(broken),
+            "durability": staticmethod(lambda: {
+                "enforceable": True, "fsync": True, "single_writer": True,
+                "append_only": True, "chained": True, "observer_mode": False}),
+        })())
         res = k.handle(envelope())
         self.assertFalse(res["ok"])
         self.assertIn(res["error"], {"E_AUDIT_UNAVAILABLE", "E_AUDIT_REQUIRED"})

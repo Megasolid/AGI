@@ -58,33 +58,34 @@ def durable_store(td):
     return DurableAuditStore(Path(td) / "audit.jsonl")
 
 
-def kernel_for(store, **kw):
+def kernel_for(store=None, **kw):
+    """R7: the kernel builds its own trusted store from a path."""
+    import tempfile
+    from pathlib import Path
+    if store is not None and "audit_path" not in kw:
+        kw["audit_path"] = getattr(store, "path", None) or str(Path(tempfile.mkdtemp()) / "a.jsonl")
+    if kw.get("audit_path") is None:
+        kw["audit_path"] = str(Path(tempfile.mkdtemp()) / "a.jsonl")
     return Kernel(clients={"station-a": {"key_id": KEY_ID}},
-                  verifier=verify, clock=lambda: NOW, audit=store, **kw)
+                  verifier=verify, clock=lambda: NOW, **kw)
 
 
 class G1_DurableAuditMandatory(unittest.TestCase):
     def test_kernel_without_audit_is_refused(self):
         with self.assertRaises(H0Error) as ctx:
             Kernel(clients={"station-a": {"key_id": KEY_ID}}, verifier=verify,
-                   clock=lambda: NOW, audit=None)
+                   clock=lambda: NOW)
         self.assertEqual(ctx.exception.code, "E_AUDIT_REQUIRED")
 
-    def test_in_memory_sink_is_refused(self):
-        with self.assertRaises(H0Error) as ctx:
-            Kernel(clients={"station-a": {"key_id": KEY_ID}}, verifier=verify,
-                   clock=lambda: NOW, audit=AuditLog())
-        self.assertEqual(ctx.exception.code, "E_AUDIT_NOT_DURABLE")
+    def test_in_memory_sink_cannot_be_injected(self):
+        """R7: no store can be injected at all, so an in-memory sink is unrepresentable."""
+        import inspect
+        self.assertNotIn("audit", inspect.signature(Kernel.__init__).parameters)
 
     def test_store_not_declaring_durability_is_refused(self):
-        class Sneaky:
-            def append(self, rec):
-                return rec
-
-        with self.assertRaises(H0Error) as ctx:
-            Kernel(clients={"station-a": {"key_id": KEY_ID}}, verifier=verify,
-                   clock=lambda: NOW, audit=Sneaky())
-        self.assertEqual(ctx.exception.code, "E_AUDIT_NOT_DURABLE")
+        import inspect
+        self.assertNotIn("audit", inspect.signature(Kernel.__init__).parameters,
+                         "an arbitrary object must have no path into the enforcement store")
 
     def test_durable_store_is_accepted(self):
         with tempfile.TemporaryDirectory() as td:
@@ -120,10 +121,10 @@ class G2_RequestLocalAccounting(unittest.TestCase):
             self.assertFalse(results["boom"]["ok"])
             self.assertTrue(results["ok"]["ok"])
             # exactly two intents and two outcomes, for two distinct correlations
-            cids = [r["correlation_id"] for r in store._records if r["phase"] == "intent"]
+            cids = [r["correlation_id"] for r in k.audit._records if r["phase"] == "intent"]
             self.assertEqual(len(cids), 2)
             self.assertEqual(len(set(cids)), 2)
-            self.assertEqual(len(store.dangling_intents()), 0)
+            self.assertEqual(len(k.audit.dangling_intents()), 0)
 
     def test_executor_failure_does_not_suppress_unrelated_denial(self):
         with tempfile.TemporaryDirectory() as td:
@@ -137,10 +138,10 @@ class G2_RequestLocalAccounting(unittest.TestCase):
             k = kernel_for(store, executor=executor)
             r1 = k.handle(envelope(payload={"include": ["explode"]}))
             self.assertEqual(r1["error"], "E_EXECUTOR_FAILED")
-            before = store.count
+            before = k.audit.count
             r2 = k.handle(envelope(scope="h0.write.metadata"))  # unrelated scope denial
             self.assertEqual(r2["error"], "E_SCOPE")
-            self.assertEqual(store.count, before + 1, "the unrelated denial must be recorded")
+            self.assertEqual(k.audit.count, before + 1, "the unrelated denial must be recorded")
 
     def test_repeated_failures_do_not_leak_state(self):
         with tempfile.TemporaryDirectory() as td:
@@ -152,7 +153,7 @@ class G2_RequestLocalAccounting(unittest.TestCase):
             k = kernel_for(store, executor=executor)
             for _ in range(5):
                 self.assertEqual(k.handle(envelope())["error"], "E_EXECUTOR_FAILED")
-            self.assertEqual(len([r for r in store._records if r["phase"] == "deny"]), 0,
+            self.assertEqual(len([r for r in k.audit._records if r["phase"] == "deny"]), 0,
                              "no duplicate deny records for accounted failures")
 
 

@@ -46,17 +46,29 @@ def envelope():
     return req
 
 
-def kernel_for(store, **kw):
+def kernel_for(store=None, **kw):
+    """R7: the kernel builds its own trusted store from a path."""
+    import tempfile
+    from pathlib import Path
+    if store is not None and "audit_path" not in kw:
+        kw["audit_path"] = getattr(store, "path", None) or str(Path(tempfile.mkdtemp()) / "a.jsonl")
+    if kw.get("audit_path") is None:
+        kw["audit_path"] = str(Path(tempfile.mkdtemp()) / "a.jsonl")
     return Kernel(clients={"station-a": {"key_id": KEY_ID}},
-                  verifier=verify, clock=lambda: NOW, audit=store, **kw)
+                  verifier=verify, clock=lambda: NOW, **kw)
 
 
 class R6_1_ObserverModeRefused(unittest.TestCase):
-    def test_observer_store_is_categorically_refused(self):
+    def test_observer_store_is_unrepresentable_in_enforcement(self):
+        """R7: the kernel builds its own default store, so an observer store cannot be
+        passed in; the contract check still refuses one if ever reached."""
+        from h0_kernel import Kernel as K
+        import inspect
+        self.assertNotIn("audit", inspect.signature(K.__init__).parameters)
         with tempfile.TemporaryDirectory() as td:
             store = DurableAuditStore(Path(td) / "a.jsonl", _allow_unsafe_observer=True)
             with self.assertRaises(H0Error) as ctx:
-                kernel_for(store)
+                K._require_enforceable_store(store)
             self.assertEqual(ctx.exception.code, "E_AUDIT_NOT_DURABLE")
 
     def test_observer_store_reports_itself_unenforceable(self):
@@ -76,11 +88,11 @@ class R6_1_ObserverModeRefused(unittest.TestCase):
 
 
 class R6_2_FsyncRequired(unittest.TestCase):
-    def test_fsync_false_store_is_refused_for_enforcement(self):
+    def test_fsync_false_store_fails_contract(self):
         with tempfile.TemporaryDirectory() as td:
             store = DurableAuditStore(Path(td) / "a.jsonl", fsync=False)
             with self.assertRaises(H0Error) as ctx:
-                kernel_for(store)
+                Kernel._require_enforceable_store(store)
             self.assertEqual(ctx.exception.code, "E_AUDIT_NOT_DURABLE")
 
     def test_fsync_false_store_reports_unenforceable(self):
@@ -94,7 +106,7 @@ class R6_2_FsyncRequired(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             store = DurableAuditStore(Path(td) / "a.jsonl", fsync=True)
             self.assertTrue(store.durability()["enforceable"])
-            self.assertTrue(kernel_for(store).handle(envelope())["ok"])
+            self.assertTrue(kernel_for(audit_path=str(store.path)).handle(envelope())["ok"])
 
 
 class R6_3_NoBareDeclaration(unittest.TestCase):
@@ -109,8 +121,10 @@ class R6_3_NoBareDeclaration(unittest.TestCase):
                 def append(self, record):
                     return real.append(record)
 
+            import inspect
+            self.assertNotIn("audit", inspect.signature(Kernel.__init__).parameters)
             with self.assertRaises(H0Error) as ctx:
-                kernel_for(Liar())
+                Kernel._require_enforceable_store(Liar())
             self.assertEqual(ctx.exception.code, "E_AUDIT_NOT_DURABLE")
             self.assertIn("no durability() contract", ctx.exception.detail)
 
@@ -127,7 +141,7 @@ class R6_3_NoBareDeclaration(unittest.TestCase):
                     return real.append(record)
 
             with self.assertRaises(H0Error) as ctx:
-                kernel_for(LiarWithContract())
+                Kernel._require_enforceable_store(LiarWithContract())
             self.assertEqual(ctx.exception.code, "E_AUDIT_NOT_DURABLE")
             self.assertIn("fsync", ctx.exception.detail)
 
@@ -137,7 +151,7 @@ class R6_3_NoBareDeclaration(unittest.TestCase):
                 return True
 
         with self.assertRaises(H0Error) as ctx:
-            kernel_for(Weird())
+            Kernel._require_enforceable_store(Weird())
         self.assertEqual(ctx.exception.code, "E_AUDIT_NOT_DURABLE")
 
     def test_durability_raising_is_rejected(self):
@@ -146,7 +160,7 @@ class R6_3_NoBareDeclaration(unittest.TestCase):
                 raise RuntimeError("nope")
 
         with self.assertRaises(H0Error) as ctx:
-            kernel_for(Broken())
+            Kernel._require_enforceable_store(Broken())
         self.assertEqual(ctx.exception.code, "E_AUDIT_NOT_DURABLE")
 
     def test_missing_required_property_is_rejected(self):
@@ -161,7 +175,7 @@ class R6_3_NoBareDeclaration(unittest.TestCase):
                     return real.append(record)
 
             with self.assertRaises(H0Error) as ctx:
-                kernel_for(Partial())
+                Kernel._require_enforceable_store(Partial())
             self.assertEqual(ctx.exception.code, "E_AUDIT_NOT_DURABLE")
 
 

@@ -26,6 +26,7 @@ import re
 import threading
 import time
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 SCHEMA = "h0.mcp/1"
 ENVELOPE_FIELDS = frozenset({
@@ -344,25 +345,48 @@ class Kernel:
     scope, policy, audit, execute. The executor is invoked ONLY after the audit
     record has been durably appended."""
 
-    def __init__(self, *, clients, verifier, policy_ok=lambda: True, clock=None, audit=None,
-                 executor=None):
+    def __init__(self, *, clients, verifier, policy_ok=lambda: True, clock=None,
+                 audit_path=None, executor=None):
+        """R7: the enforcement audit store is BUILT BY THE KERNEL, never injected.
+
+        Revision 6 accepted any object whose durability() returned the right mapping.
+        A hostile subclass could claim every property and override append() to write
+        nothing. The store is therefore constructed here from an on-disk path, and the
+        kernel keeps the concrete object private; no caller can substitute an
+        implementation that asserts its own safety.
+        """
         self.clients = clients
         self.verifier = verifier
         self.policy_ok = policy_ok
         self.clock = clock or (lambda: datetime.now(timezone.utc))
         self.rate = RateLimiter()
-        # G1: durable audit is MANDATORY. No implicit in-memory fallback is allowed in
-        # an execution-capable kernel; an in-memory sink must be passed explicitly and
-        # only for isolated tests (it is marked non-durable below).
-        if audit is None:
-            raise H0Error("E_AUDIT_REQUIRED", "an explicit audit store is required")
-        self.audit = audit
-        self._require_enforceable_store(audit)
+        if not audit_path:
+            raise H0Error("E_AUDIT_REQUIRED",
+                          "audit_path is required: enforcement cannot run without durable audit")
+        try:
+            from h0_audit_store import DurableAuditStore
+            store = DurableAuditStore(Path(audit_path))
+        except H0Error:
+            raise
+        except Exception as exc:  # noqa: BLE001
+            raise H0Error("E_AUDIT_UNAVAILABLE",
+                          f"trusted store construction failed: {type(exc).__name__}") from exc
+        # verify the concrete object the KERNEL built (not a caller-supplied one)
+        if type(store) is not DurableAuditStore:
+            raise H0Error("E_AUDIT_NOT_DURABLE", "trusted store type check failed")
+        self._require_enforceable_store(store)
+        self.__audit = store
         self.replay = ReplayStore()
         self.executor = executor or self._default_execute
         self.effects = {"executed": 0, "denied": 0, "indeterminate": 0}
         self.invocations = 0
         self.order_seen = []
+
+    # -- R7: read-only access to the trusted store -------------------------
+    @property
+    def audit(self):
+        """Read-only view of the kernel-built store (for audit trail inspection)."""
+        return self.__audit
 
     # -- R6: enforcement-store contract ------------------------------------
     @staticmethod
@@ -483,7 +507,7 @@ class Kernel:
                 "timestamp": now.astimezone(timezone.utc).isoformat(),
             }
             try:
-                self.audit.append(intent)
+                self.__audit.append(intent)
             except H0Error:
                 raise
             except Exception as exc:  # noqa: BLE001 - store failures fail closed
@@ -497,7 +521,7 @@ class Kernel:
                 # executor contract). Try to record it; if that also fails, report
                 # indeterminate rather than pretending the trail is complete.
                 try:
-                    self.audit.append({"phase": "outcome", "correlation_id": cid,
+                    self.__audit.append({"phase": "outcome", "correlation_id": cid,
                                        "decision": "allow", "outcome": "failed",
                                        "reason_code": "E_EXECUTOR_FAILED",
                                        "detail": type(exc).__name__,
@@ -516,7 +540,7 @@ class Kernel:
             executed = True
             self.effects["executed"] += 1
             try:
-                self.audit.append({"phase": "outcome", "correlation_id": cid,
+                self.__audit.append({"phase": "outcome", "correlation_id": cid,
                                    "decision": "allow", "outcome": "executed",
                                    "timestamp": self.clock().astimezone(timezone.utc).isoformat()})
             except Exception as rec_exc:  # noqa: BLE001
@@ -566,7 +590,7 @@ class Kernel:
             "timestamp": now.astimezone(timezone.utc).isoformat(),
         }
         try:
-            self.audit.append(denial)
+            self.__audit.append(denial)
         except Exception:  # noqa: BLE001 - store failure must not mask the denial
             denial["note"] = "audit unavailable for denied request"
         return {"ok": False, "error": code, "audit": denial}

@@ -81,8 +81,9 @@ def fresh_kernel(**kw):
     clients = {"station-a": {"key_id": KEY_ID, "revoked": False}}
     clients.update(kw.pop("clients", {}))
     clock = kw.pop("clock", lambda: NOW)
-    if kw.get("audit") is None:
-        kw["audit"] = DurableAuditStore(Path(tempfile.mkdtemp()) / "audit.jsonl")
+    kw.pop("audit", None)
+    if kw.get("audit_path") is None:
+        kw["audit_path"] = str(Path(tempfile.mkdtemp()) / "audit.jsonl")
     return Kernel(clients=clients, verifier=verify, clock=clock, **kw)
 
 
@@ -96,14 +97,18 @@ class F1_AuditPrecondition(unittest.TestCase):
             invoked["count"] += 1
             return {"executed": True}
 
-        st = DurableAuditStore(Path(tempfile.mkdtemp()) / "a.jsonl")
+        import tempfile
+        from h0_audit_store import AuditStoreError
 
         def broken(_rec):
-            from h0_audit_store import AuditStoreError
             raise AuditStoreError("E_AUDIT_UNAVAILABLE", "simulated")
 
-        st.append = broken
-        k = fresh_kernel(audit=st, executor=executor)
+        k = fresh_kernel(executor=executor)
+        object.__setattr__(k, "_Kernel__audit", type("Broken", (), {
+            "append": staticmethod(broken),
+            "durability": staticmethod(lambda: {
+                "enforceable": True, "fsync": True, "single_writer": True,
+                "append_only": True, "chained": True, "observer_mode": False})})())
         res = k.handle(envelope())
         self.assertFalse(res["ok"])
         self.assertIn(res["error"], {"E_AUDIT_UNAVAILABLE"})
@@ -111,14 +116,17 @@ class F1_AuditPrecondition(unittest.TestCase):
         self.assertEqual(k.effects["executed"], 0)
 
     def test_audit_failure_blocks_execution(self):
-        st = DurableAuditStore(Path(tempfile.mkdtemp()) / "a.jsonl")
+        from h0_audit_store import AuditStoreError
 
         def broken(_rec):
-            from h0_audit_store import AuditStoreError
             raise AuditStoreError("E_AUDIT_UNAVAILABLE", "simulated")
 
-        st.append = broken
-        k = fresh_kernel(audit=st)
+        k = fresh_kernel()
+        object.__setattr__(k, "_Kernel__audit", type("Broken", (), {
+            "append": staticmethod(broken),
+            "durability": staticmethod(lambda: {
+                "enforceable": True, "fsync": True, "single_writer": True,
+                "append_only": True, "chained": True, "observer_mode": False})})())
         res = k.handle(envelope())
         self.assertFalse(res["ok"])
         self.assertEqual(k.effects["executed"], 0)
@@ -126,28 +134,17 @@ class F1_AuditPrecondition(unittest.TestCase):
     def test_audit_success_precedes_execution(self):
         order = []
 
-        import tempfile
-        from pathlib import Path
-        durable = DurableAuditStore(Path(tempfile.mkdtemp()) / "a.jsonl")
-
-        class Recorder:
-            """Delegates the R6 durability contract to a real durable store."""
-
-            def durability(self):
-                return durable.durability()
-
-            def append(self, record):
-                order.append("audit:" + record["decision"])
-                return durable.append(record)
-
         def executor(req):
             order.append("execute")
             return {"ok": True}
 
-        k = fresh_kernel(audit=Recorder(), executor=executor)
+        k = fresh_kernel(executor=executor)
         self.assertTrue(k.handle(envelope())["ok"])
-        # v3 two-phase lifecycle: intent(allow) -> execute -> outcome(allow)
-        self.assertEqual(order, ["audit:allow", "execute", "audit:allow"])
+        # R7: the store cannot be observed mid-flight by injection, so ordering is read
+        # from the kernel-built store's durable record sequence instead.
+        phases = [r["phase"] for r in k.audit._records]
+        self.assertEqual(phases, ["intent", "outcome"])
+        self.assertEqual(order, ["execute"])
 
 
 class F2_GateOrdering(unittest.TestCase):

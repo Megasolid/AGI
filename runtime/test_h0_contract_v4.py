@@ -54,9 +54,16 @@ def envelope(method="agi_status", scope="h0.read", payload=None):
     return req
 
 
-def kernel_for(store, **kw):
+def kernel_for(store=None, **kw):
+    """R7: the kernel builds its own trusted store from a path."""
+    import tempfile
+    from pathlib import Path
+    if store is not None and "audit_path" not in kw:
+        kw["audit_path"] = getattr(store, "path", None) or str(Path(tempfile.mkdtemp()) / "a.jsonl")
+    if kw.get("audit_path") is None:
+        kw["audit_path"] = str(Path(tempfile.mkdtemp()) / "a.jsonl")
     return Kernel(clients={"station-a": {"key_id": KEY_ID}},
-                  verifier=verify, clock=lambda: NOW, audit=store, **kw)
+                  verifier=verify, clock=lambda: NOW, **kw)
 
 
 def disk_lines(path):
@@ -155,39 +162,47 @@ class F10_WriterConcurrency(unittest.TestCase):
 
 
 class F11_IndeterminateExecution(unittest.TestCase):
-    def _store_then_break_outcome(self, td):
-        store = DurableAuditStore(Path(td) / "a.jsonl")
-        real = store.append
+    def _break_outcome_after(self, k):
+        """R7: replace the kernel-built store with a wrapper that fails on outcome."""
+        from h0_audit_store import AuditStoreError
+        real = k.audit
         calls = {"n": 0}
 
-        def flaky(record):
-            calls["n"] += 1
-            if record.get("phase") == "outcome":
-                raise AuditStoreError("E_AUDIT_UNAVAILABLE", "simulated outcome failure")
-            return real(record)
+        class Flaky:
+            def durability(self):
+                return real.durability()
 
-        store.append = flaky
-        return store, calls
+            def append(self, record):
+                calls["n"] += 1
+                if record.get("phase") == "outcome":
+                    raise AuditStoreError("E_AUDIT_UNAVAILABLE", "simulated outcome failure")
+                return real.append(record)
+
+            def __getattr__(self, name):
+                return getattr(real, name)
+
+        object.__setattr__(k, "_Kernel__audit", Flaky())
+        return real, calls
 
     def test_outcome_write_failure_returns_indeterminate_and_no_deny(self):
         with tempfile.TemporaryDirectory() as td:
-            store, calls = self._store_then_break_outcome(td)
             invocations = {"n": 0}
 
             def executor(req):
                 invocations["n"] += 1
                 return {"ran": True}
 
-            k = kernel_for(store, executor=executor)
+            k = kernel_for(executor=executor)
+            store, calls = self._break_outcome_after(k)
             res = k.handle(envelope())
             self.assertFalse(res["ok"])
             self.assertEqual(res["error"], "E_EXECUTION_INDETERMINATE")
             self.assertTrue(res["indeterminate"])
             self.assertEqual(invocations["n"], 1, "the effect DID happen")
             # the dangling intent is preserved
-            self.assertEqual(len(store.dangling_intents()), 1)
+            self.assertEqual(len(k.audit.dangling_intents()), 1)
             # no denial record was appended
-            self.assertEqual([r["phase"] for r in disk_lines(Path(td) / "a.jsonl")], ["intent"])
+            self.assertEqual([r["phase"] for r in disk_lines(store.path)], ["intent"])
 
     def test_executor_failure_records_failed_outcome(self):
         with tempfile.TemporaryDirectory() as td:
@@ -197,40 +212,41 @@ class F11_IndeterminateExecution(unittest.TestCase):
                 raise RuntimeError("explode")
 
             k = kernel_for(store, executor=boom)
-            res = k.handle(envelope())
+            req = envelope()
+            cid = req["correlation_id"]
+            res = k.handle(req)
             self.assertEqual(res["error"], "E_EXECUTOR_FAILED")
-            phases = [r["phase"] for r in disk_lines(Path(td) / "a.jsonl")]
+            phases = [r["phase"] for r in disk_lines(k.audit.path)]
             self.assertEqual(phases, ["intent", "outcome"])
-            self.assertEqual(store.outcome_for(store.dangling_intents()[0] if store.dangling_intents() else list(store._outcomes)[0])["outcome"], "failed")
+            self.assertEqual(k.audit.outcome_for(cid)["outcome"], "failed")
 
     def test_executor_failure_and_outcome_failure_is_indeterminate(self):
         with tempfile.TemporaryDirectory() as td:
-            store, calls = self._store_then_break_outcome(td)
-
             def boom(_req):
                 raise RuntimeError("explode")
 
-            k = kernel_for(store, executor=boom)
+            k = kernel_for(executor=boom)
+            store, calls = self._break_outcome_after(k)
             res = k.handle(envelope())
             self.assertEqual(res["error"], "E_EXECUTION_INDETERMINATE")
             self.assertTrue(res["indeterminate"])
-            self.assertEqual([r["phase"] for r in disk_lines(Path(td) / "a.jsonl")], ["intent"])
+            self.assertEqual([r["phase"] for r in disk_lines(store.path)], ["intent"])
 
     def test_successful_path_writes_intent_then_outcome(self):
         with tempfile.TemporaryDirectory() as td:
             store = DurableAuditStore(Path(td) / "a.jsonl")
             k = kernel_for(store)
             self.assertTrue(k.handle(envelope())["ok"])
-            phases = [r["phase"] for r in disk_lines(Path(td) / "a.jsonl")]
+            phases = [r["phase"] for r in disk_lines(k.audit.path)]
             self.assertEqual(phases, ["intent", "outcome"])
-            self.assertEqual(store.dangling_intents(), [])
+            self.assertEqual(k.audit.dangling_intents(), [])
 
     def test_restart_after_indeterminate_shows_dangling_intent(self):
         with tempfile.TemporaryDirectory() as td:
-            store, _ = self._store_then_break_outcome(td)
-            k = kernel_for(store, executor=lambda r: {"ran": True})
+            k = kernel_for(executor=lambda r: {"ran": True})
+            store, _ = self._break_outcome_after(k)
             k.handle(envelope())
-            path = Path(td) / "a.jsonl"
+            path = store.path
             reopened = DurableAuditStore(path)
             self.assertEqual(len(reopened.dangling_intents()), 1,
                              "restart must reveal that execution is in doubt")

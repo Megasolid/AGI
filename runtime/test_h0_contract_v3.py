@@ -53,9 +53,16 @@ def envelope(method="agi_status", scope="h0.read", payload=None):
     return req
 
 
-def kernel_for(store, **kw):
+def kernel_for(store=None, **kw):
+    """R7: the kernel builds its own trusted store from a path."""
+    import tempfile
+    from pathlib import Path
+    if store is not None and "audit_path" not in kw:
+        kw["audit_path"] = getattr(store, "path", None) or str(Path(tempfile.mkdtemp()) / "a.jsonl")
+    if kw.get("audit_path") is None:
+        kw["audit_path"] = str(Path(tempfile.mkdtemp()) / "a.jsonl")
     return Kernel(clients={"station-a": {"key_id": KEY_ID}},
-                  verifier=verify, clock=lambda: NOW, audit=store, **kw)
+                  verifier=verify, clock=lambda: NOW, **kw)
 
 
 class F6_DurableAuditStore(unittest.TestCase):
@@ -121,9 +128,9 @@ class F7_TwoPhaseLifecycle(unittest.TestCase):
             req = envelope()
             self.assertTrue(k.handle(req)["ok"])
             cid = req["correlation_id"]
-            self.assertEqual(store.intent_for(cid)["phase"], "intent")
-            self.assertEqual(store.outcome_for(cid)["outcome"], "executed")
-            self.assertEqual(store.dangling_intents(), [])
+            self.assertEqual(k.audit.intent_for(cid)["phase"], "intent")
+            self.assertEqual(k.audit.outcome_for(cid)["outcome"], "executed")
+            self.assertEqual(k.audit.dangling_intents(), [])
 
     def test_executor_failure_writes_failed_outcome(self):
         with tempfile.TemporaryDirectory() as td:
@@ -138,8 +145,8 @@ class F7_TwoPhaseLifecycle(unittest.TestCase):
             self.assertFalse(res["ok"])
             self.assertEqual(res["error"], "E_EXECUTOR_FAILED")
             cid = req["correlation_id"]
-            self.assertEqual(store.outcome_for(cid)["outcome"], "failed")
-            self.assertEqual(store.dangling_intents(), [])
+            self.assertEqual(k.audit.outcome_for(cid)["outcome"], "failed")
+            self.assertEqual(k.audit.dangling_intents(), [])
             self.assertEqual(k.effects["executed"], 0)
 
     def test_audit_failure_at_intent_phase_prevents_execution(self):
@@ -158,6 +165,11 @@ class F7_TwoPhaseLifecycle(unittest.TestCase):
                 return {"ran": True}
 
             k = kernel_for(store, executor=executor)
+            object.__setattr__(k, "_Kernel__audit", type("Broken", (), {
+                "append": staticmethod(broken_append),
+                "durability": staticmethod(lambda: {
+                    "enforceable": True, "fsync": True, "single_writer": True,
+                    "append_only": True, "chained": True, "observer_mode": False})})())
             res = k.handle(envelope())
             self.assertFalse(res["ok"])
             self.assertEqual(res["error"], "E_AUDIT_UNAVAILABLE")
@@ -179,7 +191,7 @@ class F7_TwoPhaseLifecycle(unittest.TestCase):
             req = envelope()
             k.handle(req)
             cid = req["correlation_id"]
-            phases = [r["phase"] for r in store._records if r.get("correlation_id") == cid]
+            phases = [r["phase"] for r in k.audit._records if r.get("correlation_id") == cid]
             self.assertEqual(phases, ["intent", "outcome"])
 
     def test_orphan_outcome_rejected_at_reload(self):
@@ -262,20 +274,18 @@ class F8_AtomicRateAdmission(unittest.TestCase):
 class IntegrationWithKernel(unittest.TestCase):
     def test_full_happy_path_uses_durable_store(self):
         with tempfile.TemporaryDirectory() as td:
-            store = DurableAuditStore(Path(td) / "a.jsonl")
-            k = kernel_for(store)
+            k = kernel_for()
             self.assertTrue(k.handle(envelope())["ok"])
-            self.assertTrue(store.verify_chain()["ok"])
-            self.assertEqual(store.count, 2)  # intent + outcome
+            self.assertTrue(k.audit.verify_chain()["ok"])
+            self.assertEqual(k.audit.count, 2)  # intent + outcome
 
     def test_denial_recorded_once(self):
         with tempfile.TemporaryDirectory() as td:
-            store = DurableAuditStore(Path(td) / "a.jsonl")
-            k = kernel_for(store)
+            k = kernel_for()
             res = k.handle(envelope(scope="h0.write.metadata"))
             self.assertEqual(res["error"], "E_SCOPE")
-            self.assertEqual(store.count, 1)
-            self.assertEqual(store._records[0]["phase"], "deny")
+            self.assertEqual(k.audit.count, 1)
+            self.assertEqual(k.audit._records[0]["phase"], "deny")
 
 
 if __name__ == "__main__":
