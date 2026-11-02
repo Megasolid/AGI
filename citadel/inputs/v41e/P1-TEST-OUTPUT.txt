@@ -1,3 +1,11 @@
+test_allow_path_resolves_with_digest (test_v41e_adapter.AdapterTests.test_allow_path_resolves_with_digest) ... ok
+test_cross_branch_without_consent_fails (test_v41e_adapter.AdapterTests.test_cross_branch_without_consent_fails) ... ok
+test_deny_fails_closed (test_v41e_adapter.AdapterTests.test_deny_fails_closed) ... ok
+test_gateway_tamper_fails (test_v41e_adapter.AdapterTests.test_gateway_tamper_fails) ... ok
+test_missing_revocation_checked_fails (test_v41e_adapter.AdapterTests.test_missing_revocation_checked_fails) ... ok
+test_operation_mismatch_fails (test_v41e_adapter.AdapterTests.test_operation_mismatch_fails) ... ok
+test_require_boundary_allow_rejects_unknown_operation (test_v41e_adapter.AdapterTests.test_require_boundary_allow_rejects_unknown_operation) ... ok
+test_stale_revocation_fails (test_v41e_adapter.AdapterTests.test_stale_revocation_fails) ... ok
 test_cross_branch_requires_consent (test_v41e_context.ContextTests.test_cross_branch_requires_consent) ... ok
 test_cross_branch_with_consent_passes (test_v41e_context.ContextTests.test_cross_branch_with_consent_passes) ... ok
 test_duplicate_context_id_rejected (test_v41e_context.ContextTests.test_duplicate_context_id_rejected) ... ok
@@ -11,6 +19,9 @@ test_tamper_digest_fails (test_v41e_context.ContextTests.test_tamper_digest_fail
 test_unknown_schema_rejected (test_v41e_context.ContextTests.test_unknown_schema_rejected) ... ok
 test_untrusted_pointer_content_remains_data (test_v41e_context.ContextTests.test_untrusted_pointer_content_remains_data) ... ok
 test_valid_roundtrip (test_v41e_context.ContextTests.test_valid_roundtrip) ... ok
+test_deny_produces_no_body (test_v41e_e2e.EndToEndTests.test_deny_produces_no_body) ... ok
+test_fresh_agent_flow (test_v41e_e2e.EndToEndTests.test_fresh_agent_flow) ... ok
+test_replay_after_signing (test_v41e_e2e.EndToEndTests.test_replay_after_signing) ... ok
 test_authority_field_rejected (test_v41e_handoff.HandoffTests.test_authority_field_rejected) ... ok
 test_declared_permission_is_not_a_grant (test_v41e_handoff.HandoffTests.test_declared_permission_is_not_a_grant) ... ok
 test_fresh_agent_reconstructs_from_context_refs (test_v41e_handoff.HandoffTests.test_fresh_agent_reconstructs_from_context_refs) ... ok
@@ -22,8 +33,15 @@ test_receipt_roundtrip_and_match (test_v41e_handoff.HandoffTests.test_receipt_ro
 test_receipt_tamper_fails (test_v41e_handoff.HandoffTests.test_receipt_tamper_fails) ... ok
 test_tamper_digest_fails (test_v41e_handoff.HandoffTests.test_tamper_digest_fails) ... ok
 test_valid_roundtrip (test_v41e_handoff.HandoffTests.test_valid_roundtrip) ... ok
+test_missing_nonce_rejected_at_signing (test_v41e_signing.SigningTests.test_missing_nonce_rejected_at_signing) ... ok
+test_replay_nonce_rejected (test_v41e_signing.SigningTests.test_replay_nonce_rejected) ... ok
+test_sign_and_verify_handoff (test_v41e_signing.SigningTests.test_sign_and_verify_handoff) ... ok
+test_sign_and_verify_receipt (test_v41e_signing.SigningTests.test_sign_and_verify_receipt) ... ok
+test_tampered_handoff_fails (test_v41e_signing.SigningTests.test_tampered_handoff_fails) ... ok
+test_tampered_receipt_fails (test_v41e_signing.SigningTests.test_tampered_receipt_fails) ... ok
+test_tampered_signature_fails (test_v41e_signing.SigningTests.test_tampered_signature_fails) ... ok
 
 ----------------------------------------------------------------------
-Ran 24 tests in 0.002s
+Ran 42 tests in 0.004s
 
 OK
