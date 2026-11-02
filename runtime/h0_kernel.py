@@ -316,6 +316,14 @@ def validate_envelope_shape(request) -> None:
         raise H0Error("E_MALFORMED", "signature not an object")
 
 
+class _Indeterminate(Exception):
+    """Internal marker: effect may have occurred but cannot be recorded."""
+
+    def __init__(self, payload):
+        super().__init__("indeterminate")
+        self.payload = payload
+
+
 class Kernel:
     """Enforcement order (see ORDER): auth, replay, schema, payload, limits, rate,
     scope, policy, audit, execute. The executor is invoked ONLY after the audit
@@ -331,7 +339,7 @@ class Kernel:
         self.audit = audit or AuditLog()
         self.replay = ReplayStore()
         self.executor = executor or self._default_execute
-        self.effects = {"executed": 0, "denied": 0}
+        self.effects = {"executed": 0, "denied": 0, "indeterminate": 0}
         self.invocations = 0
         self.order_seen = []
 
@@ -433,27 +441,45 @@ class Kernel:
             try:
                 result = self.executor(request)
             except Exception as exc:  # noqa: BLE001
-                # Phase 2 records the failure; the intent is never left dangling.
+                # Executor failed: the effect is KNOWN not to have happened (per the
+                # executor contract). Try to record it; if that also fails, report
+                # indeterminate rather than pretending the trail is complete.
                 try:
                     self.audit.append({"phase": "outcome", "correlation_id": cid,
                                        "decision": "allow", "outcome": "failed",
                                        "reason_code": "E_EXECUTOR_FAILED",
                                        "detail": type(exc).__name__,
                                        "timestamp": self.clock().astimezone(timezone.utc).isoformat()})
-                except Exception:  # noqa: BLE001 - already failing; audit gap recorded below
-                    pass
+                except Exception as rec_exc:  # noqa: BLE001
+                    self.effects["indeterminate"] += 1
+                    return {"ok": False,
+                            "error": "E_EXECUTION_INDETERMINATE",
+                            "indeterminate": True,
+                            "detail": f"executor failed AND outcome unrecordable: {type(rec_exc).__name__}",
+                            "audit": intent}
+                self._accounted = True
                 raise H0Error("E_EXECUTOR_FAILED", type(exc).__name__)
+            # Effect HAS HAPPENED. From here on, nothing may suggest otherwise.
+            executed = True
+            self.effects["executed"] += 1
             try:
                 self.audit.append({"phase": "outcome", "correlation_id": cid,
                                    "decision": "allow", "outcome": "executed",
                                    "timestamp": self.clock().astimezone(timezone.utc).isoformat()})
-            except Exception as exc:  # noqa: BLE001
-                # The effect happened but cannot be recorded: report it as a failure so
-                # the caller knows the audit trail has a gap. Never claim success.
-                raise H0Error("E_AUDIT_UNAVAILABLE", "outcome record failed: " + type(exc).__name__) from exc
-            executed = True
-            self.effects["executed"] += 1
+            except Exception as rec_exc:  # noqa: BLE001
+                # F11: effect occurred but is unrecorded. Preserve the dangling intent.
+                # Return an explicit indeterminate result - do NOT append a deny.
+                self.effects["indeterminate"] += 1
+                return {"ok": False,
+                        "error": "E_EXECUTION_INDETERMINATE",
+                        "indeterminate": True,
+                        "detail": f"effect executed but outcome unrecordable: {type(rec_exc).__name__}",
+                        "audit": intent}
             return {"ok": True, "result": result, "audit": intent}
+
+        except _Indeterminate as exc:
+            self.effects["indeterminate"] += 1
+            return exc.payload
 
         except H0Error as exc:
             code = exc.code
@@ -464,6 +490,10 @@ class Kernel:
             self._internal = f"{type(exc).__name__}: {exc}"
 
         self.effects["denied"] += 1
+        if getattr(self, "_accounted", False):
+            # the denial is already recorded as an outcome record; do not append a second
+            self._accounted = False
+            return {"ok": False, "error": code, "audit": None}
         if reserved and not executed and isinstance(request, dict):
             rid, nonce = request.get("request_id"), request.get("nonce")
             if rid and nonce:

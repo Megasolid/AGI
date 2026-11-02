@@ -1,0 +1,55 @@
+﻿# H0 revision-4 test evidence
+# generated 
+2026-11-02T19:49:39+03:30
+
+## revision 4 suite (F9 validate-before-persist, F10 writer concurrency, F11 indeterminate) exit=0
+test_chain_intact_after_foreign_write_refusal (__main__.F10_WriterConcurrency.test_chain_intact_after_foreign_write_refusal) ... ok
+test_foreign_write_detected_before_append (__main__.F10_WriterConcurrency.test_foreign_write_detected_before_append) ... ok
+test_second_writer_refused (__main__.F10_WriterConcurrency.test_second_writer_refused) ... ok
+test_executor_failure_and_outcome_failure_is_indeterminate (__main__.F11_IndeterminateExecution.test_executor_failure_and_outcome_failure_is_indeterminate) ... ok
+test_executor_failure_records_failed_outcome (__main__.F11_IndeterminateExecution.test_executor_failure_records_failed_outcome) ... ok
+test_outcome_write_failure_returns_indeterminate_and_no_deny (__main__.F11_IndeterminateExecution.test_outcome_write_failure_returns_indeterminate_and_no_deny) ... ok
+test_restart_after_indeterminate_shows_dangling_intent (__main__.F11_IndeterminateExecution.test_restart_after_indeterminate_shows_dangling_intent) ... ok
+test_successful_path_writes_intent_then_outcome (__main__.F11_IndeterminateExecution.test_successful_path_writes_intent_then_outcome) ... ok
+test_concurrent_admission_reaches_and_respects_minute_cap (__main__.F8_MinuteCapConcurrency.test_concurrent_admission_reaches_and_respects_minute_cap)
+Drive the limiter with a fixed clock so only the minute cap can bind, and ... ok
+test_minute_cap_binds_between_burst_windows (__main__.F8_MinuteCapConcurrency.test_minute_cap_binds_between_burst_windows)
+At 0.4s spacing (2.5 req/s) the burst window stays clear, so the minute cap ... ok
+test_duplicate_intent_leaves_file_unchanged (__main__.F9_ValidateBeforePersist.test_duplicate_intent_leaves_file_unchanged) ... ok
+test_duplicate_outcome_leaves_file_unchanged (__main__.F9_ValidateBeforePersist.test_duplicate_outcome_leaves_file_unchanged) ... ok
+test_invalid_phase_rejected_without_write (__main__.F9_ValidateBeforePersist.test_invalid_phase_rejected_without_write) ... ok
+test_orphan_outcome_leaves_file_unchanged (__main__.F9_ValidateBeforePersist.test_orphan_outcome_leaves_file_unchanged) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.143s
+
+OK
+
+## revision 3 suite
+..................
+----------------------------------------------------------------------
+Ran 18 tests in 0.155s
+
+OK
+
+## revision 2 suite
+............................
+----------------------------------------------------------------------
+Ran 28 tests in 0.061s
+
+OK
+
+## revision 1 suite
+...............................
+----------------------------------------------------------------------
+Ran 31 tests in 0.066s
+
+OK
+
+## v41e regression
+.................................................................................................................................................
+----------------------------------------------------------------------
+Ran 145 tests in 0.772s
+
+OK
+

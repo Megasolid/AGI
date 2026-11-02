@@ -1,31 +1,33 @@
 #!/usr/bin/env python3
-"""H0 — durable audit store (revision 3, addresses King F6).
+"""H0 — durable audit store, revision 4.
 
-The revision-2 audit sink was an in-memory list. That proved ordering, not
-durability: the whole F1 correction rests on audit being a PRECONDITION, which is
-meaningless if the record evaporates on restart.
+Revision 3 fixes carried forward:
+  * append-only JSONL, fsync before acknowledgement, hash-chained
+  * tamper evidence on reload (digest + chain)
+  * two-phase lifecycle: intent before the effect, outcome after
 
-Contract implemented here:
-  * append-only JSONL on disk, fsync'd before the append is acknowledged
-  * hash-chained (each record carries prev_digest) so deletion/reordering is detectable
-  * atomic acknowledgement: append() returns only after the bytes are durable
-  * restart recovery: reload re-verifies the chain and reports a watermark
-  * fail-closed: if the store cannot be written or verified, append() raises and
-    the caller must not execute
+Revision 4 corrections (King review 2026-11-02T19:46):
 
-Two-phase lifecycle (King F7):
-  * `intent`   — written BEFORE the effect, outcome=pending
-  * `outcome`  — written AFTER the effect (or after a failure), one per request
-  A request therefore has exactly one intent and at most one outcome, linked by
-  correlation_id; an intent with no outcome means "authorised, execution in doubt".
+  F9  VALIDATE BEFORE PERSIST: lifecycle invariants are checked before any byte is
+      appended. A rejected append leaves the file, the sequence and the chain head
+      exactly as they were.
 
-No network, no credentials, no authority.
+  F10 WRITER CONCURRENCY: a single-writer contract is enforced by an OS-level lock
+      file. A second writer is refused rather than silently forking the chain. On
+      every append the store re-reads the on-disk tail and compares it with its own
+      head; a mismatch means another writer touched the file and the append is
+      refused (E_AUDIT_FOREIGN_WRITE).
+
+  The store never appends a record it would reject.
+
+No network, no credentials, no authority. This is not a server.
 """
 from __future__ import annotations
 
 import hashlib
 import json
 import os
+import threading
 from pathlib import Path
 
 
@@ -43,18 +45,89 @@ def _digest(obj) -> str:
     return "sha256:" + hashlib.sha256(_canonical(obj)).hexdigest()
 
 
-class DurableAuditStore:
-    """Hash-chained, fsync'd JSONL audit store with restart recovery."""
+class _SingleWriterLock:
+    """OS-level advisory lock; refuses a second live writer in this process or another."""
 
-    def __init__(self, path, *, fsync: bool = True):
+    def __init__(self, lock_path: Path):
+        self.path = lock_path
+        self._fh = None
+
+    def acquire(self) -> None:
+        try:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            fh = self.path.open("a+")
+        except Exception as exc:  # noqa: BLE001
+            raise AuditStoreError("E_AUDIT_UNAVAILABLE", f"lock open: {type(exc).__name__}") from exc
+        try:
+            if os.name == "nt":
+                import msvcrt
+                fh.seek(0)
+                msvcrt.locking(fh.fileno(), msvcrt.LK_NBLCK, 1)
+            else:
+                import fcntl
+                fcntl.flock(fh.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError as exc:
+            fh.close()
+            raise AuditStoreError("E_AUDIT_SECOND_WRITER", "another writer holds the store") from exc
+        self._fh = fh
+
+    def release(self) -> None:
+        if self._fh is None:
+            return
+        try:
+            if os.name == "nt":
+                import msvcrt
+                self._fh.seek(0)
+                msvcrt.locking(self._fh.fileno(), msvcrt.LK_UNLCK, 1)
+            else:
+                import fcntl
+                fcntl.flock(self._fh.fileno(), fcntl.LOCK_UN)
+        except OSError:
+            pass
+        finally:
+            self._fh.close()
+            self._fh = None
+
+
+class DurableAuditStore:
+    """Hash-chained, fsync'd, single-writer JSONL audit store."""
+
+    def __init__(self, path, *, fsync: bool = True, enforce_single_writer: bool = True):
         self.path = Path(path)
         self.fsync = fsync
+        self.enforce_single_writer = enforce_single_writer
+        self.lock = _SingleWriterLock(self.path.with_suffix(self.path.suffix + ".lock"))
         self._records: list[dict] = []
         self._intents: dict[str, dict] = {}
         self._outcomes: dict[str, dict] = {}
-        self._lock = __import__("threading").RLock()
+        self._lock = threading.RLock()
         self._tail_digest: str | None = None
+        self._tail_seq = 0
         self._recover()
+
+    # -- validation BEFORE persistence (F9) ------------------------------
+    def _validate(self, rec: dict) -> None:
+        phase = rec.get("phase")
+        cid = rec.get("correlation_id")
+        if phase == "intent":
+            if not cid:
+                raise AuditStoreError("E_AUDIT_INVALID", "intent without correlation_id")
+            if cid in self._intents:
+                raise AuditStoreError("E_AUDIT_DUPLICATE", f"intent {cid}")
+        elif phase == "outcome":
+            if not cid:
+                raise AuditStoreError("E_AUDIT_INVALID", "outcome without correlation_id")
+            if cid not in self._intents:
+                raise AuditStoreError("E_AUDIT_ORPHAN", f"outcome without intent {cid}")
+            if cid in self._outcomes:
+                raise AuditStoreError("E_AUDIT_DUPLICATE", f"outcome {cid}")
+        elif phase in {"deny", "indeterminate"}:
+            if not cid:
+                raise AuditStoreError("E_AUDIT_INVALID", f"{phase} without correlation_id")
+            if phase == "indeterminate" and cid not in self._intents:
+                raise AuditStoreError("E_AUDIT_ORPHAN", f"indeterminate without intent {cid}")
+        else:
+            raise AuditStoreError("E_AUDIT_INVALID", f"unknown phase {phase!r}")
 
     # -- recovery --------------------------------------------------------
     def _recover(self) -> None:
@@ -81,41 +154,66 @@ class DurableAuditStore:
 
     def _index(self, rec: dict) -> None:
         self._records.append(rec)
+        self._tail_seq = rec.get("seq", self._tail_seq)
         cid = rec.get("correlation_id")
         if rec.get("phase") == "intent":
-            if cid in self._intents:
-                raise AuditStoreError("E_AUDIT_DUPLICATE", f"intent {cid}")
             self._intents[cid] = rec
         elif rec.get("phase") == "outcome":
-            if cid not in self._intents:
-                raise AuditStoreError("E_AUDIT_ORPHAN", f"outcome without intent {cid}")
-            if cid in self._outcomes:
-                raise AuditStoreError("E_AUDIT_DUPLICATE", f"outcome {cid}")
             self._outcomes[cid] = rec
+
+    # -- durability check (F10) ------------------------------------------
+    def _disk_tail(self) -> str | None:
+        """Re-read the last record on disk and return its digest (None for empty)."""
+        if not self.path.exists():
+            return None
+        last = None
+        with self.path.open(encoding="utf-8") as fh:
+            for line in fh:
+                if line.strip():
+                    last = line
+        if last is None:
+            return None
+        try:
+            return json.loads(last).get("digest")
+        except Exception as exc:  # noqa: BLE001
+            raise AuditStoreError("E_AUDIT_CORRUPT", "tail unreadable") from exc
 
     # -- append ----------------------------------------------------------
     def append(self, record: dict) -> dict:
-        """Atomically append and fsync. Returns the stored record with chain fields."""
+        """Validate, then atomically append and fsync. Never persists a rejected record."""
         rec = {k: v for k, v in record.items() if k not in {"prev_digest", "digest", "seq"}}
         with self._lock:
-            rec["seq"] = len(self._records) + 1
-            rec["prev_digest"] = self._tail_digest
-            rec["digest"] = _digest(rec)
+            # F9: validate before touching the file
+            self._validate(rec)
+
+            if self.enforce_single_writer:
+                self.lock.acquire()
             try:
-                self.path.parent.mkdir(parents=True, exist_ok=True)
-                with self.path.open("a", encoding="utf-8") as fh:
-                    fh.write(json.dumps(rec, sort_keys=True, separators=(",", ":")) + "\n")
-                    fh.flush()
-                    if self.fsync:
-                        os.fsync(fh.fileno())
-            except Exception as exc:
-                raise AuditStoreError("E_AUDIT_UNAVAILABLE", f"{type(exc).__name__}: {exc}") from exc
-            # verify what we just wrote is readable and chained
-            if not self.path.exists():
-                raise AuditStoreError("E_AUDIT_UNAVAILABLE", "store vanished after append")
-            self._index(rec)
-            self._tail_digest = rec["digest"]
-            return rec
+                # F10: confirm nobody else moved the chain since we last wrote
+                disk_tail = self._disk_tail()
+                if disk_tail != self._tail_digest:
+                    raise AuditStoreError("E_AUDIT_FOREIGN_WRITE",
+                                          "chain head changed outside this writer")
+
+                rec["seq"] = self._tail_seq + 1
+                rec["prev_digest"] = self._tail_digest
+                rec["digest"] = _digest(rec)
+                try:
+                    self.path.parent.mkdir(parents=True, exist_ok=True)
+                    with self.path.open("a", encoding="utf-8") as fh:
+                        fh.write(json.dumps(rec, sort_keys=True, separators=(",", ":")) + "\n")
+                        fh.flush()
+                        if self.fsync:
+                            os.fsync(fh.fileno())
+                except Exception as exc:  # noqa: BLE001
+                    raise AuditStoreError("E_AUDIT_UNAVAILABLE",
+                                          f"{type(exc).__name__}: {exc}") from exc
+                self._index(rec)
+                self._tail_digest = rec["digest"]
+                return rec
+            finally:
+                if self.enforce_single_writer:
+                    self.lock.release()
 
     # -- queries ---------------------------------------------------------
     @property
@@ -127,7 +225,7 @@ class DurableAuditStore:
         return len(self._records)
 
     def watermark(self) -> dict:
-        return {"records": self.count, "head_digest": self._tail_digest}
+        return {"records": self.count, "head_digest": self._tail_digest, "seq": self._tail_seq}
 
     def intent_for(self, correlation_id: str) -> dict | None:
         return self._intents.get(correlation_id)
@@ -136,7 +234,6 @@ class DurableAuditStore:
         return self._outcomes.get(correlation_id)
 
     def dangling_intents(self) -> list[str]:
-        """Authorised but with no recorded outcome: execution is in doubt."""
         return [cid for cid in self._intents if cid not in self._outcomes]
 
     def verify_chain(self) -> dict:
