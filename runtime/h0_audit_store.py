@@ -89,6 +89,25 @@ class _SingleWriterLock:
             self._fh = None
 
 
+class _FailureInjector:
+    """Test-only fault injection that cannot be repurposed as a substitution route.
+
+    A simulation may make the store report failure; it can never supply a different
+    implementation or change where the bytes go. This is the ONLY supported way to
+    simulate an audit outage in tests (R8).
+    """
+
+    _MODE = {"fail": False}
+
+    @classmethod
+    def set(cls, failing: bool) -> None:
+        cls._MODE["fail"] = bool(failing)
+
+    @classmethod
+    def failing(cls) -> bool:
+        return bool(cls._MODE["fail"])
+
+
 class DurableAuditStore:
     """Hash-chained, fsync'd, single-writer JSONL audit store.
 
@@ -129,6 +148,11 @@ class DurableAuditStore:
             "append_only": True,
             "chained": True,
         }
+
+    # -- R8: identity probe ----------------------------------------------
+    def probe(self) -> str:
+        """Cheap, side-effect-free identity marker used to verify the bound store."""
+        return "h0-audit-store-v1:" + str(self.path)
 
     # -- validation BEFORE persistence (F9) ------------------------------
     def _validate(self, rec: dict) -> None:
@@ -222,6 +246,9 @@ class DurableAuditStore:
         """Validate, then atomically append and fsync. Never persists a rejected record."""
         rec = {k: v for k, v in record.items() if k not in {"prev_digest", "digest", "seq"}}
         with self._lock:
+            # R8 test-only fault injection (never a substitution route)
+            if _FailureInjector.failing():
+                raise AuditStoreError("E_AUDIT_UNAVAILABLE", "injected failure (test mode)")
             # F9: validate before touching the file
             self._validate(rec)
 

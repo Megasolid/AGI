@@ -375,7 +375,12 @@ class Kernel:
         if type(store) is not DurableAuditStore:
             raise H0Error("E_AUDIT_NOT_DURABLE", "trusted store type check failed")
         self._require_enforceable_store(store)
-        self.__audit = store
+        # R8: the store is reachable ONLY through a closure. Reassigning any attribute
+        # on this object cannot redirect the execution path. See the threat model in
+        # citadel/h0/H0-CORRECTION-REPORT-R8-20261102.md: in-process tampering by
+        # arbitrary code cannot be prevented in Python and is NOT claimed to be.
+        self.__audit_getter = (lambda _s=store: _s)
+        self.__probe = store.probe()
         self.replay = ReplayStore()
         self.executor = executor or self._default_execute
         self.effects = {"executed": 0, "denied": 0, "indeterminate": 0}
@@ -386,7 +391,11 @@ class Kernel:
     @property
     def audit(self):
         """Read-only view of the kernel-built store (for audit trail inspection)."""
-        return self.__audit
+        return self.__audit_getter()
+
+    def _bound_store(self):
+        """The execution path's store handle: a closure lookup, not an attribute read."""
+        return self.__audit_getter()
 
     # -- R6: enforcement-store contract ------------------------------------
     @staticmethod
@@ -454,6 +463,13 @@ class Kernel:
     def _gate(self, name):
         self.order_seen.append(name)
 
+    def _assert_store_identity(self) -> None:
+        """R8: refuse to act if the bound store is no longer the one we built."""
+        store = self._bound_store()
+        if store.probe() != self.__probe:
+            raise H0Error("E_AUDIT_STORE_SUBSTITUTED",
+                          "bound audit store no longer matches the constructed instance")
+
     def handle(self, request) -> dict:
         now = self.clock()
         self.order_seen = []
@@ -494,6 +510,7 @@ class Kernel:
             # F1 + F7: two-phase audit. Phase 1 (intent) is durable BEFORE the effect.
             # Any store failure (including AuditStoreError) must deny, never escape.
             self._gate("audit")
+            self._assert_store_identity()
             cid = request["correlation_id"]
             intent = {
                 "phase": "intent",
@@ -507,7 +524,7 @@ class Kernel:
                 "timestamp": now.astimezone(timezone.utc).isoformat(),
             }
             try:
-                self.__audit.append(intent)
+                self._bound_store().append(intent)
             except H0Error:
                 raise
             except Exception as exc:  # noqa: BLE001 - store failures fail closed
@@ -521,7 +538,7 @@ class Kernel:
                 # executor contract). Try to record it; if that also fails, report
                 # indeterminate rather than pretending the trail is complete.
                 try:
-                    self.__audit.append({"phase": "outcome", "correlation_id": cid,
+                    self._bound_store().append({"phase": "outcome", "correlation_id": cid,
                                        "decision": "allow", "outcome": "failed",
                                        "reason_code": "E_EXECUTOR_FAILED",
                                        "detail": type(exc).__name__,
@@ -540,7 +557,7 @@ class Kernel:
             executed = True
             self.effects["executed"] += 1
             try:
-                self.__audit.append({"phase": "outcome", "correlation_id": cid,
+                self._bound_store().append({"phase": "outcome", "correlation_id": cid,
                                    "decision": "allow", "outcome": "executed",
                                    "timestamp": self.clock().astimezone(timezone.utc).isoformat()})
             except Exception as rec_exc:  # noqa: BLE001
@@ -590,7 +607,7 @@ class Kernel:
             "timestamp": now.astimezone(timezone.utc).isoformat(),
         }
         try:
-            self.__audit.append(denial)
+            self._bound_store().append(denial)
         except Exception:  # noqa: BLE001 - store failure must not mask the denial
             denial["note"] = "audit unavailable for denied request"
         return {"ok": False, "error": code, "audit": denial}

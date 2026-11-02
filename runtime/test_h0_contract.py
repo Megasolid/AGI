@@ -327,12 +327,9 @@ class FailClosedTests(unittest.TestCase):
             raise AuditStoreError("E_AUDIT_UNAVAILABLE", "simulated")
 
         # break the kernel-built store in place (the only way to simulate an outage now)
-        object.__setattr__(k, "_Kernel__audit", type("Broken", (), {
-            "append": staticmethod(broken),
-            "durability": staticmethod(lambda: {
-                "enforceable": True, "fsync": True, "single_writer": True,
-                "append_only": True, "chained": True, "observer_mode": False}),
-        })())
+        from h0_audit_store import _FailureInjector
+        _FailureInjector.set(True)
+        self.addCleanup(_FailureInjector.set, False)
         res = k.handle(envelope())
         self.assertFalse(res["ok"])
         self.assertIn(res["error"], {"E_AUDIT_UNAVAILABLE", "E_AUDIT_REQUIRED"})

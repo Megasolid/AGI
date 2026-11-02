@@ -163,37 +163,29 @@ class F10_WriterConcurrency(unittest.TestCase):
 
 class F11_IndeterminateExecution(unittest.TestCase):
     def _break_outcome_after(self, k):
-        """R7: replace the kernel-built store with a wrapper that fails on outcome."""
-        from h0_audit_store import AuditStoreError
-        real = k.audit
-        calls = {"n": 0}
+        """R8: fail the outcome phase via the supported injector, never by substitution.
 
-        class Flaky:
-            def durability(self):
-                return real.durability()
-
-            def append(self, record):
-                calls["n"] += 1
-                if record.get("phase") == "outcome":
-                    raise AuditStoreError("E_AUDIT_UNAVAILABLE", "simulated outcome failure")
-                return real.append(record)
-
-            def __getattr__(self, name):
-                return getattr(real, name)
-
-        object.__setattr__(k, "_Kernel__audit", Flaky())
-        return real, calls
+        The intent is written normally; the executor flips the injector so only the
+        post-effect outcome append fails.
+        """
+        from h0_audit_store import _FailureInjector
+        _FailureInjector.set(False)
+        return k.audit, {"n": 0}
 
     def test_outcome_write_failure_returns_indeterminate_and_no_deny(self):
         with tempfile.TemporaryDirectory() as td:
             invocations = {"n": 0}
 
+            from h0_audit_store import _FailureInjector
+
             def executor(req):
                 invocations["n"] += 1
+                _FailureInjector.set(True)   # outcome append will fail
                 return {"ran": True}
 
             k = kernel_for(executor=executor)
-            store, calls = self._break_outcome_after(k)
+            self.addCleanup(_FailureInjector.set, False)
+            store, calls = k.audit, {"n": 0}
             res = k.handle(envelope())
             self.assertFalse(res["ok"])
             self.assertEqual(res["error"], "E_EXECUTION_INDETERMINATE")
@@ -222,11 +214,15 @@ class F11_IndeterminateExecution(unittest.TestCase):
 
     def test_executor_failure_and_outcome_failure_is_indeterminate(self):
         with tempfile.TemporaryDirectory() as td:
+            from h0_audit_store import _FailureInjector
+
             def boom(_req):
+                _FailureInjector.set(True)   # failed-outcome append will also fail
                 raise RuntimeError("explode")
 
             k = kernel_for(executor=boom)
-            store, calls = self._break_outcome_after(k)
+            self.addCleanup(_FailureInjector.set, False)
+            store, calls = k.audit, {"n": 0}
             res = k.handle(envelope())
             self.assertEqual(res["error"], "E_EXECUTION_INDETERMINATE")
             self.assertTrue(res["indeterminate"])
@@ -243,8 +239,15 @@ class F11_IndeterminateExecution(unittest.TestCase):
 
     def test_restart_after_indeterminate_shows_dangling_intent(self):
         with tempfile.TemporaryDirectory() as td:
-            k = kernel_for(executor=lambda r: {"ran": True})
-            store, _ = self._break_outcome_after(k)
+            from h0_audit_store import _FailureInjector
+
+            def ex(_r):
+                _FailureInjector.set(True)
+                return {"ran": True}
+
+            k = kernel_for(executor=ex)
+            self.addCleanup(_FailureInjector.set, False)
+            store = k.audit
             k.handle(envelope())
             path = store.path
             reopened = DurableAuditStore(path)

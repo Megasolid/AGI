@@ -152,24 +152,16 @@ class F7_TwoPhaseLifecycle(unittest.TestCase):
     def test_audit_failure_at_intent_phase_prevents_execution(self):
         """A store that constructs fine but fails on append must stop execution."""
         with tempfile.TemporaryDirectory() as td:
-            store = DurableAuditStore(Path(td) / "a.jsonl")
-
-            def broken_append(_record):
-                raise AuditStoreError("E_AUDIT_UNAVAILABLE", "simulated disk failure")
-
-            store.append = broken_append
             invocations = {"n": 0}
 
             def executor(req):
                 invocations["n"] += 1
                 return {"ran": True}
 
-            k = kernel_for(store, executor=executor)
-            object.__setattr__(k, "_Kernel__audit", type("Broken", (), {
-                "append": staticmethod(broken_append),
-                "durability": staticmethod(lambda: {
-                    "enforceable": True, "fsync": True, "single_writer": True,
-                    "append_only": True, "chained": True, "observer_mode": False})})())
+            k = kernel_for(str(Path(td) / "a.jsonl"), executor=executor)
+            from h0_audit_store import _FailureInjector
+            _FailureInjector.set(True)
+            self.addCleanup(_FailureInjector.set, False)
             res = k.handle(envelope())
             self.assertFalse(res["ok"])
             self.assertEqual(res["error"], "E_AUDIT_UNAVAILABLE")
