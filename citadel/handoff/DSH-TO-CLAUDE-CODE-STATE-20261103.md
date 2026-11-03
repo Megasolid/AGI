@@ -205,3 +205,59 @@ Channel bug fixed this session: `circle_mcp.find_page()` was matching a raw subs
 - KING has not independently executed suites or verified signatures; reported results remain submitter-provided evidence.
 
 **Bottom line:** AGI is a verified development foundation, not an operational autonomous system. Keep the publication block.
+
+---
+
+# ADDENDUM A — KING rulings received 2026-11-03T03:44+0330
+
+This addendum closes the three gaps Claude Code flagged when it read revision 1.
+
+## A1. M1 provisional acceptance — the conditions, as recorded by KING
+
+M1 is **provisionally accepted, subject to its evidence anchors**. The conditions recorded:
+
+- **Artifacts and execution:** both stations exit 0 and report all required tests passing (145/145 on the accepted M1 test baseline).
+- **Discrepancies:** both station reports record zero unexplained discrepancies; any mismatch or failure must be preserved and investigated, not silently discarded.
+- **Signature verification:** both station reports and the required handoff artifacts pass the specified dual-signature verification.
+- **Restart/idempotency:** restart verification produces no duplicate effect and does not alter the accepted evidence set.
+- **Historical integrity:** the earlier Station B 8/9 failure and intermediate defects remain preserved; the successful result must not overwrite or erase them.
+- **Anchors:** the accepted manifest, corrected handoff, and both station reports are identified by exact hashes in the M1 evidence record.
+- **Status qualification:** provisional, based on submitted evidence. KING did not independently rerun the tests or verify the signatures and SHA256 values. **Any later evidence mismatch reopens the acceptance claim.**
+
+Exact anchors (copied from canonical evidence records, not reconstructed):
+
+| Item | sha256 |
+|---|---|
+| baseline manifest v2 | `f14b55ed4ae90a2f33c6340e27e00f63ba5cbec0274b714a310ca9bfcaa96a40` |
+| corrected handoff M0-CORR-02 | `2bf215e974e48c8e5ba72ad8ae78e9eb09108723fb1d599f44a44f425793f280` |
+| Station A report | `6c8ac2009f1d57118539e9c3f8c4149996fa6048efccb964e8ef67df98ac7cb9` |
+| Station B report | `29838e1e68e8b08b0ce1aa466aac4498f45d88e244bd95a60b10b3fb3f8d5564` |
+
+## A2. Kilo v14 — attribution
+
+Kilo's v14 findings file now validates at exit 0 **as reported by DSH**. This has **not** been independently reproduced by a second party. Treat it as **DSH-reported evidence** until someone other than DSH reruns the validator and records the result. Kilo's review content remains advisory; it was never a gate.
+
+## A3. Deployment blockers mapped to concrete surfaces
+
+| Blocker | Concrete location |
+|---|---|
+| replay store is in-memory | `runtime/h0_kernel.py` → `class ReplayStore` |
+| verifier is injected, no real ML-DSA wiring | `Kernel.__init__(verifier=...)`; `runtime/agi_sem_transport.py` |
+| audit head not externally anchored | `runtime/h0_audit_store.py` → `watermark()`, `verify_chain()` |
+| rate counters in-process | `runtime/h0_kernel.py` → `class RateLimiter` |
+| payload schemas Python-declared only | `runtime/h0_kernel.py` → `PAYLOAD_SCHEMAS` |
+| no fuzzing / property tests | no property-test suite exists under `runtime/` |
+| same-process tampering unpreventable | documented in `H0-CORRECTION-REPORT-R9` and R8-4 |
+
+## A4. Claude Code authorization — KING, bounded R11
+
+**AUTHORIZED: bounded R11 work, additive branch only, under DSH review.**
+
+Scope: fix the three R10 checker defects — (1) regression suite not parsed or measured, (2) missing total line still yields `ok: true`, (3) duplicate suite rows silently overwritten — and add negative controls proving each defect is rejected. Preserve R1–R10 unchanged. Produce a correction report, test output, hashes and a change summary. Offline, existing non-privileged environment.
+
+**Not authorized:** protected-file edits or merges; tags, releases, publication, activation or freeze; MCP exposure, server or tunnel; credentials, signing authority, approval authority or policy changes; self-acceptance or any claim R11 is accepted before review. This authorization is for R11 only and does not authorize any downstream deployment.
+
+**Rights-model clarifications:** DSH is the task-granting operator, not a substitute for the protected owner; read-only is the default and additive branch work needs an explicit scoped DSH request; tool access does not confer decision authority. Worker proposes and produces; DSH supervises; KING reviews; Owner retains final protected authority.
+
+**Disposition:** M1 provisional; H0 R10 not accepted; H0 R11 authorized for bounded additive implementation and testing under DSH review; v4.1-E-rc1 unpublished, untagged, not activated; MCP/deployment not authorized.
+
