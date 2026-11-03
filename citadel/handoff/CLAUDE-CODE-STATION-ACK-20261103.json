@@ -1,0 +1,37 @@
+{
+ "ack": {
+  "can_start_without_dsh": true,
+  "candidate_reported": "v4.1-E-rc1 UNPUBLISHED / NOT TAGGED / NOT ACTIVATED",
+  "h0_reported": "R10 submitted, not accepted; R11 current gate",
+  "next_item": "R11",
+  "read_confirmed": true,
+  "repo_head_reported": "4b91b05",
+  "tests_reported": "156 H0 contract + 145 regression"
+ },
+ "evidence": {
+  "cli_result_is_error": false,
+  "cli_result_turns": 2,
+  "cli_stderr_warning": "FCC gateway not eligible for new auto-mode classifier billing; no functional break"
+ },
+ "handoff": {
+  "path": "citadel/handoff/DSH-TO-CLAUDE-CODE-STATE-20261103.md",
+  "sha256": "sha256:ce5f4a1bfc416b308dbb48fe7e901117609bf12469e0a4aba3d702317a136a9a"
+ },
+ "note": "Claude Code read the handoff file itself and quoted the sha256. It is a station acknowledgment, not an authority grant.",
+ "schema": "agi/station-ack/1",
+ "season_session_id": "5fa5166b-7e24-40c1-9397-2a99e1da36cc",
+ "station": "claude-code",
+ "station_declared_limits": [
+  "read-only by default",
+  "additive changes on a disposable feature branch only with explicit DSH request",
+  "no protected file edits, no tag/publish/activate, no MCP server/tunnel/credentials, no merge to main, no self-approval"
+ ],
+ "station_flagged_gaps": [
+  "provisional M1 acceptance criteria are not in the handoff document",
+  "cannot independently verify Kilo v14 re-validation without running it",
+  "deployment blockers are not tied to specific files or tickets",
+  "protected diff claim should be independently re-run"
+ ],
+ "transport": "Claude Code CLI resumed through FCC gateway http://127.0.0.1:8082 (ANTHROPIC_BASE_URL)",
+ "ts": "2026-11-03T03:56:00+0330"
+}
