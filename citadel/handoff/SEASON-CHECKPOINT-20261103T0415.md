@@ -12,7 +12,7 @@
 ```powershell
 cd C:\Users\D\.agents\skills\agi
 $repo = "C:\Users\D\.agents\skills\agi\state\repo\AGI"
-git -C $repo rev-parse --short HEAD          # expect c9bafcf
+git -C $repo rev-parse --short HEAD          # snapshot was c9bafcf; expect the later commit that adds THIS file
 git -C $repo status --porcelain              # expect empty
 git -C $repo diff --stat v4.0.1..HEAD -- DNA.md core/dna.v4.json core/dna.v4.sig repo.json repo.json.sig POLICY.md
                                               # expect empty
@@ -29,7 +29,7 @@ If those three checks do not match, stop and investigate before continuing.
 | Repo | `C:\Users\D\.agents\skills\agi\state\repo\AGI` |
 | Remote | `https://github.com/Megasolid/AGI.git` |
 | Branch | `main` |
-| Head | `c9bafcfa37c893771be4eef757a128ffe02f9424` (`c9bafcf`) |
+| Head | snapshot verified at `c9bafcfa37c893771be4eef757a128ffe02f9424` (`c9bafcf`); the commit that adds this checkpoint is one commit later |
 | Working tree | clean |
 | Published tags | `v4.0.1` newest; unchanged |
 | Rollback | `v4.0.1` commit `6a0fb796…`, runtime zip `85a92254…` |
