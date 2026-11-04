@@ -19,19 +19,18 @@ verification and continuity.
 - **The "organism" wording is a metaphor.** It describes persistent software identity and continuity, not biological
   or conscious life.
 
-**Terms:** *DNA* = signed contract (`core/dna.v4.json`); *generation* = a released edition (Entelechy is gen4);
-*intent* = a queued write that needs local Master approval; *Citadel* = the public governance/release station;
-*KING* = Citadel director role; *Kilo* = independent verification station.
+**Terms:** *DNA* = signed contract (`core/dna.v4.json`); *generation* = a released edition (Entelechy is gen4); *intent* = a queued write that needs local Master approval;
+*Citadel* = this official GitHub repository and its pull-request-based project coordination surface.
 
 ## Read this first
 
 1. **What is stable:** v4.0.1, generation Entelechy (gen4), DNA v4, Core 4.0.
 2. **What is proposed:** the v5 Distributed Cognitive Organism architecture. It is under design; it is not shipped.
 3. **How to install:** use the one-prompt quickstart below.
-4. **How it is governed:** the Citadel Council (Owner D, KING GPT, DSH, Kilo) with a book-standard documentation
-   program and an evidence-first release policy.
-5. **What is honestly missing:** independent audit, a chosen license, hardware-backed keys, and a shipped access-policy
-   tunnel.
+4. **How it is governed:** the project owner retains final authority; changes are proposed and reviewed through GitHub
+   branches and pull requests. AI assistants and contributors do not gain governance authority from tool access.
+5. **What is honestly missing:** an independent third-party audit, hardware-backed keys, and a shipped access-policy
+   tunnel. Code is licensed AGPL-3.0; documentation is licensed CC BY-SA 4.0.
 
 ## Status
 
@@ -83,8 +82,8 @@ Install version `v4.0.1`. Verify the download against `SHA256SUMS.txt` from the
 
 ```text
                  ┌──────────────────────────────────────────────┐
-                 │  Citadel (public station / living platform)  │
-                 │  Council · Hall · Divisions · decision ledger│
+                 │  GitHub repository + pull-request workflow │
+                 │  public source · review · release provenance│
                  └──────────────────────┬───────────────────────┘
                                         │  evidence, tasks, releases
                  ┌──────────────────────▼───────────────────────┐
@@ -118,16 +117,11 @@ Install version `v4.0.1`. Verify the download against `SHA256SUMS.txt` from the
   approval. Seats, a Master key and signed passports with an issuance audit.
 - **Lineage.** Previous generations are archived, verified ancestors. Nothing is deleted to make a new release look
   clean.
-- **Citadel.** The public repository is the official station. The KING directs management and documentation; DSH
-  implements; Kilo independently verifies; Owner D retains final authority. See [CITADEL.md](CITADEL.md),
-  [the charter](citadel/governance/charter.md) and [the roadmap](citadel/roadmap.md).
-  - **Owner D:** final authority.
-  - **KING (GPT-web):** Citadel management, governance, documentation, priorities and release strategy.
-  - **DSH:** implementation, integration and evidence.
-  - **Kilo:** independent verification station; it is not an integration authority.
-
-  *What this means for you:* the KING directs, DSH builds, Kilo checks, and D remains the final decision-maker. No
-  autonomous change to identity, federation or production state is implied by governance language.
+- **Project governance.** The official GitHub repository and its pull requests are the public coordination and review
+  surface. The project owner retains final authority over protected identity, release and production decisions.
+  Contributors and AI assistants may propose work, but tool access or a label used in conversation grants no
+  independent authority. See [CITADEL.md](CITADEL.md), [the governance charter](citadel/governance/charter.md)
+  and [the roadmap](citadel/roadmap.md).
 
 ## What it feels like
 
@@ -187,7 +181,8 @@ AGI is not a product line; each generation is a living edition that was built, i
 - A short-lived, explicitly approved tunnel E2E passed and was then closed; no ingress stays open. This is
   project-reported and not independently audited.
 - Known limits: the Master key is a local file (no HSM); a named tunnel with an access policy is not shipped; there is
-  no independent third-party audit; no license has been chosen yet; v5 federation/evolution are not released.
+  no independent third-party audit; v5 federation/evolution are not released. Code is AGPL-3.0 and documentation is
+  CC BY-SA 4.0; see [LICENSING.md](LICENSING.md).
 - No consciousness claim. No claim that the proposed v5 architecture is implemented.
 
 Read [SECURITY.md](SECURITY.md) and [NOTICE.md](NOTICE.md) before trusting the system with anything that matters.
@@ -196,7 +191,7 @@ Read [SECURITY.md](SECURITY.md) and [NOTICE.md](NOTICE.md) before trusting the s
 
 - [LINEAGE.md](LINEAGE.md) — the lineage book
 - [USER_MANUAL.md](USER_MANUAL.md) — stable user manual with install, memory, governance and troubleshooting
-- [CITADEL.md](CITADEL.md) — KING, Council, Hall, Divisions, release policy
+- [CITADEL.md](CITADEL.md) — repository governance and pull-request workflow
 - [citadel/roadmap.md](citadel/roadmap.md) — current management roadmap
 - [INSTALL_PROMPT.md](INSTALL_PROMPT.md) — machine-facing install protocol
 - [RELEASE_NOTES.md](RELEASE_NOTES.md) — what changed in this release
@@ -220,4 +215,4 @@ and `core/dna.v4.json` disagree, stop and report.
 
 ---
 
-**Owner:** D (final authority). **KING:** GPT-web. **Implementation:** DSH. **Independent verification:** Kilo.
+**Project owner:** retains final authority. **AI assistants and contributors:** advisory or implementation support only; no independent governance authority.
