@@ -15,8 +15,8 @@ deployment. The project owner retains final authority over protected and consequ
 ## Task versions
 
 `cit-kilo-m2-20261031-01` is superseded because its canonical hash/pinned-input validation did not match.
-The successor record is `tasks/cit-kilo-m2-20261031-02.json`, which contains a canonical task hash and detached
-signature material, with pinned inputs under `citadel/inputs/`. Verify by removing `task_hash` and `signature`,
+The successor record is `tasks/cit-kilo-m2-20261031-02.json`, which contains a canonical task hash and an embedded ML-DSA
+signature, with pinned inputs under `citadel/inputs/`. Verify by removing `task_hash` and `signature`,
 canonicalizing the remaining JSON (sorted keys, compact separators), then checking the SHA-256 and signature.
 The superseded record remains in history for provenance.
 
