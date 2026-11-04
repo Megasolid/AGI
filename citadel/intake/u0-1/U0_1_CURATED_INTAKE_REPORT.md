@@ -1,6 +1,6 @@
 # U0.1 Curated Reference Intake Report
 
-**Generated:** 2026-11-04T16:29:35.302290
+**Generated:** 2026-11-04T17:19:19.123562
 **Reference Root:** `[REDACTED-LOCAL-PATH]/.reference`
 **Output Directory:** `[REDACTED-LOCAL-PATH]/U0.1_output`
 
@@ -25,6 +25,7 @@
 
 | Category | Count | Description |
 |----------|-------|-------------|
+| (empty) | 1,915 | Supporting category |
 | S6 | 580 | Continuous research and evolution |
 | SKILLS | 573 | Supporting category |
 | S1 | 434 | Identity, constitutional foundations, canonical hierarchy |
@@ -82,7 +83,7 @@
 | excluded_directory:.vs | 12 | 7.44 |
 | excluded_directory:codex/.sandbox | 8 | 0.02 |
 | vendor_directory:npm-cache | 6 | 0.01 |
-| compressed_archive:.gz | 5 | 24.59 |
+| compressed_archive:.tar.gz | 5 | 24.59 |
 | compressed_archive:.tgz | 4 | 9.94 |
 | excluded_directory:tools/bin | 1 | 52.82 |
 
@@ -109,13 +110,14 @@
 ## Known Limitations
 
 1. **Metadata-first intake:** No recursive parsing of file contents, no archive extraction, no semantic analysis.
-2. **Large file hashing skipped:** Files >100MB were not hashed (cloudflared.exe, AGI-DNA-BLOCK.py, model files).
+2. **Large file hashing skipped for excluded files:** Files >100MB in excluded directories (cloudflared.exe in tools/bin, AGI-DNA-BLOCK.py in backups, model files) were not hashed. **No eligible files exceed 100MB.**
 3. **Duplicate detection limited to eligible files:** Excluded archive/backup contents not hashed.
 4. **Classification based on filenames/paths:** No content inspection performed.
 5. **Browser cache directories:** Multiple LOCALID directories in unsloth-studio identified as duplicates; only first retained.
 6. **Season directories:** claude/ and chatgpt/ under family/seasons are exact duplicates of deepseek/.
 7. **State/entelechy/state:** Appears to be a nested duplicate of state/ directory structure.
 8. **Sensitive files:** Flagged by pattern matching only; actual sensitivity not verified.
+9. **Category assignment:** 1,915 eligible files (36%) have no AGI category assigned — they fall outside current category rules.
 
 ## Reconciliation with Previous Inventory
 

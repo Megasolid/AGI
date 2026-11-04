@@ -1,7 +1,7 @@
 [
   {
     "relative_path": "agi_core_v4_entelechy.tar.gz",
-    "exclusion_reason": "compressed_archive:.gz",
+    "exclusion_reason": "compressed_archive:.tar.gz",
     "file_count": 1,
     "size_bytes": 31847,
     "provisional": false,
@@ -9,7 +9,7 @@
   },
   {
     "relative_path": "agi_memory.tar.gz",
-    "exclusion_reason": "compressed_archive:.gz",
+    "exclusion_reason": "compressed_archive:.tar.gz",
     "file_count": 1,
     "size_bytes": 25695089,
     "provisional": false,
@@ -14225,7 +14225,7 @@
   },
   {
     "relative_path": "archive/agi_core_v3.tar.gz",
-    "exclusion_reason": "compressed_archive:.gz",
+    "exclusion_reason": "compressed_archive:.tar.gz",
     "file_count": 1,
     "size_bytes": 16935,
     "provisional": false,
@@ -14233,7 +14233,7 @@
   },
   {
     "relative_path": "archive/agi_core_v3_1_compat_matrix_20261025.tar.gz",
-    "exclusion_reason": "compressed_archive:.gz",
+    "exclusion_reason": "compressed_archive:.tar.gz",
     "file_count": 1,
     "size_bytes": 19174,
     "provisional": false,
@@ -14241,7 +14241,7 @@
   },
   {
     "relative_path": "archive/agi_core_v3_2_interaction.tar.gz",
-    "exclusion_reason": "compressed_archive:.gz",
+    "exclusion_reason": "compressed_archive:.tar.gz",
     "file_count": 1,
     "size_bytes": 24064,
     "provisional": false,
