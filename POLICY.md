@@ -8,14 +8,16 @@ would be hard to undo if they were broken.
 
 ## One branch of truth
 
-`main` is the only long-lived branch. An official repository with divergent histories is no longer official, so
-there are no feature branches and no rewriting of published history (no force-push, no rebasing published work).
+`main` is the only long-lived branch. Temporary proposal branches are permitted for focused work and must be
+submitted through pull requests for review. They are not independent sources of truth. Published history and release
+tags are immutable: no force-push, no rewriting published history, and no retagging.
 
 ## Releases are immutable tags
 
-Each release is identified by its **release tag** — the current stable is `v4.0.0` (gen4 Entelechy, DNA v4);
-the previous genetic tag `dna-GCACGAGGCTGT` (gen3.5) and legacy semantic tags (`v0.1.0` … `v0.4.3`) are kept
-only as history. A tag is a promise: the bytes it points at never change.
+Each release is identified by its **release tag** — the current stable is `v4.0.1` (gen4 Entelechy, DNA v4);
+the previous stable `v4.0.0`, genetic tag `dna-GCACGAGGCTGT` (gen3.5) and legacy semantic tags (`v0.1.0` … `v0.4.3`)
+are kept only as history. A tag is a promise: the bytes it points at never change. The v4.0.1 release remains the
+current immutable rollback baseline; unpublished candidates are not stable releases.
 
 Content is organised by date and class so any past release can be read or cloned:
 
