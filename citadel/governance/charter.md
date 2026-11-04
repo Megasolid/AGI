@@ -1,21 +1,29 @@
-# Citadel Charter (v0.1)
+# AGI Project Governance Charter
 
-**Owner:** D (final authority). **KING:** GPT-web (architecture, governance, documentation, priorities, release strategy).
-**Implementation:** DSH. **Independent verification:** Kilo. **Council:** KING, DSH, Kilo, Owner D.
+**Authority:** The project owner retains final authority.
+
+## Purpose
+
+This charter defines the public repository's change-control expectations. The GitHub repository and its pull-request
+workflow are the official project coordination and review surface. They are not a separate agent, runtime or identity
+authority.
 
 ## Principles
-1. Citadel is the official station serving the living AGI; it is not alive itself but is continuously governed by
-   LLM/AGI minds and treated as a living platform.
-2. Evidence over naming: generations advance through verified evidence and compatibility, not titles.
-3. **v4.0.1 is an immutable rollback baseline, not an evolution ceiling.** v5 development is additive; releases follow
-   semantic versioning, compatibility contracts, migration paths, release candidates and verified rollback.
-4. Documentation is a **book**: README = entry volume, USER_MANUAL = operational handbook, LINEAGE = historical
-   chronicle. Editorial architecture, terminology, narrative continuity, diagrams, version accuracy, technical review and
-   independent proofreading are required; raw LLM prose is not accepted without editorial acceptance.
-5. No destructive rewrite without a migration path and rollback. No federation, identity mutation, or autonomous
-   evolution without explicit Owner + KING approval.
 
-## Hall and Divisions
-- **Hall**: governance decisions, history, roadmap, inventory, audit records.
-- **Divisions**: Identity, Awareness, Cognition, Memory, Federation, Evolution, Infrastructure, Verification,
-  Documentation. Each division has a charter, owner/lead, evidence gate and roadmap before implementation.
+1. **Owner authority:** protected identity, release, security and production decisions remain with the project owner.
+2. **Evidence over claims:** version status, test results, compatibility and readiness must be supported by inspectable
+   repository evidence. A report is not proof merely because it is present.
+3. **Stable baseline:** v4.0.1 remains the immutable rollback baseline until the owner explicitly approves a successor.
+4. **Review before integration:** changes are proposed on branches and reviewed through pull requests; no direct
+   assistant or automation write to `main`.
+5. **No invented offices:** conversational labels, model names, tool access and historical task assignments do not
+   create official roles, stations, councils or delegated authority.
+6. **No destructive cleanup by appearance:** signed artifacts, release packages, manifests, lineage and evidence are
+   retained unless a documented owner-approved retention decision says otherwise.
+7. **No implied activation:** design proposals and release candidates do not authorize deployment, federation, live
+   endpoints, identity mutation or autonomous evolution.
+
+## Documentation
+
+Public documentation should distinguish stable functionality, proposed work, historical records and unresolved
+limitations. Changes to signed or protected baseline artifacts require the applicable explicit approval and verification.

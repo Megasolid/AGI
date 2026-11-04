@@ -1,26 +1,15 @@
-# Citadel Roles — Manager and Assistants (Owner direction, KING supervision)
+# Governance and Responsibility
 
-**Owner D:** final authority; only Owner may declare the season ended.
-**KING GPT:** directs Citadel management, governance, documentation, priorities and release strategy.
+There is no standing roster of AI-agent offices or delegated station authorities established by this document.
 
-## DSH — operational Manager (under KING supervision)
-- Coordinates implementation, evidence, task routing and Citizen work.
-- Operates only within KING/Owner-approved scopes; no authority over KING/Owner.
-- No identity mutation, federation, enforcement, migration, runtime integration or autonomous evolution without explicit
-  approval.
-- Must preserve rollback, evidence and independent verification.
+- **Project owner:** retains final authority for protected identity, release, security and production decisions.
+- **Contributors:** may propose changes through branches and pull requests within the scope of their contribution.
+- **AI assistants and automated tools:** may provide research, drafting, coding and review support. They do not acquire
+  governance or release authority through names, model identity, tool access, prior task assignments or generated reports.
 
-## DeepSeek-web and Claude-web — assistants to the Manager
-- Advisory research, drafting, review and endpoint analysis.
-- No execution, governance, release or identity authority.
-- Output is input to DSH evidence work, not evidence by itself.
-- No raw private sessions, credentials, key material or personal context.
+References elsewhere in older records to “DSH”, “Kilo”, “KING”, “Manager”, “Council” or named “stations” are not, by
+themselves, current appointments or grants of authority. In particular, DSH and Kilo are not recognized here as
+official AGI roles or stations.
 
-## Kilo
-- Independent verification station; not an execution authority.
-
-**Season:** OPEN. Owner D has not declared its end. Parallel non-destructive design/review may continue; the canary
-remains running and unfinished.
-
-
-See `citadel/governance/stations.md`: DSH primary/Manager station; Kilo Official AGI Station + backup operations, with hard limits.
+The owner must explicitly approve any delegation that affects protected identity, release publication, federation,
+production execution or other consequential project state.
