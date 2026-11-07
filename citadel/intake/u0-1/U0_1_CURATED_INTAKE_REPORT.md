@@ -1,6 +1,6 @@
 # U0.1 Curated Reference Intake Report
 
-**Generated:** 2026-11-04T17:19:19.123562
+**Generated:** 2026-11-07T03:48:27.576596
 **Reference Root:** `[REDACTED-LOCAL-PATH]/.reference`
 **Output Directory:** `[REDACTED-LOCAL-PATH]/U0.1_output`
 
@@ -119,6 +119,22 @@
 8. **Sensitive files:** Flagged by pattern matching only; actual sensitivity not verified.
 9. **Category assignment:** 1,915 eligible files (36%) have no AGI category assigned — they fall outside current category rules.
 
+## Archive and Bundle-Stage Scope Clarification
+
+**Included (eligible intake):**
+- `state/archive/evolution/` — Research evolution records (S6/S2 categories): research-window-freeze-20261031, review-calibration-20261101, risk-closure-20261101, rr03-closure-20261101, s2-portable-bootstrap, s2-s3-fixtures. These are architectural evidence, not compressed archives.
+- Total: ~50 files, all categorized and hashed.
+
+**Excluded (not in active intake):**
+- `archive/` (root level): 3 .tar.gz files (agi_core_v3, agi_core_v3_1_compat_matrix, agi_core_v3_2_interaction) — excluded as `compressed_archive:.tar.gz`
+- `archive/backups/`: 5 backup files — excluded as `excluded_directory:archive/backups` (if separate) or under parent
+- `archive/bundle_stage/`: 100+ files — build artifacts, scripts, chrome-mcp package, embeddings — excluded as `excluded_directory:archive/bundle_stage`
+- `AGI.Original Data/codex/archived_sessions/`: 7 .zst/.jsonl session files — excluded as `excluded_directory:agi.original data/codex/archived_sessions`
+- `state/archive/seed-feed/`: 6 JSON files — excluded as `excluded_directory:state/archive/seed-feed`
+- Compressed releases: 41 .zip files under `state/repo/AGI/releases/` — excluded as `compressed_archive:.zip`
+
+**Review scope:** Only the compressed archives and build-artifact directories are excluded. The research evolution archives under `state/archive/evolution/` are **included** as S6/S2 evidence.
+
 ## Reconciliation with Previous Inventory
 
 | Item | Value | Note |
@@ -148,7 +164,53 @@
 
 1. **State/agi5 directory:** 1,394 files of test outputs, JSON evidence, Python test files - classified as TEST_OR_VERIFICATION_EVIDENCE but volume is large.
 2. **Memory/index directory:** 4 files, 39MB - likely embedding indexes, classification uncertain.
-3. **Archive/bundle_stage directories:** May contain relevant architectural bundles - marked REVIEW_REQUIRED.
+3. **Archive/bundle_stage review scope clarified:** Compressed archives and build artifacts excluded; research evolution archives (state/archive/evolution/) included as S6/S2.
 4. **Codex/sessions:** 16 session files, 24MB - relevance to AGI architecture unclear.
 5. **DSH/sessions:** 743 session files, 35MB - may contain relevant operational history.
 6. **Unsloth-studio superseded-docs:** 48 files - marked HISTORICAL_REFERENCE but may contain unique architectural decisions.
+
+## Validation Evidence
+
+### Exclusion Manifest Validation
+- **Total exclusion records:** 4,472
+- **Unique exclusion reasons:** 22 (not 23 — previously miscounted)
+- **Total excluded files:** 16,936
+- **Total excluded size:** 1.39 GB
+- **Sum of file_count across all records:** 16,936 = 16,936 ✓
+- **Sum of size_bytes across all records:** 1,495,512,225 bytes = 1.39 GB ✓
+
+### Included Files Validation
+- **Total included records:** 5,265
+- **Records with SHA-256:** 5,252
+- **Records skipped (empty):** 13
+- **Records skipped (large):** 0
+- **Total records accounted:** 5,265 = 5,265 ✓
+- **Unique SHA-256 values:** 3,987
+- **Duplicate records (is_duplicate=true):** 1,265
+- **Unique + Duplicates:** 5,252 = 5,252 ✓
+
+### Category Accounting
+- **Files with AGI category:** 3,350
+- **Files without AGI category (empty):** 1,915
+- **Total:** 5,265 ✓
+
+### Classification Accounting
+- **Total by classification:** 5,265 = 5,265 ✓
+
+### Reconciliation Cross-Checks
+| Check | Expected | Actual | Status |
+|-------|----------|--------|--------|
+| Included + Excluded | 22,201 | 22,201 | ✓ |
+| Hashing success + skipped | 5,265 | 5,265 | ✓ |
+| Unique + Duplicates | 5,252 | 5,252 | ✓ |
+| Exclusion manifest sum | 16,936 | 16,936 | ✓ |
+
+### Reproduction Instructions
+1. Run `python process_intake.py` from `U0.1_output/`
+2. Verify outputs match this report
+3. Cross-check JSON records against report tables
+4. Validate: `jq '. | length' U0_1_INCLUDED_FILES.json` → 5265
+5. Validate: `jq '[.[] | .file_count] | add' U0_1_EXCLUSION_MANIFEST.json` → 16936
+6. Validate: `jq '[.[] | select(.hashing_status=="success")] | length' U0_1_INCLUDED_FILES.json` → 5252
+7. Validate: `jq '[.[] | select(.is_duplicate==true)] | length' U0_1_INCLUDED_FILES.json` → 1265
+
