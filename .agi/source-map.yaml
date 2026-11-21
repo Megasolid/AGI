@@ -1,0 +1,79 @@
+schema_version: 1
+status: preliminary_top_level_map
+revision_basis: 98a53250181173815eddf1bc137b2c2f2d995b60
+note: >
+  This map records top-level paths observed at the baseline revision.
+  It is a navigation aid, not a complete inventory, content audit, or
+  classification of every descendant file. Inspect a path before relying
+  on assumptions about its contents.
+
+paths:
+  README.md:
+    role: human_facing_project_overview
+    authority: descriptive
+  SKILL.md:
+    role: assistant_review_entrypoint
+    authority: procedural_guidance
+  DNA.md:
+    role: published_stable_dna_summary
+    authority: derived_publication; verify_against_signed_contract
+  core/:
+    role: core_contracts_and_identity_material
+    status: protected_until_classified
+  runtime/:
+    role: runtime_implementation
+    status: inspect_before_change
+  citadel/:
+    role: repository_governance_and_project_records
+    status: inspect_before_change
+  docs/:
+    role: documentation_and_history
+    status: inspect_before_change
+  tools/:
+    role: repository_and_assurance_tools
+    status: inspect_before_execution
+  beta/:
+    role: beta_and_seed_material
+    status: protected_until_classified
+  bundle/:
+    role: distributable_bundle_area
+    status: release_sensitive
+  pool/:
+    role: update_pool_and_proofs
+    status: release_sensitive
+  public/:
+    role: public_mirror_area
+    status: release_sensitive
+  recovery/:
+    role: recovery_material
+    status: protected_until_classified
+  releases/:
+    role: release_packages_and_manifests
+    status: immutable_release_evidence
+  install.ps1:
+    role: windows_installer
+    status: do_not_execute_without_task_specific_authorization
+  install.sh:
+    role: unix_installer
+    status: do_not_execute_without_task_specific_authorization
+  INSTALL_PROMPT.md:
+    role: machine_facing_install_protocol
+    authority: installation_only
+  llms.txt:
+    role: compact_machine_summary
+    authority: descriptive
+  repo.json:
+    role: repository_manifest
+    status: signed_or_integrity_sensitive
+  repo.json.sig:
+    role: repository_manifest_signature
+    status: cryptographically_protected
+  POLICY.md:
+    role: publication_and_repository_policy
+    status: owner_governed
+  CITADEL.md:
+    role: governance_and_change_workflow
+    status: owner_governed
+  .github/:
+    role: repository_automation
+    status: inspect_before_change
