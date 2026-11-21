@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "repository": "Megasolid/AGI",
+  "default_branch": "main",
+  "baseline_commit": "98a53250181173815eddf1bc137b2c2f2d995b60",
+  "baseline_tree": "74d87c7d0432cde5bc64e9f3b0d5d3a83507cca2",
+  "baseline_observed": "2026-11-21",
+  "scope": "repository identity and top-level navigation baseline",
+  "inventory_status": "not_performed",
+  "per_file_hashes": "not_generated",
+  "meaning": "This record anchors change-driven review to a Git revision. It does not claim a recursive file count, complete file classification, or per-file integrity verification.",
+  "protected_reference": {
+    "stable_release": "v4.0.1",
+    "stable_dna_version": 4,
+    "v5_status": "proposed_architecture_only"
+  }
+}

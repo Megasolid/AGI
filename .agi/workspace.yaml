@@ -1,0 +1,29 @@
+schema_version: 1
+workspace:
+  id: megasolid-agi
+  name: AGI
+  repository: https://github.com/Megasolid/AGI
+  default_branch: main
+  review_entrypoint: SKILL.md
+  human_entrypoint: README.md
+  machine_summary: llms.txt
+  install_protocol: INSTALL_PROMPT.md
+  governance: CITADEL.md
+  publication_policy: POLICY.md
+baseline:
+  stable_release: v4.0.1
+  stable_dna: v4
+  proposed_architecture: v5
+  proposed_architecture_status: design_only
+review:
+  default_mode: targeted_read_only
+  inventory_mode: change_driven
+  full_recursive_inventory_default: false
+  require_source_evidence: true
+  require_owner_approval_for_protected_changes: true
+  merge_release_or_deploy_authority: owner_only
+metadata_status:
+  workspace_identity: declared
+  source_map: preliminary
+  per_file_inventory: not_created
+  full_hash_manifest: not_created
